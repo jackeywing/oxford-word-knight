@@ -32,16 +32,10 @@
       padding:12px;
     }
 
-    .header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+    .header { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; }
     .header h1 { color:#FFE0B2; text-shadow:2px 2px 0 #5D4037; font-size:0.9em; letter-spacing:2px; }
     .header h1 .pick { font-size:1.2em; animation:pickBounce 1s ease infinite; }
     @keyframes pickBounce { 0%,100%{transform:translateY(0) rotate(-10deg)} 50%{transform:translateY(-4px) rotate(5deg)} }
-
-    .lv-btn { padding:8px 16px; border:none; font-family:inherit; font-size:0.55em; cursor:pointer; background:#8D6E63; color:#FFE0B2; font-weight:bold; }
-    .lv-btn:first-child { border-right:2px solid #4A3020; }
-    .lv-btn.g1 { background:#5D8C2E; } .lv-btn.g2 { background:#1565C0; }
-    .lv-btn.active { filter:brightness(1.3); box-shadow:inset 0 0 0 3px #FFD54F; }
-    .level-btns { display:flex; border:2px solid #4A3020; border-radius:3px; overflow:hidden; }
 
     .char-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .char-row label { color:#3E2723; font-size:0.48em; }
@@ -132,10 +126,6 @@
 <div class="app">
   <div class="mc-panel header">
     <h1><span class="pick">⛏️</span>Word-Knight</h1>
-    <div class="level-btns">
-      <button class="lv-btn g1 active" onclick="setLv('G1')">🌱 G1</button>
-      <button class="lv-btn g2" onclick="setLv('G2')">🌳 G2</button>
-    </div>
   </div>
 
   <div class="mc-panel char-row">
@@ -178,7 +168,7 @@ const F={biff:'👧🏻‍',chip:'🧒🏻',kipper:'👦🏻',wilma:'👧🏽'};
 const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma'};
 const N=8,TS=40;
 
-let lv='G1',ch='biff',qs=[],i=0,sc=0,cb=0,mc=0,xp=0,ti=null,tl=0,ls=[],aud=null;
+let lv='G2',ch='biff',qs=[],i=0,sc=0,cb=0,mc=0,xp=0,ti=null,tl=0,ls=[],aud=null;
 
 function beep(f,d,t='square'){try{if(!aud)aud=new(window.AudioContext||window.webkitAudioContext)();const o=aud.createOscillator(),g=aud.createGain();o.type=t;o.frequency.value=f;g.gain.value=0.06;g.gain.exponentialRampToValueAtTime(0.001,aud.currentTime+d);o.connect(g);g.connect(aud.destination);o.start();o.stop(aud.currentTime+d)}catch(e){}}
 function okB(){beep(523,0.1);setTimeout(()=>beep(659,0.1),100);setTimeout(()=>beep(784,0.15),200)}
@@ -190,7 +180,6 @@ function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=
 function pt(x,y,e='✨',n=8){const c=document.getElementById('pcs');for(let j=0;j<n;j++){const p=document.createElement('div');p.className='p';p.textContent=e;p.style.left=(x+(Math.random()-0.5)*90)+'px';p.style.top=(y+(Math.random()-0.5)*40)+'px';p.style.animationDuration=(0.5+Math.random()*0.6)+'s';c.appendChild(p);setTimeout(()=>p.remove(),1300)}}
 
 function sel(n){ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');document.getElementById('csprite').textContent=F[n]}
-function setLv(l){lv=l;document.getElementById('tabG1').classList.toggle('active',l==='G1');document.getElementById('tabG2').classList.toggle('active',l==='G2');rst()}
 
 function dn(){
   const c=document.getElementById('pnodes');let h='';

@@ -65,30 +65,30 @@ function getThreeDistractors(level, excludeWord) {
   return rows.map(r => r.word);
 }
 
-// ── Cloze: generate fill-in-the-blank pattern ──
+// ── Cloze: hide letters from the main word (last word of phrase) ──
 function makeCloze(word) {
-  const n = word.length;
-  if (n <= 2) return { blanked: word[0] + '_', hidden: word.slice(1), answerLen: n - 1 };
+  const parts = word.split(/\s+/);
+  const target = parts[parts.length - 1];  // last word for phrases
+  const n = target.length;
+  if (n <= 2) return { blanked: word.replace(target, target[0] + '_'), hidden: target.slice(1), answerLen: n - 1 };
   const hideLen = Math.max(1, Math.ceil(n * 0.45));
   const start = Math.floor(Math.random() * (n - hideLen + 1));
-  const hidden = word.slice(start, start + hideLen);
-  const blanked = word.slice(0, start) + '_'.repeat(hideLen) + word.slice(start + hideLen);
-  return { blanked: blanked.toLowerCase(), hidden: hidden.toLowerCase(), answerLen: hideLen };
+  const hidden = target.slice(start, start + hideLen);
+  const blankedWord = target.slice(0, start) + '_'.repeat(hideLen) + target.slice(start + hideLen);
+  const blanked = word.replace(target, blankedWord).toLowerCase();
+  return { blanked, hidden: hidden.toLowerCase(), answerLen: hideLen };
 }
 
-// ── Generate clue sentence by replacing target word with cloze pattern ──
-function sentenceWithCloze(sentence, word) {
-  const cloze = makeCloze(word);
-  // Try exact word match first
-  const re = new RegExp('\\b' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+// ── Replace target word in sentence with cloze blank ──
+function sentenceWithCloze(sentence, word, cloze) {
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(escaped, 'i');
   if (re.test(sentence)) {
     return sentence.replace(re, cloze.blanked);
   }
-  // If sentence has ____ placeholder, replace it with cloze
   if (sentence.includes('____')) {
     return sentence.replace('____', cloze.blanked);
   }
-  // Fallback: append cloze pattern
   return sentence + ' (' + cloze.blanked + ')';
 }
 
@@ -119,7 +119,7 @@ const server = http.createServer((req, res) => {
       const challenges = words.map(w => {
         const cloze = makeCloze(w.word);
         const clue = w.sentence
-          ? sentenceWithCloze(w.sentence, w.word)
+          ? sentenceWithCloze(w.sentence, w.word, cloze)
           : `____ (${w.hint})`;
         return {
           id: w.id,
