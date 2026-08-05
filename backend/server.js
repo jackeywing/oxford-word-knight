@@ -65,18 +65,28 @@ function getThreeDistractors(level, excludeWord) {
   return rows.map(r => r.word);
 }
 
-// ── Cloze: hide letters from the main word (last word of phrase) ──
+// ── Cloze: hide letters from the full phrase, preserve spaces as separators ──
 function makeCloze(word) {
-  const parts = word.split(/\s+/);
-  const target = parts[parts.length - 1];  // last word for phrases
-  const n = target.length;
-  if (n <= 2) return { blanked: word.replace(target, target[0] + '_'), hidden: target.slice(1), answerLen: n - 1 };
-  const hideLen = Math.max(1, Math.ceil(n * 0.45));
-  const start = Math.floor(Math.random() * (n - hideLen + 1));
-  const hidden = target.slice(start, start + hideLen);
-  const blankedWord = target.slice(0, start) + '_'.repeat(hideLen) + target.slice(start + hideLen);
-  const blanked = word.replace(target, blankedWord).toLowerCase();
-  return { blanked, hidden: hidden.toLowerCase(), answerLen: hideLen };
+  const clean = word.replace(/…/g, ' ').replace(/\s+/g, ' ').trim();
+  const parts = clean.split(' ');
+  const lettersOnly = parts.join('');
+  const total = lettersOnly.length;
+  if (total <= 2) {
+    return { blanked: lettersOnly[0] + '_', hidden: lettersOnly.slice(1), answerLen: total - 1 };
+  }
+  const hideLen = Math.max(Math.ceil(total * 0.4), 2);
+  const start = Math.floor(Math.random() * (total - hideLen + 1));
+  const end = start + hideLen;
+  let blanked = '', hidden = '', idx = 0;
+  for (let k = 0; k < parts.length; k++) {
+    if (k > 0) blanked += ' ';
+    for (const ch of parts[k]) {
+      if (idx >= start && idx < end) { blanked += '_'; hidden += ch; }
+      else { blanked += ch; }
+      idx++;
+    }
+  }
+  return { blanked: blanked.toLowerCase(), hidden: hidden.toLowerCase(), answerLen: hideLen, phraseLen: total };
 }
 
 // ── Replace target word in sentence with cloze blank ──

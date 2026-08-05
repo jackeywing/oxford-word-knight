@@ -181,20 +181,26 @@ const WORDS = [{"word": "of", "hint": "……的", "sentence": "The key of the m
 
 // ── Cloze logic ──
 function c_makeCloze(word) {
-  const parts = word.trim().split(/\s+/);
-  const target = parts[parts.length - 1].toLowerCase();
-  if (target.length <= 1) {
-    return { blanked: target[0] + '_'.repeat(target.length - 1), hidden: target.slice(1) };
+  const clean = word.replace(/…/g, ' ').replace(/\s+/g, ' ').trim();
+  const parts = clean.split(' ');
+  const lettersOnly = parts.join('');
+  const total = lettersOnly.length;
+  if (total <= 2) {
+    return { blanked: lettersOnly[0] + '_', hidden: lettersOnly.slice(1), answerLen: total - 1 };
   }
-  const hideStart = Math.max(0, Math.floor(target.length * 0.3));
-  const hideEnd = Math.min(target.length, Math.ceil(target.length * 0.7));
-  const hidden = target.slice(hideStart, hideEnd);
-  if (!hidden) {
-    const mid = Math.floor(target.length / 2);
-    return { blanked: target.slice(0, mid) + '_'.repeat(target.slice(1) || mid) + target.slice(mid * 2), hidden: target.slice(mid, mid * 2) };
+  const hideLen = Math.max(Math.ceil(total * 0.4), 2);
+  const start = Math.floor(Math.random() * (total - hideLen + 1));
+  const end = start + hideLen;
+  let blanked = '', hidden = '', idx = 0;
+  for (let k = 0; k < parts.length; k++) {
+    if (k > 0) blanked += ' ';
+    for (const ch of parts[k]) {
+      if (idx >= start && idx < end) { blanked += '_'; hidden += ch; }
+      else { blanked += ch; }
+      idx++;
+    }
   }
-  const blanked = target.slice(0, hideStart) + '_'.repeat(hidden.length) + target.slice(hideEnd);
-  return { blanked: blanked, hidden: hidden };
+  return { blanked: blanked.toLowerCase(), hidden: hidden.toLowerCase(), answerLen: hideLen, phraseLen: total };
 }
 
 function c_sentenceWithCloze(sentence, word, cloze) {
@@ -214,7 +220,7 @@ async function c_load() {
     if (pool.length < 4) { document.getElementById('chArea').innerHTML = '<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>'; return false; }
     c_shuffle(pool);
     pool = pool.slice(0, N);
-    qs = pool.map(w => { const cz = c_makeCloze(w.word); const clue = w.sentence ? c_sentenceWithCloze(w.sentence, w.word, cz) : '____ (' + w.hint + ')'; return { word: w.word, hint: w.hint, sentence: w.sentence || '', clue, blanked: cz.blanked, hidden: cz.hidden, answerLen: cz.hidden.length }; });
+    qs = pool.map(w => { const cz = c_makeCloze(w.word); const clue = w.sentence ? c_sentenceWithCloze(w.sentence, w.word, cz) : '____ (' + w.hint + ')'; return { word: w.word, hint: w.hint, sentence: w.sentence || '', clue, blanked: cz.blanked, hidden: cz.hidden, answerLen: cz.answerLen }; });
     return true;
   } catch (e) { document.getElementById('chArea').innerHTML = '<div style="text-align:center;padding:30px;color:#C62828;">❌ 加载失败</div>'; return false; }
 }
