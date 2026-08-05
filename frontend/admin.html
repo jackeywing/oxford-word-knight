@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛠️ Word-Knight 管理后台</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+:root { --bg:#2D1F0E; --panel:#3E2723; --gold:#FFD54F; --green:#66BB6A; --red:#EF5350; --text:#FFE0B2; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Press Start 2P',monospace; background:var(--bg); color:var(--text); min-height:100vh; padding:14px; }
+.wrap { max-width:1100px; margin:0 auto; }
+h1 { color:var(--gold); font-size:0.8em; text-align:center; margin:12px 0; text-shadow:2px 2px 0 #1A0E00; }
+h2 { color:var(--gold); font-size:0.55em; margin:14px 0 8px; }
+.panel { background:var(--panel); border:3px solid #5D4037; padding:12px; margin-bottom:10px; }
+table { width:100%; border-collapse:collapse; font-size:0.38em; }
+th,td { padding:5px 7px; border:2px solid #5D4037; text-align:center; }
+th { background:#4A3020; color:var(--gold); }
+td { color:#FFE0B2; }
+.green { color:var(--green); } .red { color:var(--red); } .gold { color:var(--gold); }
+.badge { display:inline-block; padding:2px 5px; border-radius:2px; font-size:0.85em; }
+.badge.g1 { background:#5D8C2E; color:#fff; } .badge.g2 { background:#1565C0; color:#fff; }
+.btn { padding:8px 14px; font-family:inherit; font-size:0.42em; cursor:pointer; border:2px solid; box-shadow:0 3px 0 rgba(0,0,0,0.3); transition:all 0.15s; }
+.btn:hover { transform:translateY(-1px); }
+.btn:active { transform:translateY(2px); box-shadow:none; }
+.btn-r { background:#C62828; color:#FFE0B2; border-color:#B71C1C; }
+.btn-g { background:#2E7D32; color:#FFE0B2; border-color:#1B5E20; margin-right:6px; }
+.btn-b { background:#1565C0; color:#FFE0B2; border-color:#0D47A1; }
+.row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:8px; }
+input[type="file"] { padding:4px; border:2px dashed #8D6E63; cursor:pointer; font-family:inherit; font-size:0.38em; color:#FFE0B2; }
+.msg { font-size:0.38em; } .msg.ok{color:var(--green)} .msg.err{color:var(--red)}
+.stats { font-size:0.36em; color:#888; }
+.lnk { font-size:0.38em; color:#888; text-align:center; }
+.lnk a { color:#1565C0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🛠️ Word-Knight 管理后台</h1>
+
+<div class="row">
+  <span class="stats" id="tick"></span>
+  <div>
+    <button class="btn btn-g" onclick="rf()">🔄 刷新</button>
+    <button class="btn btn-r" onclick="clr()">🗑️ 清空记录</button>
+  </div>
+</div>
+
+<h2>📥 上传字库 CSV</h2>
+<div class="panel">
+  <div class="row">
+    <input type="file" id="csvF" accept=".csv">
+    <span class="msg" id="uMsg"></span>
+    <span class="stats" id="wStats"></span>
+  </div>
+  <div class="stats" style="margin-top:6px;">
+    CSV格式: <code>word,hint,sentence</code> — oxford_level可选(G1/G2)，sentence为牛津树原文
+  </div>
+</div>
+
+<h2>🏆 角色总览</h2>
+<div class="panel"><table><thead><tr><th>角色</th><th>级别</th><th>游戏数</th><th>总分</th><th>平均分</th><th>最高分</th><th>最高连击</th><th>✅正确</th><th>❌错误</th><th>⏰超时</th></tr></thead>
+  <tbody id="sum"><tr><td colspan="10">—</td></tr></tbody></table></div>
+
+<h2>📅 每日统计</h2>
+<div class="panel"><table><thead><tr><th>日期</th><th>角色</th><th>游戏数</th><th>总分</th><th>最高连击</th></tr></thead>
+  <tbody id="day"><tr><td colspan="5">—</td></tr></tbody></table></div>
+
+<h2>📜 最近闯关</h2>
+<div class="panel"><table><thead><tr><th>时间</th><th>角色</th><th>级别</th><th>得分</th><th>连击</th><th>✅</th><th>❌</th><th>⏰</th></tr></thead>
+  <tbody id="rec"><tr><td colspan="8">—</td></tr></tbody></table></div>
+
+<div class="lnk"><a href="/">🎮 返回游戏</a></div>
+</div>
+
+<script>
+const API = window.location.hostname==='localhost' ? 'http://localhost:3000' : window.location.origin;
+async function rf() {
+  try {
+    const r = await fetch(API+'/api/dashboard'), d = await r.json();
+    document.getElementById('tick').textContent='更新于 '+new Date().toLocaleString('zh-CN');
+    const s = document.getElementById('sum');
+    if(!d.summary||!d.summary.length){s.innerHTML='<tr><td colspan="10">暂无</td></tr>'}
+    else s.innerHTML=d.summary.map(r=>`<tr><td>${r.character_name}</td><td><span class="badge ${r.level.toLowerCase()}">${r.level}</span></td><td>${r.games}</td><td class="gold">${r.totalScore}</td><td>${r.avgScore}</td><td class="gold">${r.bestScore}</td><td>${r.bestCombo}</td><td class="green">${r.correctWords}</td><td class="red">${r.wrongWords}</td><td>${r.timeoutWords}</td></tr>`).join('');
+    const da = document.getElementById('day');
+    if(!d.daily||!d.daily.length){da.innerHTML='<tr><td colspan="5">暂无</td></tr>'}
+    else da.innerHTML=d.daily.map(r=>`<tr><td>${r.day}</td><td>${r.character_name}</td><td>${r.games}</td><td class="gold">${r.score}</td><td>${r.topCombo}</td></tr>`).join('');
+    const re = document.getElementById('rec');
+    if(!d.recent||!d.recent.length){re.innerHTML='<tr><td colspan="8">暂无</td></tr>'}
+    else re.innerHTML=d.recent.map(r=>`<tr><td>${r.created_at}</td><td>${r.character_name}</td><td><span class="badge ${r.level.toLowerCase()}">${r.level}</span></td><td class="gold">${r.score}</td><td>${r.max_combo}</td><td class="green">${r.words_correct}</td><td class="red">${r.words_wrong}</td><td>${r.words_timeout}</td></tr>`).join('');
+  } catch(e) { console.error(e); }
+}
+async function clr() { if(!confirm('确认清空？'))return; await fetch(API+'/api/dashboard/clear'); rf(); }
+
+async function st() {
+  try { const r = await fetch(API+'/api/stats'), d = await r.json();
+    if(d.length) document.getElementById('wStats').textContent=d.map(s=>`${s.oxford_level}:${s.count}词`).join(' | '); } catch(e){}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('csvF').addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f)return; const m=document.getElementById('uMsg');
+    m.textContent='⏳...'; m.className='msg';
+    const r=new FileReader();
+    r.onload=async()=>{
+      try { const res=await fetch(API+'/api/import',{method:'POST',body:r.result}), d=await res.json();
+        m.textContent=d.success?'✅ '+d.message:'❌ '+d.error; m.className='msg '+(d.success?'ok':'err'); if(d.success)st(); }
+      catch { m.textContent='❌ 失败'; m.className='msg err'; }
+    }; r.readAsText(f);
+  });
+});
+rf(); st();
+</script>
+</body>
+</html>

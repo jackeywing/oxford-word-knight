@@ -102,8 +102,8 @@ const server = http.createServer((req, res) => {
     return serveFile(res, 'frontend/index.html', 'text/html; charset=utf-8');
   if (req.method === 'GET' && pathname === '/frontend/game.css')
     return serveFile(res, 'frontend/game.css', 'text/css; charset=utf-8');
-  if (req.method === 'GET' && pathname === '/dashboard' || pathname === '/dashboard.html')
-    return serveFile(res, 'frontend/dashboard.html', 'text/html; charset=utf-8');
+  if (req.method === 'GET' && (pathname === '/dashboard' || pathname === '/dashboard.html' || pathname === '/admin' || pathname === '/admin.html'))
+    return serveFile(res, 'frontend/admin.html', 'text/html; charset=utf-8');
 
   // ── GET /api/challenges?level=G1&count=8 ──
   if (req.method === 'GET' && pathname === '/api/challenges') {

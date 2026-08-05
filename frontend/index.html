@@ -3,561 +3,262 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⛏️ 牛津树单词冒险 | Word-Knight</title>
+  <title>⛏️ Word-Knight | 牛津树单词冒险</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    
     :root {
-      --dirt: #8B5E3C; --grass-top: #5D8C2E; --grass-side: #7C9C3A;
-      --stone: #7F7F7F; --wood: #8B6914; --gold: #F9A825;
-      --diamond: #64B5F6; --redstone: #E53935; --emerald: #43A047;
-      --text-dark: #3E2723; --text-light: #FFF8E1;
-      --panel-bg: #C4A46C; --panel-border: #6D4C2E;
+      --dirt:#8B5E3C; --grass:#5D8C2E; --gold:#F9A825; --emerald:#43A047;
+      --panel-bg:#C4A46C; --panel-border:#6D4C2E;
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Press Start 2P', -apple-system, sans-serif;
-      background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 60%, #8B5E3C 60%, #6D4C2E 100%);
-      min-height: 100vh; overflow-x: hidden;
-      image-rendering: pixelated; user-select: none; -webkit-user-select: none;
+      font-family:'Press Start 2P',-apple-system,sans-serif;
+      background:linear-gradient(180deg,#87CEEB 0%,#B3E5FC 60%,#8B5E3C 60%,#6D4C2E 100%);
+      min-height:100vh; overflow-x:hidden;
+      image-rendering:pixelated; user-select:none; -webkit-user-select:none;
     }
+    .clouds { position:fixed; top:0; left:0; width:100%; height:160px; pointer-events:none; z-index:0; overflow:hidden; }
+    .cloud { position:absolute; background:#fff; border:3px solid #e0e0e0; box-shadow:4px 4px 0 #ddd; }
+    .cloud:nth-child(1) { width:120px; height:40px; top:30px; left:10%; animation:drift 25s linear infinite; }
+    .cloud:nth-child(2) { width:90px; height:32px; top:55px; left:50%; animation:drift 30s linear infinite; animation-delay:-10s; }
+    .cloud:nth-child(3) { width:70px; height:28px; top:20px; left:80%; animation:drift 22s linear infinite; animation-delay:-5s; }
+    @keyframes drift { 0%{transform:translateX(-200px)} 100%{transform:translateX(calc(100vw+200px))} }
 
-    /* Clouds */
-    .clouds { position: fixed; top: 0; left: 0; width: 100%; height: 180px; pointer-events: none; z-index: 0; overflow: hidden; }
-    .cloud { position: absolute; background: #fff; border: 3px solid #e0e0e0; box-shadow: 4px 4px 0 #ddd; }
-    .cloud:nth-child(1) { width: 120px; height: 40px; top: 40px; left: 10%; animation: cloudDrift 25s linear infinite; }
-    .cloud:nth-child(2) { width: 100px; height: 35px; top: 70px; left: 45%; animation: cloudDrift 30s linear infinite; animation-delay: -10s; }
-    .cloud:nth-child(3) { width: 80px; height: 30px; top: 30px; left: 75%; animation: cloudDrift 22s linear infinite; animation-delay: -5s; }
-    @keyframes cloudDrift { 0%{transform:translateX(-200px)} 100%{transform:translateX(calc(100vw + 200px))} }
+    .app { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:10px; display:flex; flex-direction:column; gap:8px; min-height:100vh; }
 
-    .app { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 100vh; }
-
-    /* Panels */
     .mc-panel {
-      background: var(--panel-bg); border: 4px solid var(--panel-border);
-      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.2), inset 2px 2px 0 rgba(255,255,255,0.15), 0 4px 0 #4A3020, 0 6px 16px rgba(0,0,0,0.3);
-      padding: 12px; position: relative;
+      background:var(--panel-bg); border:4px solid var(--panel-border);
+      box-shadow:inset -2px -2px 0 rgba(0,0,0,0.2),inset 2px 2px 0 rgba(255,255,255,0.15),0 4px 0 #4A3020,0 6px 14px rgba(0,0,0,0.3);
+      padding:12px;
     }
 
-    /* Header */
-    .header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-    .header h1 { color: #FFE0B2; text-shadow: 2px 2px 0 #5D4037; font-size: 0.95em; letter-spacing: 2px; }
-    .header h1 .pick { font-size: 1.2em; animation: pickBounce 1s ease infinite; }
+    .header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+    .header h1 { color:#FFE0B2; text-shadow:2px 2px 0 #5D4037; font-size:0.9em; letter-spacing:2px; }
+    .header h1 .pick { font-size:1.2em; animation:pickBounce 1s ease infinite; }
     @keyframes pickBounce { 0%,100%{transform:translateY(0) rotate(-10deg)} 50%{transform:translateY(-4px) rotate(5deg)} }
-    .level-btns { display: flex; gap: 0; border: 2px solid #4A3020; border-radius: 3px; overflow: hidden; }
-    .lv-btn { padding: 8px 16px; border: none; font-family: inherit; font-size: 0.55em; cursor: pointer; background: #8D6E63; color: #FFE0B2; font-weight: bold; }
-    .lv-btn.g1 { background: #5D8C2E; } .lv-btn.g2 { background: #1565C0; }
-    .lv-btn.active { filter: brightness(1.3); box-shadow: inset 0 0 0 3px #FFD54F; }
 
-    /* Character select */
-    .char-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .char-row label { color: #3E2723; font-size: 0.48em; }
-    .char-card { width: 52px; height: 68px; background: #E0C9A6; border: 2px solid #8D6E63; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-shadow: 0 2px 0 #6D4C2E; transition: all 0.2s; }
-    .char-card:hover { transform: translateY(-2px); }
-    .char-card.selected { border-color: #FFD54F; box-shadow: 0 0 0 3px rgba(255,213,79,0.4), 0 2px 0 #6D4C2E; }
-    .char-card .face { font-size: 1.6em; } .char-card .name { font-size: 0.35em; color: #3E2723; }
+    .lv-btn { padding:8px 16px; border:none; font-family:inherit; font-size:0.55em; cursor:pointer; background:#8D6E63; color:#FFE0B2; font-weight:bold; }
+    .lv-btn:first-child { border-right:2px solid #4A3020; }
+    .lv-btn.g1 { background:#5D8C2E; } .lv-btn.g2 { background:#1565C0; }
+    .lv-btn.active { filter:brightness(1.3); box-shadow:inset 0 0 0 3px #FFD54F; }
+    .level-btns { display:flex; border:2px solid #4A3020; border-radius:3px; overflow:hidden; }
 
-    /* Stats */
-    .hud { display: flex; gap: 6px; flex-wrap: wrap; }
-    .hud-item { flex: 1; min-width: 60px; background: #5D4037; border: 2px solid #3E2723; padding: 6px 8px; color: #FFE0B2; text-align: center; box-shadow: 0 2px 0 #3E2723; }
-    .hud-item .val { font-size: 0.8em; margin-top: 2px; color: #FFD54F; } .hud-item .lbl { font-size: 0.35em; opacity: 0.75; }
-    .xp-wrap { width: 100%; height: 16px; background: #3E2723; border: 2px solid #4A3020; position: relative; }
-    .xp-fill { height: 100%; background: linear-gradient(90deg, #66BB6A, #AED581); transition: width 0.4s; }
-    .xp-text { position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size: 0.4em; color: #FFE0B2; text-shadow: 1px 1px 0 #000; }
+    .char-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .char-row label { color:#3E2723; font-size:0.48em; }
+    .char-card { width:52px; height:68px; background:#E0C9A6; border:2px solid #8D6E63; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 2px 0 #6D4C2E; transition:all 0.2s; }
+    .char-card:hover { transform:translateY(-2px); }
+    .char-card.selected { border-color:#FFD54F; box-shadow:0 0 0 3px rgba(255,213,79,0.4),0 2px 0 #6D4C2E; }
+    .char-card .face { font-size:1.6em; } .char-card .name { font-size:0.35em; color:#3E2723; }
 
-    /* Path View */
-    .path-box { position: relative; height: 150px; background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 55%, #7C9C3A 55%, #8B5E3C 100%); border: 3px solid #4A3020; overflow: hidden; }
-    .path-nodes { position: absolute; bottom: 55px; left: 40px; right: 40px; display: flex; align-items: center; gap: 0; height: 36px; }
-    .path-line { height: 5px; background: #8D6E63; flex: 1; margin: 0 -1px; border-top: 1px solid #A1887F; border-radius: 2px; }
-    .pn { flex-shrink: 0; width: 32px; height: 32px; border: 2px solid #4A3020; display: flex; align-items: center; justify-content: center; font-size: 0.9em; transition: all 0.3s; }
-    .pn.pend { background: #BDBDBD; } .pn.actv { background: #FFD54F; border-color: #F9A825; transform: scale(1.2); animation: nodeGlow 0.7s ease infinite alternate; }
-    .pn.ok { background: #66BB6A; border-color: #388E3C; } .pn.bad { background: #EF5350; border-color: #C62828; }
-    @keyframes nodeGlow { 0%{box-shadow:0 0 6px rgba(255,213,79,0.6)} 100%{box-shadow:0 0 16px rgba(255,213,79,0.9)} }
+    .hud { display:flex; gap:6px; flex-wrap:wrap; }
+    .hud-item { flex:1; min-width:55px; background:#5D4037; border:2px solid #3E2723; padding:6px 8px; color:#FFE0B2; text-align:center; box-shadow:0 2px 0 #3E2723; }
+    .hud-item .val { font-size:0.8em; margin-top:2px; color:#FFD54F; } .hud-item .lbl { font-size:0.35em; opacity:0.75; }
+    .xp-wrap { width:100%; height:14px; background:#3E2723; border:2px solid #4A3020; position:relative; }
+    .xp-fill { height:100%; background:linear-gradient(90deg,#66BB6A,#AED581); transition:width 0.4s; }
+    .xp-text { position:absolute; top:50%;left:50%;transform:translate(-50%,-50%); font-size:0.38em; color:#FFE0B2; text-shadow:1px 1px 0 #000; }
 
-    .char-sprite { position: absolute; bottom: 34px; font-size: 2.5em; transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 10; filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.3)); pointer-events: none; }
-    .char-sprite.jump { animation: charJump 0.5s ease; }
+    .path-box { position:relative; height:140px; background:linear-gradient(180deg,#87CEEB 0%,#B3E5FC 55%,#7C9C3A 55%,#8B5E3C 100%); border:3px solid #4A3020; overflow:hidden; }
+    .path-nodes { position:absolute; bottom:50px; left:30px; right:30px; display:flex; align-items:center; height:32px; }
+    .path-line { height:5px; background:#8D6E63; flex:1; margin:0 -1px; border-top:1px solid #A1887F; border-radius:2px; }
+    .pn { flex-shrink:0; width:30px; height:30px; border:2px solid #4A3020; display:flex; align-items:center; justify-content:center; font-size:0.85em; transition:all 0.3s; }
+    .pn.pend { background:#BDBDBD; } .pn.actv { background:#FFD54F; border-color:#F9A825; transform:scale(1.2); animation:glow 0.7s ease infinite alternate; }
+    .pn.ok { background:#66BB6A; border-color:#388E3C; } .pn.bad { background:#EF5350; border-color:#C62828; }
+    @keyframes glow { 0%{box-shadow:0 0 4px rgba(255,213,79,0.6)} 100%{box-shadow:0 0 14px rgba(255,213,79,0.9)} }
+
+    .char-sprite { position:absolute; bottom:30px; font-size:2.5em; transition:left 0.6s cubic-bezier(0.34,1.56,0.64,1); z-index:10; filter:drop-shadow(2px 3px 0 rgba(0,0,0,0.3)); pointer-events:none; }
+    .char-sprite.jump { animation:charJump 0.5s ease; }
     @keyframes charJump { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-28px) rotate(-5deg)} }
 
-    /* Challenge */
-    .ch-area { min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .ch-card { background: #FFF8E1; border: 4px solid #8D6E63; box-shadow: 0 5px 0 #5D4037, 0 6px 16px rgba(0,0,0,0.25); padding: 20px; width: 100%; max-width: 680px; animation: cardIn 0.4s ease; }
-    @keyframes cardIn { 0%{transform:translateY(16px) scale(0.96); opacity:0} 100%{transform:translateY(0) scale(1); opacity:1} }
-    .ch-card .ch-label { font-size: 0.45em; color: #8D6E63; margin-bottom: 8px; }
-    .ch-card .ch-sentence { font-size: 1.05em; color: #3E2723; margin-bottom: 14px; line-height: 1.6; text-align: center; font-family: -apple-system,'PingFang SC',sans-serif; font-weight: 600; }
-    .ch-card .ch-clue { font-size: 0.55em; color: #8D6E63; text-align: center; margin-bottom: 12px; font-style: italic; }
-    .ch-card .ch-input-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
-    .ch-card .ch-input {
-      font-family: 'Press Start 2P', monospace; font-size: 1.1em;
-      padding: 12px 16px; width: 200px; text-align: center;
-      border: 4px solid #BDBDBD; background: #fff;
-      letter-spacing: 6px; text-transform: lowercase;
-      outline: none; transition: border-color 0.2s;
-    }
-    .ch-card .ch-input:focus { border-color: #F9A825; }
-    .ch-card .ch-input.correct { border-color: #66BB6A; background: #E8F5E9; }
-    .ch-card .ch-input.wrong { border-color: #EF5350; background: #FFEBEE; animation: shake 0.4s ease; }
+    .ch-area { min-height:160px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .ch-card { background:#FFF8E1; border:4px solid #8D6E63; box-shadow:0 5px 0 #5D4037,0 6px 14px rgba(0,0,0,0.2); padding:20px; width:100%; max-width:660px; animation:cardIn 0.4s ease; }
+    @keyframes cardIn { 0%{transform:translateY(14px) scale(0.96);opacity:0} 100%{transform:translateY(0) scale(1);opacity:1} }
+    .ch-card .ch-hint { font-size:0.45em; color:#8D6E63; margin-bottom:8px; }
+    .ch-card .ch-sentence { font-size:1.05em; color:#3E2723; margin-bottom:12px; line-height:1.6; text-align:center; font-family:-apple-system,'PingFang SC',sans-serif; font-weight:600; }
+    .ch-card .ch-blanked { font-size:1.3em; color:#3E2723; text-align:center; margin-bottom:16px; letter-spacing:4px; }
+    .ch-card .ch-input { font-family:'Press Start 2P',monospace; font-size:1.1em; padding:12px 16px; width:200px; text-align:center; border:4px solid #BDBDBD; background:#fff; letter-spacing:6px; text-transform:lowercase; outline:none; transition:border-color 0.2s; }
+    .ch-card .ch-input:focus { border-color:#F9A825; }
+    .ch-card .ch-input.ok { border-color:#66BB6A; background:#E8F5E9; }
+    .ch-card .ch-input.ng { border-color:#EF5350; background:#FFEBEE; animation:shake 0.4s ease; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
 
-    /* Timer */
-    .timer-bar-wrap { width: 100%; height: 12px; background: #E0E0E0; border: 2px solid #BDBDBD; margin-bottom: 12px; position: relative; border-radius: 2px; overflow: hidden; }
-    .timer-bar { height: 100%; background: #66BB6A; transition: width 1s linear, background 0.5s; border-radius: 1px; }
-    .timer-bar.warn { background: #FFA726; } .timer-bar.danger { background: #EF5350; animation: dangerPulse 0.5s ease infinite alternate; }
-    @keyframes dangerPulse { 0%{opacity:1} 100%{opacity:0.5} }
-    .timer-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.5em; color: #3E2723; font-weight: bold; }
+    .timer-wrap { width:100%; height:10px; background:#E0E0E0; border:2px solid #BDBDBD; margin-bottom:10px; position:relative; border-radius:2px; overflow:hidden; }
+    .timer-bar { height:100%; background:#66BB6A; transition:width 1s linear,background 0.5s; border-radius:1px; }
+    .timer-bar.warn { background:#FFA726; } .timer-bar.danger { background:#EF5350; animation:pulse 0.5s ease infinite alternate; }
+    @keyframes pulse { 0%{opacity:1} 100%{opacity:0.5} }
+    .timer-num { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:0.45em; color:#3E2723; font-weight:bold; }
 
-    /* Buttons */
-    .mc-btn { padding: 12px 24px; font-family: inherit; font-size: 0.5em; background: #5D8C2E; color: #FFE0B2; border: 3px solid #33691E; box-shadow: 0 4px 0 #33691E; cursor: pointer; transition: all 0.15s; }
-    .mc-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #33691E; }
-    .mc-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #33691E; }
-    .mc-btn.blue { background: #1565C0; border-color: #0D47A1; box-shadow: 0 4px 0 #0D47A1; }
+    .mc-btn { padding:12px 24px; font-family:inherit; font-size:0.5em; background:#5D8C2E; color:#FFE0B2; border:3px solid #33691E; box-shadow:0 4px 0 #33691E; cursor:pointer; transition:all 0.15s; }
+    .mc-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 #33691E; }
+    .mc-btn:active,.mc-btn.down { transform:translateY(2px); box-shadow:0 2px 0 #33691E; }
+    .mc-btn.down { opacity:0.6; pointer-events:none; }
+    .mc-btn.blue { background:#1565C0; border-color:#0D47A1; box-shadow:0 4px 0 #0D47A1; }
 
-    /* Toast */
-    .toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); padding: 12px 24px; font-family: inherit; font-size: 0.5em; z-index: 100; pointer-events: none; border: 3px solid; box-shadow: 0 4px 0 rgba(0,0,0,0.2); animation: toastIn 0.4s ease, toastOut 0.4s ease 2s forwards; opacity: 0; }
-    .toast.show { opacity: 1; } .toast.ok { background: #C8E6C9; border-color: #388E3C; color: #2E7D32; }
-    .toast.bad { background: #FFCDD2; border-color: #C62828; color: #B71C1C; }
-    .toast.great { background: #FFF9C4; border-color: #F9A825; color: #F57F17; }
+    .toast { position:fixed; top:16px; left:50%; transform:translateX(-50%); padding:12px 24px; font-family:inherit; font-size:0.48em; z-index:100; pointer-events:none; border:3px solid; box-shadow:0 4px 0 rgba(0,0,0,0.2); opacity:0; }
+    .toast.show { opacity:1; animation:toastIn 0.4s ease,toastOut 0.4s ease 2s forwards; }
+    .toast.ok { background:#C8E6C9; border-color:#388E3C; color:#2E7D32; }
+    .toast.bad { background:#FFCDD2; border-color:#C62828; color:#B71C1C; }
+    .toast.great { background:#FFF9C4; border-color:#F9A825; color:#F57F17; }
     @keyframes toastIn { 0%{opacity:0;transform:translateX(-50%) translateY(-16px)} 100%{opacity:1;transform:translateX(-50%) translateY(0)} }
     @keyframes toastOut { 0%{opacity:1} 100%{opacity:0;transform:translateX(-50%) translateY(-16px)} }
 
-    /* Victory / Egg */
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { 0%{opacity:0} 100%{opacity:1} }
-    .ov-card { background: var(--panel-bg); border: 5px solid var(--panel-border); box-shadow: 0 6px 0 #4A3020, 0 8px 30px rgba(0,0,0,0.5); padding: 24px; text-align: center; max-width: 480px; width: 90%; }
-    .ov-card h2 { color: #FFD54F; font-size: 0.8em; text-shadow: 2px 2px 0 #5D4037; margin-bottom: 12px; }
-    .ov-card .egg-icon { font-size: 4em; margin: 12px 0; animation: eggBounce 0.6s ease infinite alternate; }
-    @keyframes eggBounce { 0%{transform:translateY(0)} 100%{transform:translateY(-12px)} }
-    .ov-card p { color: #3E2723; font-size: 0.5em; line-height: 1.8; }
-    .ov-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-    .ov-table th, .ov-table td { padding: 6px 10px; font-size: 0.45em; border: 2px solid #8D6E63; }
-    .ov-table th { background: #5D4037; color: #FFE0B2; }
-    .ov-table td { color: #3E2723; }
-    .ov-table .fail { color: #E53935; font-weight: bold; }
+    .ov-card { margin:10px auto; }
+    .ov-card h2 { color:#FFD54F; font-size:0.72em; text-shadow:2px 2px 0 #5D4037; margin-bottom:10px; }
+    .ov-card .egg { font-size:3.5em; animation:eggBounce 0.6s ease infinite alternate; }
+    @keyframes eggBounce { 0%{transform:translateY(0)} 100%{transform:translateY(-10px)} }
+    .ov-card p { color:#3E2723; font-size:0.48em; line-height:1.8; }
+    .ov-tbl { width:100%; border-collapse:collapse; margin:10px auto; }
+    .ov-tbl th,.ov-tbl td { padding:5px 8px; font-size:0.42em; border:2px solid #8D6E63; }
+    .ov-tbl th { background:#5D4037; color:#FFE0B2; }
+    .ov-tbl td { color:#3E2723; } .ov-tbl .fail { color:#E53935; font-weight:bold; }
 
-    /* Particles */
-    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 60; }
-    .p { position: absolute; font-size: 1.1em; animation: pUp 0.9s ease forwards; }
-    @keyframes pUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-70px) scale(0.3)} }
+    .particles { position:fixed; inset:0; pointer-events:none; z-index:60; }
+    .p { position:absolute; font-size:1.1em; animation:pUp 0.9s ease forwards; }
+    @keyframes pUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-60px) scale(0.3)} }
 
-    /* Import */
-    .import-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .import-row h3 { font-size: 0.45em; margin: 0; }
-    .import-row input[type="file"] { padding: 4px; border: 2px dashed #8D6E63; cursor: pointer; font-family: inherit; font-size: 0.4em; }
-    .imsg { font-size: 0.4em; font-weight: 600; } .imsg.ok { color: #2E7D32; } .imsg.err { color: #C62828; }
-    .wstats { font-size: 0.38em; color: #5D4037; margin-left: auto; }
+    .grass-footer { position:fixed; bottom:0; left:0; right:0; height:14px; background:repeating-linear-gradient(90deg,var(--grass) 0px,var(--grass) 4px,#4A7A1E 4px,#4A7A1E 8px); z-index:0; border-top:2px solid #3E6A12; }
 
-    .grass-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 16px; background: repeating-linear-gradient(90deg, var(--grass-top) 0px, var(--grass-top) 4px, #4A7A1E 4px, #4A7A1E 8px); z-index: 0; border-top: 2px solid #3E6A12; }
-    .link-row { font-size: 0.4em; text-align: center; color: #5D4037; }
-    .link-row a { color: #1565C0; }
-
-    @media (max-width: 640px) {
-      .header h1 { font-size: 0.7em; } .ch-card .ch-sentence { font-size: 0.85em; }
-      .char-sprite { font-size: 2em; } .path-box { height: 120px; }
-      .ch-card .ch-input { width: 160px; font-size: 0.9em; }
+    @media (max-width:600px) {
+      .header h1 { font-size:0.65em; } .ch-card .ch-sentence { font-size:0.8em; }
+      .char-sprite { font-size:2em; } .path-box { height:110px; }
+      .ch-card .ch-input { width:150px; font-size:0.85em; }
     }
   </style>
 </head>
 <body>
 <div class="clouds"><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div></div>
 <div class="grass-footer"></div>
-<div class="particles" id="particles"></div>
+<div class="particles" id="pcs"></div>
 
 <div class="app">
-  <!-- Header -->
   <div class="mc-panel header">
     <h1><span class="pick">⛏️</span>Word-Knight</h1>
     <div class="level-btns">
-      <button class="lv-btn g1 active" id="tabG1" onclick="setLevel('G1')">🌱 G1</button>
-      <button class="lv-btn g2" id="tabG2" onclick="setLevel('G2')">🌳 G2</button>
+      <button class="lv-btn g1 active" onclick="setLv('G1')">🌱 G1</button>
+      <button class="lv-btn g2" onclick="setLv('G2')">🌳 G2</button>
     </div>
   </div>
 
-  <!-- Characters -->
   <div class="mc-panel char-row">
     <label>角色:</label>
-    <div class="char-card selected" id="charBiff" onclick="selChar('biff')"><div class="face">👧🏻‍</div><div class="name">Biff</div></div>
-    <div class="char-card" id="charChip" onclick="selChar('chip')"><div class="face">🧒🏻</div><div class="name">Chip</div></div>
-    <div class="char-card" id="charKipper" onclick="selChar('kipper')"><div class="face">👦🏻</div><div class="name">Kipper</div></div>
-    <div class="char-card" id="charWilma" onclick="selChar('wilma')"><div class="face">👧🏽</div><div class="name">Wilma</div></div>
+    <div class="char-card selected" onclick="sel('biff')"><div class="face">👧🏻‍</div><div class="name">Biff</div></div>
+    <div class="char-card" onclick="sel('chip')"><div class="face">🧒🏻</div><div class="name">Chip</div></div>
+    <div class="char-card" onclick="sel('kipper')"><div class="face">👦🏻</div><div class="name">Kipper</div></div>
+    <div class="char-card" onclick="sel('wilma')"><div class="face">👧🏽</div><div class="name">Wilma</div></div>
   </div>
 
-  <!-- HUD -->
   <div class="hud">
     <div class="hud-item"><div class="lbl">🏆 得分</div><div class="val" id="s">0</div></div>
     <div class="hud-item"><div class="lbl">🔥 连击</div><div class="val" id="c">0</div></div>
     <div class="hud-item"><div class="lbl">📊 进度</div><div class="val" id="p">0/8</div></div>
-    <div class="hud-item"><div class="lbl">🕐 剩余</div><div class="val" id="t">40s</div></div>
+    <div class="hud-item"><div class="lbl">⏳ 剩余</div><div class="val" id="t">40s</div></div>
   </div>
-  <div class="xp-wrap"><div class="xp-fill" id="xpFill" style="width:0%"></div><div class="xp-text" id="xpText">0/100</div></div>
+  <div class="xp-wrap"><div class="xp-fill" id="xpFill" style="width:0%"></div><div class="xp-text" id="xpText">XP 0/100</div></div>
 
-  <!-- Path -->
   <div class="mc-panel" style="padding:0;overflow:hidden;">
-    <div class="path-box" id="pathView">
-      <div class="path-nodes" id="pathNodes"></div>
-      <div class="char-sprite" id="charSprite" style="left:10px;">👧🏻‍</div>
-    </div>
+    <div class="path-box"><div class="path-nodes" id="pnodes"></div><div class="char-sprite" id="csprite" style="left:6px;">👧🏻‍</div></div>
   </div>
 
-  <!-- Challenge -->
   <div class="mc-panel ch-area" id="chArea">
-    <div style="color:#5D4037;font-size:0.48em;text-align:center;padding:36px;">
-      选择角色和级别，开始冒险吧！
+    <div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">
+      选择角色和级别<br>开始冒险吧！
     </div>
   </div>
 
-  <!-- Controls -->
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-    <button class="mc-btn" id="startBtn" onclick="start()">⚔️ 开始冒险</button>
+    <button class="mc-btn" id="goBtn" onclick="go()">⚔️ 开始冒险</button>
     <button class="mc-btn blue" id="rstBtn" style="display:none;" onclick="rst()">🔄 重新开始</button>
-  </div>
-
-  <!-- Import -->
-  <div class="mc-panel import-row">
-    <h3>📥 上传CSV</h3>
-    <input type="file" id="csvFile" accept=".csv">
-    <span class="imsg" id="imsg"></span>
-    <span class="wstats" id="wstats"></span>
-  </div>
-
-  <div class="link-row">
-    <a href="/dashboard" target="_blank">📊 闯关看板 Dashboard</a>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ════════════════════════════════════════
-//  Word-Knight - Minecraft × Oxford Tree
-// ════════════════════════════════════════
+const API='/api';
+const F={biff:'👧🏻‍',chip:'🧒🏻',kipper:'👦🏻',wilma:'👧🏽'};
+const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma'};
+const N=8,TS=40;
 
-const API = window.location.hostname === 'localhost'
-  ? 'http://localhost:3000'
-  : 'https://oxford-word-knight-api.glitch.me';
+let lv='G1',ch='biff',qs=[],i=0,sc=0,cb=0,mc=0,xp=0,ti=null,tl=0,ls=[],aud=null;
 
-const FACES = { biff:'👧🏻‍', chip:'🧒🏻', kipper:'👦🏻', wilma:'👧🏽' };
-const NAMES = { biff:'Biff', chip:'Chip', kipper:'Kipper', wilma:'Wilma' };
-const N = 8;       // nodes
-const T_SEC = 40; // seconds per node
+function beep(f,d,t='square'){try{if(!aud)aud=new(window.AudioContext||window.webkitAudioContext)();const o=aud.createOscillator(),g=aud.createGain();o.type=t;o.frequency.value=f;g.gain.value=0.06;g.gain.exponentialRampToValueAtTime(0.001,aud.currentTime+d);o.connect(g);g.connect(aud.destination);o.start();o.stop(aud.currentTime+d)}catch(e){}}
+function okB(){beep(523,0.1);setTimeout(()=>beep(659,0.1),100);setTimeout(()=>beep(784,0.15),200)}
+function noB(){beep(180,0.35,'sawtooth')}
+function cbB(){beep(784,0.07);setTimeout(()=>beep(988,0.07),70);setTimeout(()=>beep(1175,0.1),140)}
+function wB(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18),i*140))}
 
-let level = 'G1', chr = 'biff';
-let items = [], idx = 0, score = 0, combo = 0, maxCombo = 0, xp = 0;
-let timerId = null, timeLeft = 0;
-let logs = []; // [{word, correct, timeout}]
-let aud = null;
-let apiBase = API;
+function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+c+' show';setTimeout(()=>e.className='toast '+c,2400)}
+function pt(x,y,e='✨',n=8){const c=document.getElementById('pcs');for(let j=0;j<n;j++){const p=document.createElement('div');p.className='p';p.textContent=e;p.style.left=(x+(Math.random()-0.5)*90)+'px';p.style.top=(y+(Math.random()-0.5)*40)+'px';p.style.animationDuration=(0.5+Math.random()*0.6)+'s';c.appendChild(p);setTimeout(()=>p.remove(),1300)}}
 
-// Try server URL override
-const u = window.location.search;
-const m = u.match(/[?&]api=([^&]+)/);
-if (m) apiBase = decodeURIComponent(m[1]);
+function sel(n){ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');document.getElementById('csprite').textContent=F[n]}
+function setLv(l){lv=l;document.getElementById('tabG1').classList.toggle('active',l==='G1');document.getElementById('tabG2').classList.toggle('active',l==='G2');rst()}
 
-function beep(f,d,t='square') {
-  try {
-    if(!aud) aud = new (window.AudioContext||window.webkitAudioContext)();
-    const o = aud.createOscillator(), g = aud.createGain();
-    o.type=t; o.frequency.value=f; g.gain.value=0.06; g.gain.exponentialRampToValueAtTime(0.001,aud.currentTime+d);
-    o.connect(g); g.connect(aud.destination); o.start(); o.stop(aud.currentTime+d);
-  }catch(e){}
+function dn(){
+  const c=document.getElementById('pnodes');let h='';
+  for(let j=0;j<N;j++){
+    let cls='pend',ic='⬜';
+    if(j<i){const lg=ls[j];cls=lg&&lg.ok?'ok':'bad';ic=lg&&lg.ok?'✅':'❌'}
+    else if(j===i){cls='actv';ic='❓'}
+    h+=`<div class="pn ${cls}">${ic}</div>`;if(j<N-1)h+='<div class="path-line"></div>';
+  }c.innerHTML=h;
 }
-function beepOk() { beep(523,0.1); setTimeout(()=>beep(659,0.1),100); setTimeout(()=>beep(784,0.15),200); }
-function beepNo() { beep(180,0.35,'sawtooth'); }
-function beepComboFn() { beep(784,0.07); setTimeout(()=>beep(988,0.07),70); setTimeout(()=>beep(1175,0.1),140); }
-function beepWin() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18),i*140)); }
+function mc_(){const s=document.getElementById('csprite'),w=document.getElementById('pnodes').offsetWidth,st=w/N;s.style.left=(st*i+st/2-12)+'px';s.textContent=F[ch];s.classList.add('jump');setTimeout(()=>s.classList.remove('jump'),500)}
+function hud(){document.getElementById('s').textContent=sc;document.getElementById('c').textContent=cb;document.getElementById('p').textContent=i+'/'+qs.length;document.getElementById('t').textContent=tl+'s';document.getElementById('xpFill').style.width=xp+'%';document.getElementById('xpText').textContent='XP '+xp+'/100'}
 
-function toast(msg,cls='ok') {
-  const e = document.getElementById('toast');
-  e.textContent = msg; e.className = 'toast '+cls; e.classList.add('show');
-  setTimeout(()=>e.classList.remove('show'),2400);
-}
-function particles(x,y,emoji='✨',n=8) {
-  const c = document.getElementById('particles');
-  for(let i=0;i<n;i++){
-    const p = document.createElement('div'); p.className='p'; p.textContent=emoji;
-    p.style.left=(x+(Math.random()-0.5)*100)+'px'; p.style.top=(y+(Math.random()-0.5)*50)+'px';
-    p.style.animationDuration=(0.5+Math.random()*0.7)+'s'; c.appendChild(p);
-    setTimeout(()=>p.remove(),1400);
-  }
-}
-
-function selChar(name) {
-  chr = name;
-  document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
-  document.getElementById('char'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('selected');
-  document.getElementById('charSprite').textContent = FACES[name];
-}
-function setLevel(l) {
-  level = l;
-  document.getElementById('tabG1').classList.toggle('active', l==='G1');
-  document.getElementById('tabG2').classList.toggle('active', l==='G2');
-  rst();
-}
-
-function drawNodes() {
-  const c = document.getElementById('pathNodes');
-  let h = '';
-  for(let i=0; i<N; i++) {
-    let cls = 'pend', ic = '⬜';
-    if (i < idx) {
-      const lg = logs[i];
-      cls = lg && lg.correct ? 'ok' : 'bad';
-      ic = lg && lg.correct ? '✅' : '❌';
-    } else if (i === idx) { cls = 'actv'; ic = '❓'; }
-    h += `<div class="pn ${cls}">${ic}</div>`;
-    if (i < N-1) h += '<div class="path-line"></div>';
-  }
-  c.innerHTML = h;
-}
-function moveChar() {
-  const s = document.getElementById('charSprite');
-  const w = document.getElementById('pathNodes').offsetWidth;
-  const step = w / N;
-  s.style.left = (step * idx + step/2 - 14) + 'px';
-  s.textContent = FACES[chr];
-  s.classList.add('jump'); setTimeout(()=>s.classList.remove('jump'),500);
-}
-function updHUD() {
-  document.getElementById('s').textContent = score;
-  document.getElementById('c').textContent = combo;
-  document.getElementById('p').textContent = idx + '/' + items.length;
-  document.getElementById('t').textContent = timeLeft + 's';
-  document.getElementById('xpFill').style.width = xp+'%';
-  document.getElementById('xpText').textContent = 'XP ' + xp + '/100';
-}
-
-function renderChallenge() {
-  if (idx >= items.length) { showVictory(); return; }
-  const ch = items[idx];
-  timeLeft = T_SEC;
-  updHUD();
-  startTimer();
-
-  const area = document.getElementById('chArea');
-  area.innerHTML = `
+function draw(){
+  if(i>=qs.length){victory();return}
+  const q=qs[i];tl=TS;hud();timer();
+  document.getElementById('chArea').innerHTML=`
     <div class="ch-card">
-      <div class="ch-label">💡 ${ch.hint}</div>
-      <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar" style="width:100%"></div><div class="timer-num" id="timerNum">${T_SEC}s</div></div>
-      <div class="ch-sentence">${ch.clue || ch.sentence}</div>
-      <div class="ch-input-wrap">
-        <span style="font-size:1.2em;color:#3E2723;">${ch.blanked}</span>
+      <div class="ch-hint">💡 ${q.hint}</div>
+      <div class="timer-wrap"><div class="timer-bar" id="tbar" style="width:100%"></div><div class="timer-num" id="tnum">${TS}s</div></div>
+      <div class="ch-sentence">${q.clue||q.sentence}</div>
+      <div class="ch-blanked">${q.blanked}</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+        <input class="ch-input" id="inp" type="text" maxlength="${q.answerLen}" placeholder="补全字母" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button class="mc-btn" id="sbm" onclick="ans()">✓</button>
       </div>
-      <div class="ch-input-wrap">
-        <input class="ch-input" id="ansInput" type="text" maxlength="${ch.answerLen}" placeholder="补全字母" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        <button class="mc-btn" id="submitBtn" onclick="checkAnswer()">✓</button>
-      </div>
-    </div>
-  `;
-
-  const inp = document.getElementById('ansInput');
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
-  setTimeout(() => inp.focus(), 100);
+    </div>`;
+  const inp=document.getElementById('inp');inp.addEventListener('keydown',e=>{if(e.key==='Enter')ans()});setTimeout(()=>inp.focus(),100);
 }
 
-function startTimer() {
-  clearInterval(timerId);
-  timerId = setInterval(() => {
-    timeLeft--;
-    const bar = document.getElementById('timerBar');
-    const num = document.getElementById('timerNum');
-    if (!bar || !num) { clearInterval(timerId); return; }
-    const pct = (timeLeft / T_SEC) * 100;
-    bar.style.width = pct + '%';
-    bar.className = 'timer-bar' + (pct < 30 ? ' danger' : (pct < 60 ? ' warn' : ''));
-    num.textContent = timeLeft + 's';
-    document.getElementById('t').textContent = timeLeft + 's';
-    if (timeLeft <= 0) { clearInterval(timerId); handleTimeout(); }
-  }, 1000);
+function timer(){clearInterval(ti);ti=setInterval(()=>{tl--;const b=document.getElementById('tbar'),n=document.getElementById('tnum');if(!b||!n){clearInterval(ti);return}const pct=(tl/TS)*100;b.style.width=pct+'%';b.className='timer-bar'+(pct<30?' danger':(pct<60?' warn':''));n.textContent=tl+'s';document.getElementById('t').textContent=tl+'s';if(tl<=0){clearInterval(ti);to()}},1000)}
+
+function to(){const q=qs[i];ls.push({word:q.word,ok:false,to:true});cb=0;noB();toast('⏰ 时间到！','bad');const inp=document.getElementById('inp');if(inp){inp.disabled=true;inp.classList.add('ng')}const sb=document.getElementById('sbm');if(sb){sb.disabled=true;sb.classList.add('down')}setTimeout(()=>adv(),1500)}
+
+function ans(){clearInterval(ti);const inp=document.getElementById('inp'),a=(inp.value||'').trim().toLowerCase(),q=qs[i],ok_=a===q.hidden;
+  if(ok_){cb++;if(cb>mc)mc=cb;let pt_=10;if(cb>=10){pt_=50;cbB();toast('💎 '+cb+'连击！','great')}else if(cb>=5){pt_=30;cbB();toast('⭐ '+cb+'连击！','ok')}else if(cb>=3){pt_=20;cbB()}else okB();sc+=Math.round(pt_*(1+tl/TS));xp=Math.min(100,xp+pt_);inp.classList.add('ok');inp.disabled=true;document.getElementById('sbm').disabled=true;document.getElementById('sbm').classList.add('down');const r=inp.getBoundingClientRect();pt(r.left+r.width/2,r.top);ls.push({word:q.word,ok:true,to:false});setTimeout(()=>adv(),700)}
+  else{noB();inp.classList.add('ng');inp.value='';setTimeout(()=>{inp.classList.remove('ng');inp.focus()},500)}
+  hud();
 }
 
-function handleTimeout() {
-  const ch = items[idx];
-  logs.push({ word: ch.word, correct: false, timeout: true, userAnswer: '(超时)' });
-  combo = 0;
-  beepNo();
-  toast('⏰ 时间到！', 'bad');
-  const inp = document.getElementById('ansInput');
-  if (inp) { inp.disabled = true; inp.classList.add('wrong'); }
-  const sb = document.getElementById('submitBtn');
-  if (sb) sb.disabled = true;
-  const blank = document.getElementById('timerBar');
-  if (blank) { blank.style.width = '0%'; blank.className = 'timer-bar danger'; }
+function adv(){clearInterval(ti);i++;dn();mc_();hud();if(i<qs.length){setTimeout(draw,500)}else{xp=100;hud();wB();fetch(API+'/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({character:NM[ch],level:lv,score:sc,maxCombo:mc,wordsTotal:qs.length,wordsCorrect:ls.filter(l=>l.ok).length,wordsTimeout:ls.filter(l=>l.to).length,wordsWrong:ls.filter(l=>!l.ok&&!l.to).length,details:ls})}).catch(()=>{});setTimeout(victory,800)}}
 
-  setTimeout(() => advance(), 1500);
+const EGGS=[{icon:'🔑',title:'🔮 魔法钥匙！',desc:'你发现了一把 Magic Key！<br>它会在下一次冒险中带你去到意想不到的地方…'},{icon:'👹',title:'🪨 巨人出现！',desc:'一个 Giant 从山洞里走了出来！<br>但他看到你答对了所有单词，友好地挥手离开了~'},{icon:'🐉',title:'🔥 龙之宝藏',desc:'你在城堡深处发现了一条 Dragon 守护的宝藏！<br>它赞赏你的单词功力，送你一颗宝石。'},{icon:'🏴‍☠️',title:'⚓ 海盗勋章',desc:'Pirate船长被你征服了！<br>"你的词汇量比我的地图还大！"'},{icon:'👑',title:'🏰 皇冠加冕',desc:'国王为你戴上 Crown！<br>"勇敢的 Word-Knight，王国因你而骄傲！"'},{icon:'🌟',title:'✨ 星光之路',desc:'你走过的路径上，每一颗星星都在闪耀。<br>新的冒险正在等待你… Bravo！'}];
+function re(){return EGGS[Math.floor(Math.random()*EGGS.length)]}
+
+function victory(){
+  const egg=re(),cn=ls.filter(l=>l.ok).length,fn=ls.filter(l=>!l.ok).length,stars=cn===N?'⭐⭐⭐':(cn>=N*0.7?'⭐⭐':'⭐');
+  let fr='';ls.forEach((l,j)=>{if(!l.ok)fr+=`<tr><td>${j+1}</td><td class="fail">${l.word}</td><td class="fail">${l.to?'⏰ 超时':'❌ 错误'}</td></tr>`});
+  document.getElementById('chArea').innerHTML=`
+    <div style="text-align:center;padding:18px;">
+      <div class="egg">${egg.icon}</div><h2>${egg.title}</h2><p>${egg.desc}</p>
+      <div style="margin:8px 0;">${stars}</div>
+      <p>🏆 ${sc} 分 · 🔥 ${mc} 连击 · ✅ ${cn}/${N} 正确</p>
+      ${fn?`<table class="ov-tbl"><thead><tr><th>#</th><th>单词</th><th>状态</th></tr></thead><tbody>${fr}</tbody></table>`:''}
+      <p style="margin-top:10px;">👤 ${NM[ch]} · 📚 ${lv}</p>
+      <button class="mc-btn" onclick="rst()" style="margin-top:10px;">🔄 再来一次</button>
+    </div>`;
+  document.getElementById('goBtn').style.display='none';
+  document.getElementById('rstBtn').style.display='inline-block';
 }
 
-function checkAnswer() {
-  clearInterval(timerId);
-  const inp = document.getElementById('ansInput');
-  const ans = (inp.value || '').trim().toLowerCase();
-  const ch = items[idx];
-  const correct = ans === ch.hidden;
+async function load(){try{const r=await fetch(`${API}/challenges?level=${lv}&count=${N}`),d=await r.json();if(d.error||!d.length){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">⚠️ 字库为空</div>`;return false}if(d.length<4){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>`;return false}qs=d;return true}catch(e){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接</div>`;return false}}
 
-  if (correct) {
-    combo++;
-    if (combo > maxCombo) maxCombo = combo;
-    let pts = 10;
-    if (combo >= 10) { pts = 50; beepComboFn(); toast('💎 '+combo+'连击！传奇！', 'great'); }
-    else if (combo >= 5) { pts = 30; beepComboFn(); toast('⭐ '+combo+'连击！', 'ok'); }
-    else if (combo >= 3) { pts = 20; beepComboFn(); }
-    else { beepOk(); }
-    score += Math.round(pts * (1 + timeLeft / T_SEC));
-    xp = Math.min(100, xp + pts);
-    inp.classList.add('correct'); inp.disabled = true;
-    document.getElementById('submitBtn').disabled = true;
-    const rect = inp.getBoundingClientRect();
-    particles(rect.left+rect.width/2, rect.top);
-    logs.push({ word: ch.word, correct: true, timeout: false, userAnswer: ans });
-    setTimeout(() => advance(), 700);
-  } else {
-    beepNo();
-    inp.classList.add('wrong');
-    inp.value = '';
-    setTimeout(() => { inp.classList.remove('wrong'); inp.focus(); }, 500);
-  }
-  updHUD();
-}
+async function go(){const ok=await load();if(!ok)return;i=0;sc=0;cb=0;mc=0;xp=0;ls=[];tl=TS;clearInterval(ti);dn();mc_();hud();draw();document.getElementById('goBtn').style.display='none';document.getElementById('rstBtn').style.display='inline-block'}
 
-function advance() {
-  clearInterval(timerId);
-  idx++;
-  drawNodes();
-  moveChar();
-  updHUD();
-  if (idx < items.length) {
-    setTimeout(renderChallenge, 500);
-  } else {
-    xp = 100; updHUD();
-    beepWin();
-    // Post log
-    fetch(apiBase + '/api/log', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        character: NAMES[chr], level,
-        score, maxCombo,
-        wordsTotal: items.length,
-        wordsCorrect: logs.filter(l=>l.correct).length,
-        wordsTimeout: logs.filter(l=>l.timeout).length,
-        wordsWrong: logs.filter(l=>!l.correct && !l.timeout).length,
-        details: logs
-      })
-    }).catch(()=>{});
-    setTimeout(showVictory, 800);
-  }
-}
+function rst(){clearInterval(ti);i=0;sc=0;cb=0;mc=0;xp=0;ls=[];qs=[];tl=TS;dn();mc_();hud();document.getElementById('chArea').innerHTML=`<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">准备好了吗？<br>点击"开始冒险"！</div>`;document.getElementById('goBtn').style.display='inline-block';document.getElementById('rstBtn').style.display='none'}
 
-// ── Easter Egg ──
-const EGGS = [
-  { icon:'🔑', title:'🔮 魔法钥匙！', desc:'你发现了一把闪闪发光的 Magic Key！<br>它会在下一次冒险中带你去到意想不到的地方…' },
-  { icon:'👹', title:'🪨 小心巨人！', desc:'一个 Giant 从山洞里走了出来！<br>但他看到你答对了所有单词，就友好地挥手离开了~' },
-  { icon:'🐉', title:'🔥 龙之宝藏', desc:'你在城堡深处发现了一条 Dragon 守护的宝藏！<br>它赞赏你的单词功力，送你一颗宝石。' },
-  { icon:'🏴‍☠️', title:'⚓ 海盗勋章', desc:'Pirate船长被你征服了！<br>"你的词汇量比我的地图还大！"他大笑着说。' },
-  { icon:'👑', title:'🏰 皇冠加冕', desc:'国王为你戴上 Crown！<br>"勇敢的 Word-Knight，王国因你而骄傲！"' },
-  { icon:'🌟', title:'✨ 星光之路', desc:'你走过的路径上，每一颗星星都在闪耀。<br>新的冒险正在等待你… Bravo！' },
-];
-function randomEgg() { return EGGS[Math.floor(Math.random() * EGGS.length)]; }
-
-function showVictory() {
-  const area = document.getElementById('chArea');
-  const egg = randomEgg();
-  const correctN = logs.filter(l=>l.correct).length;
-  const failN = logs.filter(l=>!l.correct).length;
-  const stars = correctN === N ? '⭐⭐⭐' : (correctN >= N * 0.7 ? '⭐⭐' : '⭐');
-
-  let failRows = '';
-  logs.forEach((l,i) => {
-    if (!l.correct) {
-      failRows += `<tr><td>${i+1}</td><td class="fail">${l.word}</td><td class="fail">${l.timeout ? '⏰ 超时' : '❌ 错误'}</td></tr>`;
-    }
-  });
-
-  area.innerHTML = `
-    <div style="text-align:center; padding:20px;">
-      <div class="egg-icon">${egg.icon}</div>
-      <h2>${egg.title}</h2>
-      <p>${egg.desc}</p>
-      <div style="margin:12px 0;">${stars}</div>
-      <p>🏆 ${score} 分 · 🔥 ${maxCombo} 连击 · ✅ ${correctN}/${N} 正确</p>
-      ${failN ? `<table class="ov-table"><thead><tr><th>#</th><th>单词</th><th>状态</th></tr></thead><tbody>${failRows}</tbody></table>` : ''}
-      <p style="margin-top:12px;">👤 ${NAMES[chr]} · 📚 ${level}</p>
-      <button class="mc-btn" onclick="rst()" style="margin-top:12px;">🔄 再来一次</button>
-    </div>
-  `;
-  document.getElementById('startBtn').style.display = 'none';
-  document.getElementById('rstBtn').style.display = 'inline-block';
-}
-
-async function loadItems() {
-  try {
-    const res = await fetch(`${apiBase}/api/challenges?level=${level}&count=${N}`);
-    const data = await res.json();
-    if (data.error || !data.length) {
-      document.getElementById('chArea').innerHTML = `<div style="text-align:center;padding:30px;color:#C62828;">⚠️ ${data.error || '字库为空，请先上传CSV'}</div>`;
-      return false;
-    }
-    if (data.length < 4) {
-      document.getElementById('chArea').innerHTML = `<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足，需要至少4个单词</div>`;
-      return false;
-    }
-    items = data;
-    return true;
-  } catch(e) {
-    document.getElementById('chArea').innerHTML = `<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接服务器</div>`;
-    return false;
-  }
-}
-
-async function start() {
-  const ok = await loadItems(); if (!ok) return;
-  idx = 0; score = 0; combo = 0; maxCombo = 0; xp = 0; logs = [];
-  timeLeft = T_SEC; clearInterval(timerId);
-  drawNodes(); moveChar(); updHUD(); renderChallenge();
-  document.getElementById('startBtn').style.display = 'none';
-  document.getElementById('rstBtn').style.display = 'inline-block';
-}
-
-function rst() {
-  clearInterval(timerId);
-  idx = 0; score = 0; combo = 0; maxCombo = 0; xp = 0; logs = []; items = [];
-  timeLeft = T_SEC;
-  drawNodes(); moveChar(); updHUD();
-  document.getElementById('chArea').innerHTML = `<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:36px;">准备好了吗？点击"开始冒险"！</div>`;
-  document.getElementById('startBtn').style.display = 'inline-block';
-  document.getElementById('rstBtn').style.display = 'none';
-}
-
-function init() {
-  drawNodes(); moveChar(); updHUD(); loadStats();
-  window.addEventListener('resize', ()=>{ drawNodes(); moveChar(); });
-}
-async function loadStats() {
-  try {
-    const res = await fetch(`${apiBase}/api/stats`);
-    const d = await res.json();
-    if(d.length) document.getElementById('wstats').textContent = d.map(s=>`${s.oxford_level}:${s.count}词`).join(' | ');
-  }catch(e){}
-}
-
-// CSV Import
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('csvFile').addEventListener('change', e=>{
-    const f = e.target.files[0]; if(!f) return;
-    const m = document.getElementById('imsg');
-    m.textContent='⏳...'; m.className='imsg';
-    const r = new FileReader();
-    r.onload = async ()=>{
-      try {
-        const res = await fetch(`${apiBase}/api/import`,{method:'POST',body:r.result});
-        const d = await res.json();
-        m.textContent = d.success ? '✅ '+d.message : '❌ '+d.error;
-        m.className = 'imsg '+(d.success?'ok':'err');
-        if(d.success) loadStats();
-      } catch { m.textContent='❌ 服务器未响应'; m.className='imsg err'; }
-    };
-    r.readAsText(f);
-  });
-});
-init();
+dn();mc_();hud();window.addEventListener('resize',()=>{dn();mc_()});
 </script>
 </body>
 </html>
