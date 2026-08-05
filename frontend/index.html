@@ -130,10 +130,10 @@
 
   <div class="mc-panel char-row">
     <label>角色:</label>
-    <div class="char-card selected" onclick="sel('biff')"><div class="face">👧🏻‍</div><div class="name">Biff</div></div>
-    <div class="char-card" onclick="sel('chip')"><div class="face">🧒🏻</div><div class="name">Chip</div></div>
-    <div class="char-card" onclick="sel('kipper')"><div class="face">👦🏻</div><div class="name">Kipper</div></div>
-    <div class="char-card" onclick="sel('wilma')"><div class="face">👧🏽</div><div class="name">Wilma</div></div>
+    <div class="char-card selected" id="charBiff" onclick="sel('biff')"><div class="face">👧🏻‍</div><div class="name">Biff</div></div>
+    <div class="char-card" id="charChip" onclick="sel('chip')"><div class="face">🧒🏻</div><div class="name">Chip</div></div>
+    <div class="char-card" id="charKipper" onclick="sel('kipper')"><div class="face">👦🏻</div><div class="name">Kipper</div></div>
+    <div class="char-card" id="charWilma" onclick="sel('wilma')"><div class="face">👧🏽</div><div class="name">Wilma</div></div>
   </div>
 
   <div class="hud">
@@ -195,15 +195,16 @@ function hud(){document.getElementById('s').textContent=sc;document.getElementBy
 
 function draw(){
   if(i>=qs.length){victory();return}
+  ansLock=false;
   const q=qs[i];tl=TS;hud();timer();
   document.getElementById('chArea').innerHTML=`
     <div class="ch-card">
       <div class="ch-hint">💡 ${q.hint}</div>
       <div class="timer-wrap"><div class="timer-bar" id="tbar" style="width:100%"></div><div class="timer-num" id="tnum">${TS}s</div></div>
       <div class="ch-sentence">${q.clue||q.sentence}</div>
-      <div class="ch-blanked">${q.blanked}</div>
+      <div class="ch-blanked">${q.blanked} <span style="color:#8D6E63;font-size:0.5em;">→ 填入 ${q.answerLen} 个字母</span></div>
       <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-        <input class="ch-input" id="inp" type="text" maxlength="${q.answerLen}" placeholder="补全字母" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <input class="ch-input" id="inp" type="text" maxlength="16" placeholder="补全字母" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button class="mc-btn" id="sbm" onclick="ans()">✓</button>
       </div>
     </div>`;
@@ -212,18 +213,49 @@ function draw(){
 
 function timer(){clearInterval(ti);ti=setInterval(()=>{tl--;const b=document.getElementById('tbar'),n=document.getElementById('tnum');if(!b||!n){clearInterval(ti);return}const pct=(tl/TS)*100;b.style.width=pct+'%';b.className='timer-bar'+(pct<30?' danger':(pct<60?' warn':''));n.textContent=tl+'s';document.getElementById('t').textContent=tl+'s';if(tl<=0){clearInterval(ti);to()}},1000)}
 
-function to(){const q=qs[i];ls.push({word:q.word,ok:false,to:true});cb=0;noB();toast('⏰ 时间到！','bad');const inp=document.getElementById('inp');if(inp){inp.disabled=true;inp.classList.add('ng')}const sb=document.getElementById('sbm');if(sb){sb.disabled=true;sb.classList.add('down')}setTimeout(()=>adv(),1500)}
+function to(){if(ansLock)return;ansLock=true;const q=qs[i];ls.push({word:q.word,ok:false,to:true});cb=0;noB();toast('⏰ 时间到！','bad');const inp=document.getElementById('inp');if(inp){inp.disabled=true;inp.classList.add('ng');inp.value=q.word}const sb=document.getElementById('sbm');if(sb){sb.disabled=true;sb.classList.add('down')}setTimeout(()=>{ansLock=false;adv()},1500)}
 
-function ans(){clearInterval(ti);const inp=document.getElementById('inp'),a=(inp.value||'').trim().toLowerCase(),q=qs[i],ok_=a===q.hidden;
-  if(ok_){cb++;if(cb>mc)mc=cb;let pt_=10;if(cb>=10){pt_=50;cbB();toast('💎 '+cb+'连击！','great')}else if(cb>=5){pt_=30;cbB();toast('⭐ '+cb+'连击！','ok')}else if(cb>=3){pt_=20;cbB()}else okB();sc+=Math.round(pt_*(1+tl/TS));xp=Math.min(100,xp+pt_);inp.classList.add('ok');inp.disabled=true;document.getElementById('sbm').disabled=true;document.getElementById('sbm').classList.add('down');const r=inp.getBoundingClientRect();pt(r.left+r.width/2,r.top);ls.push({word:q.word,ok:true,to:false});setTimeout(()=>adv(),700)}
-  else{noB();inp.classList.add('ng');inp.value='';setTimeout(()=>{inp.classList.remove('ng');inp.focus()},500)}
+let ansLock=false;
+function ans(){
+  if(ansLock)return;ansLock=true;clearInterval(ti);
+  const inp=document.getElementById('inp'),a=(inp.value||'').trim().toLowerCase().replace(/\s+/g,''),q=qs[i],ok_=a===q.hidden||a===q.word.replace(/\s+/g,'');
+  if(ok_){cb++;if(cb>mc)mc=cb;let pt_=10;if(cb>=10){pt_=50;cbB();toast('💎 '+cb+'连击！','great')}else if(cb>=5){pt_=30;cbB();toast('⭐ '+cb+'连击！','ok')}else if(cb>=3){pt_=20;cbB()}else okB();sc+=Math.round(pt_*(1+tl/TS));xp=Math.min(100,xp+pt_);inp.classList.add('ok');inp.disabled=true;document.getElementById('sbm').disabled=true;document.getElementById('sbm').classList.add('down');const r=inp.getBoundingClientRect();pt(r.left+r.width/2,r.top);ls.push({word:q.word,ok:true,to:false});setTimeout(()=>{ansLock=false;adv()},700)}
+  else{noB();inp.classList.add('ng');inp.value='';setTimeout(()=>{inp.classList.remove('ng');inp.focus();ansLock=false},500)}
   hud();
 }
 
 function adv(){clearInterval(ti);i++;dn();mc_();hud();if(i<qs.length){setTimeout(draw,500)}else{xp=100;hud();wB();fetch(API+'/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({character:NM[ch],level:lv,score:sc,maxCombo:mc,wordsTotal:qs.length,wordsCorrect:ls.filter(l=>l.ok).length,wordsTimeout:ls.filter(l=>l.to).length,wordsWrong:ls.filter(l=>!l.ok&&!l.to).length,details:ls})}).catch(()=>{});setTimeout(victory,800)}}
 
-const EGGS=[{icon:'🔑',title:'🔮 魔法钥匙！',desc:'你发现了一把 Magic Key！<br>它会在下一次冒险中带你去到意想不到的地方…'},{icon:'👹',title:'🪨 巨人出现！',desc:'一个 Giant 从山洞里走了出来！<br>但他看到你答对了所有单词，友好地挥手离开了~'},{icon:'🐉',title:'🔥 龙之宝藏',desc:'你在城堡深处发现了一条 Dragon 守护的宝藏！<br>它赞赏你的单词功力，送你一颗宝石。'},{icon:'🏴‍☠️',title:'⚓ 海盗勋章',desc:'Pirate船长被你征服了！<br>"你的词汇量比我的地图还大！"'},{icon:'👑',title:'🏰 皇冠加冕',desc:'国王为你戴上 Crown！<br>"勇敢的 Word-Knight，王国因你而骄傲！"'},{icon:'🌟',title:'✨ 星光之路',desc:'你走过的路径上，每一颗星星都在闪耀。<br>新的冒险正在等待你… Bravo！'}];
-function re(){return EGGS[Math.floor(Math.random()*EGGS.length)]}
+let eggIdx=0,eggPool=[];
+function initEggs(){
+  eggPool=[
+    {icon:'🔑',title:'Magic Key!',desc:'Biff 在旧盒子里发现了一把闪闪发光的魔法钥匙！<br>它开始发光了——下一次冒险即将开始…'},
+    {icon:'🏰',title:'秘密城堡',desc:'魔法钥匙带 Chip 来到了一座云端的城堡！<br>里面的图书馆有读不完的冒险故事。'},
+    {icon:'🐉',title:'友善的龙',desc:'Kipper 遇到了 Dragon，但它并不想打架——<br>它想和你玩单词游戏！'},
+    {icon:'🏴‍☠️',title:'海盗勋章',desc:'Pirate船长递给 Wilma 一枚勋章。<br>"你的词汇量比我的藏宝图还要棒！"'},
+    {icon:'🌳',title:'魔法森林',desc:'你走进了一片发光的森林。<br>树上挂满了你会拼读的单词，每一片叶子都会唱歌。'},
+    {icon:'👑',title:'皇冠加冕',desc:'国王亲自为勇敢的 Word-Knight 加冕！<br>"王国因你的智慧而骄傲！"'},
+    {icon:'🌊',title:'海底王国',desc:'魔法钥匙化作潜水艇<br>带你见到了海底的美人鱼和会说英语的章鱼！'},
+    {icon:'🚀',title:'太空冒险',desc:'钥匙变成了火箭！<br>Chip 在月球上留下了自己的名字。'},
+    {icon:'🎪',title:'马戏团之夜',desc:'Floppy 带孩子们溜进了马戏团！<br>小丑送了你一本会发光的魔法书。'},
+    {icon:'🏔️',title:'雪山之巅',desc:'你爬到了雪山的最高处。<br>一只雪鹰送来了写着你名字的羽毛笔！'},
+    {icon:'🎨',title:'画中世界',desc:'Biff 画了一扇门——门竟然推开了！<br>里面是一个由单词组成的彩色世界。'},
+    {icon:'🦁',title:'狮子的考验',desc:'狮子王说："回答出我的单词谜题，<br>才能通过这座桥！"你轻松过关了！'},
+    {icon:'🌌',title:'星光之夜',desc:'Kipper 用望远镜看到了流星。<br>每颗流星都是一个你学会的单词，正从天上落下。'},
+    {icon:'🕯️',title:'远古图书馆',desc:'Wilma 找到了一本千年前的魔法词典。<br>每一页都在发光…它认出了你！'},
+    {icon:'💎',title:'宝石矿洞',desc:'你挖到了一颗会说话的宝石！<br>它说："你答对的单词越多，我就越亮！"'},
+    {icon:'🎭',title:'面具舞会',desc:'所有人戴着面具，但魔法钥匙认出了你。<br>"只有真正会拼单词的人才能摘下它！"'},
+    {icon:'🌈',title:'彩虹尽头',desc:'在彩虹的尽头，你找到了一个罐子。<br>里面不是金子——而是无限的新单词！'},
+    {icon:'🏕️',title:'篝火故事会',desc:'Chip 围着篝火讲了一个故事。<br>每讲一个单词火花就变成一簇烟花！'}
+  ];
+  for(let j=eggPool.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[eggPool[j],eggPool[k]]=[eggPool[k],eggPool[j]];}
+  eggIdx=0;
+}
+function re(){
+  if(eggIdx>=eggPool.length)initEggs();
+  return eggPool[eggIdx++];
+}
+initEggs();
 
 function victory(){
   const egg=re(),cn=ls.filter(l=>l.ok).length,fn=ls.filter(l=>!l.ok).length,stars=cn===N?'⭐⭐⭐':(cn>=N*0.7?'⭐⭐':'⭐');
