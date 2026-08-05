@@ -1,0 +1,19 @@
+# Render Blueprint — 一键部署
+# 在 Render Dashboard 中创建 Blueprint，连接此 GitHub 仓库
+services:
+  - type: web
+    name: oxford-word-knight-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node backend/server.js
+    plan: free
+    healthCheckPath: /api/stats
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: DB_PATH
+        value: /opt/render/project/src/backend/db.sqlite3
+    disk:
+      name: sqlite-data
+      mountPath: /opt/render/project/src/backend
+      sizeGB: 1

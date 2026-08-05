@@ -347,7 +347,10 @@
 //  Ability    : one click, big targets, clear feedback
 //  Triggers   : spark (particles), facilitator (toast), signal (HUD)
 
-const API = 'http://localhost:3000';
+// API base URL: 本地开发用 localhost，部署后自动使用同源地址
+const API = window.location.hostname === 'localhost' 
+  ? 'http://localhost:3000' 
+  : window.location.origin;
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 

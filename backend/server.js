@@ -5,8 +5,8 @@ const fs = require('fs');
 const Database = require('better-sqlite3');
 const { parse } = require('csv-parse/sync');
 
-const PORT = 3000;
-const DB_PATH = path.join(__dirname, 'db.sqlite3');
+const PORT = process.env.PORT || 3000;
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'db.sqlite3');
 
 const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
