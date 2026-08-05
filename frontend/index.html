@@ -293,7 +293,7 @@ function re(){
 initEggs();
 
 function victory(){
-  const egg=re();eggSnd(egg.icon);const cn=ls.filter(l=>l.ok).length,fn=ls.filter(l=>!l.ok).length,stars=cn===N?'⭐⭐⭐':(cn>=N*0.7?'⭐⭐':'⭐');
+  const egg=re();try{eggSnd(egg.icon)}catch(e){}const cn=ls.filter(l=>l.ok).length,fn=ls.filter(l=>!l.ok).length,stars=cn===N?'⭐⭐⭐':(cn>=N*0.7?'⭐⭐':'⭐');
   let fr='';ls.forEach((l,j)=>{if(!l.ok)fr+=`<tr><td>${j+1}</td><td class="fail">${l.word}</td><td class="fail">${l.to?'⏰ 超时':'❌ 错误'}</td></tr>`});
   document.getElementById('chArea').innerHTML=`
     <div style="text-align:center;padding:18px;">
