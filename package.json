@@ -1,0 +1,14 @@
+{
+  "name": "oxford-word-knight",
+  "version": "1.0.0",
+  "description": "牛津树单词骑士 - 基于牛津树G1/G2分级的单词学习游戏",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "csv-parse": "^5.5.0"
+  }
+}

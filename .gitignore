@@ -1,0 +1,5 @@
+node_modules/
+backend/db.sqlite3
+backend/db.sqlite3-wal
+backend/db.sqlite3-shm
+.DS_Store

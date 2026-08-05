@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>牛津树单词骑士</title>
+  <style>
+    :root {
+      --g1-primary: #2e7d32;
+      --g1-light: #66bb6a;
+      --g1-bg: #e8f5e9;
+      --g2-primary: #1565c0;
+      --g2-light: #42a5f5;
+      --g2-bg: #e3f2fd;
+      --gold: #f9a825;
+      --gold-light: #fff8e1;
+      --danger: #d32f2f;
+      --text: #212121;
+      --text-light: #616161;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    .app {
+      width: 960px;
+      max-width: 98vw;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header h1 {
+      font-size: 1.6em;
+      font-weight: 800;
+      color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .header h1 .icon { font-size: 1.4em; }
+
+    .oxford-tabs {
+      display: flex; gap: 0;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .oxford-tab {
+      padding: 10px 24px;
+      font-size: 0.95em;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: inherit;
+    }
+    .oxford-tab.g1-tab {
+      background: var(--g1-bg); color: var(--g1-primary);
+    }
+    .oxford-tab.g2-tab {
+      background: var(--g2-bg); color: var(--g2-primary);
+    }
+    .oxford-tab.active.g1-tab {
+      background: var(--g1-primary); color: #fff;
+    }
+    .oxford-tab.active.g2-tab {
+      background: var(--g2-primary); color: #fff;
+    }
+    .oxford-tab:hover { filter: brightness(0.92); }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      flex: 1; min-width: 120px;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .stat-icon { font-size: 1.4em; }
+    .stat-info { display: flex; flex-direction: column; }
+    .stat-label { font-size: 0.75em; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 1.3em; font-weight: 800; color: var(--text); }
+
+    /* ── Game Area ── */
+    .game-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .game-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid #eee;
+      background: #fafafa;
+    }
+    .level-badge {
+      background: var(--g1-primary);
+      color: #fff;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.9em;
+    }
+    .level-badge.g2 { background: var(--g2-primary); }
+
+    .progress-wrap {
+      flex: 1; margin: 0 16px;
+    }
+    .progress-label {
+      font-size: 0.7em;
+      color: var(--text-light);
+      margin-bottom: 4px;
+      display: flex; justify-content: space-between;
+    }
+    .progress-bar-bg {
+      height: 6px;
+      background: #eee;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+    .progress-bar-fill.g1 { background: var(--g1-primary); }
+    .progress-bar-fill.g2 { background: var(--g2-primary); }
+
+    .combo-display {
+      font-weight: 700;
+      font-size: 1em;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .combo-display.active { opacity: 1; animation: pulse 0.5s ease; }
+
+    .canvas-wrap { position: relative; }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 520px;
+      cursor: crosshair;
+    }
+
+    /* ── Overlay messages ── */
+    .level-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .level-overlay-text {
+      font-size: 2.6em;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: overlayIn 0.6s ease forwards;
+      text-align: center;
+    }
+    .level-overlay-sub {
+      font-size: 1.1em;
+      color: var(--text);
+      margin-top: 8px;
+      animation: overlayIn 0.6s ease 0.2s forwards;
+      opacity: 0;
+    }
+
+    @keyframes overlayIn {
+      0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* ── Motivational triggers ── */
+    .trigger-toast {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-weight: 700;
+      font-size: 0.95em;
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0;
+      transition: all 0.4s;
+    }
+    .trigger-toast.show {
+      opacity: 1;
+      animation: toastUp 2s ease forwards;
+    }
+    @keyframes toastUp {
+      0% { opacity: 0; transform: translate(-50%, 0); }
+      20% { opacity: 1; transform: translate(-50%, -10px); }
+      80% { opacity: 1; transform: translate(-50%, -30px); }
+      100% { opacity: 0; transform: translate(-50%, -50px); }
+    }
+
+    /* ── Bottom bar ── */
+    .bottom-bar {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 24px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.9em;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #1a237e;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #283593; }
+    .btn-outline {
+      background: #fff;
+      border: 2px solid #ddd;
+    }
+    .btn-outline:hover { border-color: #999; }
+
+    .import-section {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .import-section h3 { font-size: 0.9em; margin: 0; white-space: nowrap; }
+    .import-section input[type="file"] { padding: 6px; border: 2px dashed #ccc; border-radius: 8px; cursor: pointer; }
+    .import-msg { font-size: 0.85em; font-weight: 600; }
+    .import-msg.ok { color: #2e7d32; }
+    .import-msg.err { color: #d32f2f; }
+    .word-stats { font-size: 0.8em; color: var(--text-light); margin-left: auto; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      canvas { height: 360px; }
+      .level-overlay-text { font-size: 1.8em; }
+      .stat-card { min-width: 80px; padding: 10px 12px; }
+      .stat-value { font-size: 1em; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <h1><span class="icon">⚔️</span>牛津树单词骑士</h1>
+    <div class="oxford-tabs">
+      <button class="oxford-tab g1-tab active" id="tabG1" onclick="selectOxford('G1')">🌱 G1 初级</button>
+      <button class="oxford-tab g2-tab" id="tabG2" onclick="selectOxford('G2')">🌳 G2 进阶</button>
+    </div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-card"><span class="stat-icon">🏆</span><div class="stat-info"><span class="stat-label">总分</span><span class="stat-value" id="totalScore">0</span></div></div>
+    <div class="stat-card"><span class="stat-icon">📊</span><div class="stat-info"><span class="stat-label">关卡</span><span class="stat-value" id="statLevel">1</span></div></div>
+    <div class="stat-card"><span class="stat-icon">🔥</span><div class="stat-info"><span class="stat-label">连击</span><span class="stat-value" id="statCombo">0</span></div></div>
+    <div class="stat-card"><span class="stat-icon">⭐</span><div class="stat-info"><span class="stat-label">最高分</span><span class="stat-value" id="statBest">—</span></div></div>
+  </div>
+
+  <!-- Game Card -->
+  <div class="game-card" id="gameCard">
+    <div class="game-hud">
+      <div class="level-badge" id="levelBadge">第 1 关</div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="progressText">消灭单词 0/5</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill g1" id="progressBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="combo-display" id="comboDisplay">x1</div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="gameCanvas" width="960" height="520"></canvas>
+      <div class="level-overlay" id="levelOverlay"></div>
+      <div class="trigger-toast" id="triggerToast"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Controls -->
+  <div class="bottom-bar">
+    <button class="btn btn-primary" onclick="restartGame()">🔄 重新开始</button>
+    <button class="btn btn-outline" onclick="togglePause()" id="pauseBtn">⏸ 暂停</button>
+  </div>
+
+  <!-- Import -->
+  <div class="import-section">
+    <h3>📥 上传字库 (CSV)</h3>
+    <input type="file" id="csvFile" accept=".csv">
+    <span class="import-msg" id="importMsg"></span>
+    <span class="word-stats" id="wordStats"></span>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  B.J. Fogg Behavior Design  —  ~5% Difficulty Gradient
+// ══════════════════════════════════════════════════
+//  B = MAT
+//  Motivation : score, streaks, stars, celebrations
+//  Ability    : one click, big targets, clear feedback
+//  Triggers   : spark (particles), facilitator (toast), signal (HUD)
+
+const API = 'http://localhost:3000';
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// ── Configuration ──
+const GRADIENT = 1.05;          // 5% difficulty increase per level
+const BASE_SPEED = 0.6;         // base movement multiplier
+const BASE_RADIUS = 58;         // bubble click radius
+const BASE_WORD_COUNT = 5;      // starting words per level
+const MAX_WORD_COUNT = 25;      // cap
+const COMBO_WINDOW_MS = 2000;   // ms between hits for combo
+const TRIGGER_INTERVAL = 4000;  // min ms between facilitator triggers
+
+// ── Oxford Level Color Theme ──
+const OXFORD_THEME = {
+  G1: { primary: '#2e7d32', light: '#66bb6a', bg: '#e8f5e9', accent: '#a5d6a7' },
+  G2: { primary: '#1565c0', light: '#42a5f5', bg: '#e3f2fd', accent: '#90caf9' }
+};
+
+// ── State ──
+let oxfordLevel = 'G1';
+let wordPool = [];            // all words for current oxford level (pre-shuffled)
+let currentLevel = 1;
+let levelWords = [];          // words used in current level
+let enemies = [];             // active Enemy instances
+let particles = [];
+let score = 0;
+let totalScore = 0;
+let comboCount = 0;
+let lastHitTime = 0;
+let animationId = null;
+let paused = false;
+let bestScores = {};
+let lastTriggerTime = 0;
+let levelClearing = false;
+
+// ── Enemy Class ──
+class Enemy {
+  constructor(word, hint, idx) {
+    this.word = word;
+    this.hint = hint;
+    this.idx = idx;
+    this.radius = BASE_RADIUS;
+    this.x = 80 + Math.random() * (canvas.width - 160);
+    this.y = 80 + Math.random() * (canvas.height - 160);
+    const spd = BASE_SPEED * Math.pow(GRADIENT, currentLevel - 1);
+    this.vx = ((Math.random() - 0.5) * 2.0) * spd;
+    this.vy = ((Math.random() - 0.5) * 2.0) * spd;
+    this.alive = true;
+    this.popScale = 1;
+    this.wobble = Math.random() * Math.PI * 2;
+    this.wobbleSpeed = 0.02 + Math.random() * 0.02;
+  }
+  update() {
+    if (!this.alive) { this.popScale *= 0.88; return; }
+    this.wobble += this.wobbleSpeed;
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x - this.radius < 5 || this.x + this.radius > canvas.width - 5) this.vx *= -1;
+    if (this.y - this.radius < 5 || this.y + this.radius > canvas.height - 5) this.vy *= -1;
+  }
+  draw(theme) {
+    const alpha = this.alive ? 1 : this.popScale;
+    if (alpha < 0.05) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(this.x, this.y);
+    const s = this.alive ? (1 + Math.sin(this.wobble) * 0.03) : this.popScale;
+
+    // glow
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius + 6, 0, Math.PI * 2);
+    ctx.fillStyle = theme.light + '33';
+    ctx.fill();
+
+    // body
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+    const grad = ctx.createRadialGradient(-10, -15, 5, 0, 0, this.radius);
+    grad.addColorStop(0, '#fff');
+    grad.addColorStop(0.35, theme.light);
+    grad.addColorStop(1, theme.primary);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // word
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold ${Math.min(22, this.radius * 0.35)}px -apple-system, "PingFang SC", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 3;
+    ctx.fillText(this.word, 0, 0);
+    ctx.restore();
+  }
+  contains(x, y) {
+    const dx = x - this.x, dy = y - this.y;
+    return Math.sqrt(dx*dx + dy*dy) < this.radius;
+  }
+}
+
+// ── Particle ──
+class Particle {
+  constructor(x, y, theme) {
+    this.x = x; this.y = y;
+    const a = Math.random() * Math.PI * 2;
+    const s = 2 + Math.random() * 5;
+    this.vx = Math.cos(a) * s;
+    this.vy = Math.sin(a) * s - 3;
+    this.life = 1;
+    this.decay = 0.015 + Math.random() * 0.025;
+    this.size = 2 + Math.random() * 5;
+    this.color = Math.random() < 0.5 ? theme.light : '#f9a825';
+  }
+  update() { this.x += this.vx; this.y += this.vy; this.vy += 0.12; this.life -= this.decay; }
+  draw() {
+    if (this.life <= 0) return;
+    ctx.globalAlpha = this.life;
+    ctx.fillStyle = this.color;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+// ── Toast Trigger (Fogg Facilitator) ──
+function showTrigger(msg) {
+  const now = Date.now();
+  if (now - lastTriggerTime < TRIGGER_INTERVAL) return;
+  lastTriggerTime = now;
+  const el = document.getElementById('triggerToast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2100);
+}
+
+// ── Level Complete Overlay ──
+function showLevelOverlay(level, stars) {
+  const el = document.getElementById('levelOverlay');
+  const starStr = '⭐'.repeat(stars);
+  el.innerHTML = `<div class="level-overlay-text">${starStr}</div>
+    <div class="level-overlay-sub">第 ${level} 关 · 通关！</div>`;
+  setTimeout(() => { el.innerHTML = ''; }, 1800);
+}
+
+// ── Calculate Stars (Fogg: meaningful reward) ──
+function calcStars() {
+  const total = levelWords.length;
+  const cleared = enemies.filter(e => !e.alive).length;
+  const ratio = cleared / total;
+  if (ratio >= 0.95) return 3;  // perfect
+  if (ratio >= 0.75) return 2;  // great
+  return 1;                      // good
+}
+
+// ── Draw Grid ──
+function drawGrid() {
+  ctx.strokeStyle = '#f0f0f0';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < canvas.width; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+  for (let y = 0; y < canvas.height; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+}
+
+// ── Update HUD ──
+function updateHUD() {
+  const total = levelWords.length;
+  const cleared = enemies.filter(e => !e.alive).length;
+  const pct = total > 0 ? Math.round((cleared / total) * 100) : 0;
+  const theme = OXFORD_THEME[oxfordLevel];
+
+  document.getElementById('progressText').textContent = `消灭单词 ${cleared}/${total}`;
+  document.getElementById('progressPct').textContent = `${pct}%`;
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  const cb = document.getElementById('comboDisplay');
+  if (comboCount >= 3) {
+    cb.textContent = `🔥 x${comboCount}`;
+    cb.classList.add('active');
+  } else {
+    cb.classList.remove('active');
+  }
+
+  document.getElementById('totalScore').textContent = totalScore.toLocaleString();
+  document.getElementById('statLevel').textContent = currentLevel;
+  document.getElementById('statCombo').textContent = comboCount;
+
+  // update best
+  const best = bestScores[oxfordLevel] || 0;
+  if (totalScore > best) {
+    bestScores[oxfordLevel] = totalScore;
+    localStorage.setItem('oxford_best', JSON.stringify(bestScores));
+  }
+  document.getElementById('statBest').textContent = (bestScores[oxfordLevel] || totalScore).toLocaleString();
+}
+
+// ── Spawn Level ──
+function spawnLevel() {
+  const theme = OXFORD_THEME[oxfordLevel];
+
+  // 5% gradient: word count grows ~5% per level, capped
+  const count = Math.min(
+    Math.round(BASE_WORD_COUNT * Math.pow(GRADIENT, currentLevel - 1)),
+    MAX_WORD_COUNT
+  );
+
+  // Take next batch from shuffled pool
+  const start = ((currentLevel - 1) * count) % wordPool.length;
+  levelWords = [];
+  for (let i = 0; i < count; i++) {
+    const idx = (start + i) % wordPool.length;
+    if (!wordPool[idx]) break;
+    levelWords.push(wordPool[idx]);
+  }
+  // shuffle level words
+  levelWords.sort(() => Math.random() - 0.5);
+
+  enemies = levelWords.map((w, i) => new Enemy(w.word, w.hint, i));
+  score = 0;
+  levelClearing = false;
+
+  document.getElementById('levelBadge').textContent = `第 ${currentLevel} 关`;
+  document.getElementById('levelBadge').className = `level-badge ${oxfordLevel === 'G2' ? 'g2' : ''}`;
+  document.getElementById('progressBar').className = `progress-bar-fill ${oxfordLevel === 'G2' ? 'g2' : 'g1'}`;
+  updateHUD();
+
+  // Fogg Facilitator trigger
+  if (currentLevel === 1) {
+    showTrigger('🎯 点击泡泡消灭单词！');
+  } else if (currentLevel % 3 === 0) {
+    showTrigger('⚡ 速度加快了，你能跟上吗？');
+  } else if (currentLevel % 5 === 0) {
+    showTrigger(`🌟 第 ${currentLevel} 关！你太厉害了！`);
+  }
+}
+
+// ── Game Loop ──
+function gameLoop() {
+  if (paused) { animationId = requestAnimationFrame(gameLoop); return; }
+
+  const theme = OXFORD_THEME[oxfordLevel];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid();
+
+  // update & draw enemies
+  enemies.forEach(e => { e.update(); e.draw(theme); });
+
+  // update & draw particles
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => { p.update(); p.draw(); });
+
+  // check level complete
+  const allDead = enemies.every(e => !e.alive);
+  if (allDead && enemies.length > 0 && !levelClearing) {
+    levelClearing = true;
+    const stars = calcStars();
+    totalScore += score + (stars * 50); // bonus
+    setTimeout(() => {
+      showLevelOverlay(currentLevel, stars);
+      updateHUD();
+      currentLevel++;
+      spawnLevel();
+    }, 800);
+  }
+
+  // check combo decay
+  if (Date.now() - lastHitTime > COMBO_WINDOW_MS && comboCount > 0) {
+    comboCount = 0;
+    updateHUD();
+  }
+
+  updateHUD();
+  animationId = requestAnimationFrame(gameLoop);
+}
+
+// ── Click Handler ──
+canvas.addEventListener('click', (e) => {
+  if (paused) return;
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width / rect.width;
+  const sy = canvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * sx;
+  const my = (e.clientY - rect.top) * sy;
+
+  const theme = OXFORD_THEME[oxfordLevel];
+  let hit = false;
+
+  for (const enemy of enemies) {
+    if (!enemy.alive) continue;
+    if (enemy.contains(mx, my)) {
+      enemy.alive = false;
+      // Show hint as trigger
+      showTrigger(`💡 ${enemy.hint}`);
+
+      // Combo (Fogg: variable reward)
+      const now = Date.now();
+      if (now - lastHitTime < COMBO_WINDOW_MS) comboCount++;
+      else comboCount = 1;
+      lastHitTime = now;
+
+      // Combo multiplier: 5% gradient applies to scoring too
+      const comboMult = 1 + Math.min(comboCount - 1, 10) * 0.2; // max 3x
+      const levelMult = Math.pow(GRADIENT, currentLevel - 1);
+      const points = Math.round(10 * comboMult * levelMult);
+      score += points;
+
+      // Particles
+      for (let i = 0; i < 12; i++) particles.push(new Particle(enemy.x, enemy.y, theme));
+
+      // Fogg Spark trigger: special animation at milestones
+      if (comboCount === 5) showTrigger('🔥 5连击！');
+      else if (comboCount === 10) showTrigger('💥 10连击！无敌！');
+
+      hit = true;
+      break;
+    }
+  }
+
+  if (!hit && !levelClearing) {
+    // Miss: reset combo (Fogg: safe failure, low cost)
+    comboCount = 0;
+  }
+
+  updateHUD();
+});
+
+// ── API Calls ──
+async function loadWordPool() {
+  try {
+    // Load all available words for the level; need enough for 50+ levels
+    const res = await fetch(`${API}/api/words?level=${oxfordLevel}&count=50`);
+    const data = await res.json();
+    if (data.error) {
+      wordPool = [];
+      drawIdle('字库为空，请上传CSV 📥');
+      return;
+    }
+    // Shuffle and repeat for infinite levels
+    wordPool = data.sort(() => Math.random() - 0.5);
+    startGame();
+  } catch (err) {
+    wordPool = [];
+    drawIdle('无法连接服务器 ⚠️');
+  }
+}
+
+function selectOxford(lvl) {
+  oxfordLevel = lvl;
+  document.getElementById('tabG1').classList.toggle('active', lvl === 'G1');
+  document.getElementById('tabG2').classList.toggle('active', lvl === 'G2');
+  document.getElementById('levelBadge').className = `level-badge ${lvl === 'G2' ? 'g2' : ''}`;
+  document.getElementById('progressBar').className = `progress-bar-fill ${lvl === 'G2' ? 'g2' : 'g1'}`;
+  // Reset
+  currentLevel = 1;
+  totalScore = 0;
+  comboCount = 0;
+  levelClearing = false;
+  loadWordPool();
+}
+
+async function startGame() {
+  if (wordPool.length === 0) return;
+  currentLevel = 1;
+  totalScore = 0;
+  comboCount = 0;
+  enemies = [];
+  particles = [];
+  levelClearing = false;
+  score = 0;
+  spawnLevel();
+  if (!animationId) gameLoop();
+  updateHUD();
+}
+
+function restartGame() {
+  if (animationId) cancelAnimationFrame(animationId);
+  animationId = null;
+  enemies = [];
+  particles = [];
+  comboCount = 0;
+  lastHitTime = 0;
+  levelClearing = false;
+  score = 0;
+  totalScore = 0;
+  currentLevel = 1;
+  loadWordPool();
+}
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pauseBtn').textContent = paused ? '▶ 继续' : '⏸ 暂停';
+}
+
+function drawIdle(msg) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#999';
+  ctx.font = '20px -apple-system, "PingFang SC", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+}
+
+// ── Stats ──
+async function loadStats() {
+  try {
+    const res = await fetch(`${API}/api/stats`);
+    const stats = await res.json();
+    if (stats.length) {
+      document.getElementById('wordStats').textContent =
+        stats.map(s => `${s.oxford_level}:${s.count}词`).join(' | ');
+    }
+  } catch {}
+}
+
+// ── CSV Import ──
+document.getElementById('csvFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const msg = document.getElementById('importMsg');
+  msg.textContent = '⏳ 导入中...';
+  msg.className = 'import-msg';
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const res = await fetch(`${API}/api/import`, { method: 'POST', body: reader.result });
+      const d = await res.json();
+      if (d.success) {
+        msg.textContent = '✅ ' + d.message;
+        msg.className = 'import-msg ok';
+        await loadStats();
+        loadWordPool();
+      } else {
+        msg.textContent = '❌ ' + d.error;
+        msg.className = 'import-msg err';
+      }
+    } catch {
+      msg.textContent = '❌ 请确认后端已启动';
+      msg.className = 'import-msg err';
+    }
+  };
+  reader.readAsText(file);
+});
+
+// ── Init ──
+function init() {
+  const saved = localStorage.getItem('oxford_best');
+  if (saved) bestScores = JSON.parse(saved);
+  document.getElementById('statBest').textContent = (bestScores[oxfordLevel] || '—');
+  loadStats();
+  loadWordPool();
+  setTimeout(() => {
+    if (wordPool.length === 0) {
+      fetch(`${API}/api/import`, {
+        method: 'POST',
+        body: 'oxford_level,word,hint\nG1,click,点击开始\nG1,start,开始游戏\nG1,word,单词\nG1,game,游戏\nG1,play,玩耍\nG1,learn,学习\nG1,fun,有趣的\nG1,go,出发\nG1,good,好\nG1,cat,猫咪\nG1,dog,小狗\nG1,big,大的\nG1,run,跑步\nG1,red,红色\nG1,see,看见'
+      }).then(r => r.json()).then(d => {
+        if (d.success) { loadStats(); loadWordPool(); }
+      });
+    }
+  }, 500);
+}
+
+init();
+</script>
+</body>
+</html>
