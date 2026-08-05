@@ -1,61 +1,61 @@
-oxford_level,word,hint
-G1,run,快速移动
-G1,jump,离开地面的动作
-G1,big,尺寸很大
-G1,cat,可爱的宠物
-G1,dog,忠诚的动物
-G1,red,苹果的颜色
-G1,blue,天空的颜色
-G1,mum,妈妈
-G1,dad,爸爸
-G1,look,用眼睛看
-G1,come,过来
-G1,play,玩耍
-G1,good,好的
-G1,house,房子
-G1,tree,大树
-G1,eat,吃东西
-G1,drink,喝东西
-G1,book,一本书
-G1,ball,圆圆的球
-G1,car,汽车
-G1,sun,太阳
-G1,moon,月亮
-G1,star,星星
-G1,fish,鱼
-G1,bird,小鸟
-G1,school,学校
-G1,friend,朋友
-G1,happy,开心的
-G1,sad,难过的
-G1,hot,热的
-G2,adventure,冒险的经历
-G2,discover,发现新事物
-G2,enormous,非常巨大的
-G2,journey,长途旅行
-G2,mystery,神秘的事物
-G2,brave,勇敢的
-G2,castle,城堡
-G2,treasure,宝藏
-G2,whisper,轻声说话
-G2,curious,好奇的
-G2,delight,快乐的感觉
-G2,forest,森林
-G2,giggle,咯咯地笑
-G2,hidden,隐藏的
-G2,ancient,古老的
-G2,magnificent,壮丽的
-G2,puzzled,困惑的
-G2,splendid,华丽的
-G2,thunder,雷声
-G2,courage,勇气
-G2,imagine,想象
-G2,protect,保护
-G2,shadow,影子
-G2,wonder,想知道
-G2,escape,逃跑
-G2,creature,生物
-G2,beneath,在下方
-G2,sparkle,闪闪发光
-G2,silence,安静
-G2,explore,探索
+oxford_level,word,hint,sentence
+G1,look,看,"""____ at me,"" said Biff."
+G1,dad,爸爸,"____ wanted a new house."
+G1,mum,妈妈,"____ was in the kitchen."
+G1,house,房子,"They painted the ____ blue."
+G1,tree,树,"Kipper climbed the big ____."
+G1,dog,狗,"Floppy was a good ____."
+G1,cat,猫,"The ____ sat on the mat."
+G1,run,跑,"Chip can ____ very fast."
+G1,big,大的,"It was a ____ red bus."
+G1,red,红色,"The ____ car stopped."
+G1,blue,蓝色,"I like the ____ sky."
+G1,go,走,"Let us ____ to the park."
+G1,come,来,"____ here, said Wilma."
+G1,play,玩,"Biff wanted to ____ outside."
+G1,see,看见,"What can you ____?"
+G1,good,好的,"Kipper had a ____ idea."
+G1,help,帮助,"Can you ____ me find it?"
+G1,home,家,"They wanted to go ____."
+G1,door,门,"Chip opened the ____."
+G1,rain,雨,"It started to ____ outside."
+G1,school,学校,"Biff went to ____."
+G1,book,书,"It was a magic ____."
+G1,water,水,"He jumped in the ____."
+G1,find,找到,"Can you ____ the key?"
+G1,make,做,"Wilma wanted to ____ a cake."
+G1,put,放,"____ the box down."
+G1,want,想要,"I ____ to read a book."
+G1,day,天,"We had a fun ____."
+G1,new,新的,"They got a ____ bicycle."
+G1,old,旧的,"It was a very ____ house."
+G2,adventure,冒险,"It was time for an ____."
+G2,magic,魔法,"The key began to ____."
+G2,castle,城堡,"They found a giant ____."
+G2,secret,秘密,"There was a ____ room."
+G2,village,村庄,"They walked into the ____."
+G2,pirate,海盗,"The ____ had a wooden leg."
+G2,dragon,龙,"A ____ lived in the cave."
+G2,palace,宫殿,"The ____ was made of gold."
+G2,rescue,营救,"They came to ____ the princess."
+G2,forest,森林,"They walked through the dark ____."
+G2,treasure,宝藏,"We found hidden ____."
+G2,island,岛屿,"They sailed to the ____."
+G2,mountain,山,"Chip climbed the high ____."
+G2,thunder,雷,"There was a flash and ____."
+G2,bridge,桥,"They crossed the old ____."
+G2,journey,旅程,"It was a dangerous ____."
+G2,giant,巨人,"A ____ was sleeping inside."
+G2,crown,王冠,"The king wore a golden ____."
+G2,storm,暴风雨,"The ____ blew the ship away."
+G2,explore,探索,"They wanted to ____ the cave."
+G2,travel,旅行,"They would ____ through time."
+G2,frighten,吓到,"The noise ____ Kipper."
+G2,hide,藏起来,"They had to ____ from the troll."
+G2,discover,发现,"What did the children ____?"
+G2,lightning,闪电,"____ split the sky in two."
+G2,disappear,消失,"The door began to ____."
+G2,strange,奇怪的,"A ____ light filled the room."
+G2,guard,守卫,"The ____ stood by the gate."
+G2,whisper,低声说,"Biff heard a faint ____."
+G2,ancient,古老的,"The ____ map showed the way."
