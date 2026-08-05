@@ -3,893 +3,560 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⛏️ 牛津树单词冒险 | Minecraft</title>
+  <title>⛏️ 牛津树单词冒险 | Word-Knight</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
     
     :root {
-      --dirt: #8B5E3C;
-      --grass-top: #5D8C2E;
-      --grass-side: #7C9C3A;
-      --stone: #7F7F7F;
-      --sky: #87CEEB;
-      --sky-bottom: #C8E6F5;
-      --wood: #8B6914;
-      --gold: #F9A825;
-      --diamond: #64B5F6;
-      --redstone: #E53935;
-      --emerald: #43A047;
-      --text-dark: #3E2723;
-      --text-light: #FFF8E1;
-      --panel-bg: #C4A46C;
-      --panel-border: #6D4C2E;
+      --dirt: #8B5E3C; --grass-top: #5D8C2E; --grass-side: #7C9C3A;
+      --stone: #7F7F7F; --wood: #8B6914; --gold: #F9A825;
+      --diamond: #64B5F6; --redstone: #E53935; --emerald: #43A047;
+      --text-dark: #3E2723; --text-light: #FFF8E1;
+      --panel-bg: #C4A46C; --panel-border: #6D4C2E;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Press Start 2P', -apple-system, sans-serif;
       background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 60%, #8B5E3C 60%, #6D4C2E 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-      image-rendering: pixelated;
-      user-select: none;
-      -webkit-user-select: none;
+      min-height: 100vh; overflow-x: hidden;
+      image-rendering: pixelated; user-select: none; -webkit-user-select: none;
     }
 
-    /* ── Clouds ── */
-    .clouds {
-      position: fixed; top: 0; left: 0; width: 100%; height: 200px;
-      pointer-events: none; z-index: 0; overflow: hidden;
-    }
-    .cloud {
-      position: absolute;
-      background: #fff;
-      border: 3px solid #e0e0e0;
-      box-shadow: 4px 4px 0 #ddd;
-      image-rendering: pixelated;
-    }
+    /* Clouds */
+    .clouds { position: fixed; top: 0; left: 0; width: 100%; height: 180px; pointer-events: none; z-index: 0; overflow: hidden; }
+    .cloud { position: absolute; background: #fff; border: 3px solid #e0e0e0; box-shadow: 4px 4px 0 #ddd; }
     .cloud:nth-child(1) { width: 120px; height: 40px; top: 40px; left: 10%; animation: cloudDrift 25s linear infinite; }
     .cloud:nth-child(2) { width: 100px; height: 35px; top: 70px; left: 45%; animation: cloudDrift 30s linear infinite; animation-delay: -10s; }
     .cloud:nth-child(3) { width: 80px; height: 30px; top: 30px; left: 75%; animation: cloudDrift 22s linear infinite; animation-delay: -5s; }
-    .cloud:nth-child(4) { width: 140px; height: 45px; top: 90px; left: 20%; animation: cloudDrift 28s linear infinite; animation-delay: -15s; }
+    @keyframes cloudDrift { 0%{transform:translateX(-200px)} 100%{transform:translateX(calc(100vw + 200px))} }
 
-    @keyframes cloudDrift {
-      0% { transform: translateX(-200px); }
-      100% { transform: translateX(calc(100vw + 200px)); }
-    }
+    .app { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 100vh; }
 
-    /* ── App Container ── */
-    .app {
-      position: relative; z-index: 1;
-      max-width: 960px; margin: 0 auto; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
-      min-height: 100vh;
-    }
-
-    /* ── Minecraft Panel ── */
+    /* Panels */
     .mc-panel {
-      background: var(--panel-bg);
-      border: 5px solid var(--panel-border);
-      box-shadow: inset -3px -3px 0 rgba(0,0,0,0.2), inset 3px 3px 0 rgba(255,255,255,0.15),
-                  0 6px 0 #4A3020, 0 8px 20px rgba(0,0,0,0.4);
-      padding: 16px;
-      position: relative;
-    }
-    .mc-panel::before {
-      content: '';
-      position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px;
-      border: 3px solid var(--panel-border);
-      pointer-events: none;
-      z-index: -1;
+      background: var(--panel-bg); border: 4px solid var(--panel-border);
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.2), inset 2px 2px 0 rgba(255,255,255,0.15), 0 4px 0 #4A3020, 0 6px 16px rgba(0,0,0,0.3);
+      padding: 12px; position: relative;
     }
 
-    /* ── Header ── */
-    .header {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 12px;
-    }
-    .header h1 {
-      color: #FFE0B2;
-      text-shadow: 3px 3px 0 #5D4037, -1px -1px 0 #5D4037;
-      font-size: 1.2em;
-      display: flex; align-items: center; gap: 8px;
-      letter-spacing: 2px;
-    }
-    .header h1 .pick { font-size: 1.3em; animation: pickBounce 1s ease infinite; }
-    @keyframes pickBounce {
-      0%,100% { transform: translateY(0) rotate(-10deg); }
-      50% { transform: translateY(-4px) rotate(5deg); }
-    }
-
-    .level-btns { display: flex; gap: 0; border: 3px solid #4A3020; border-radius: 4px; overflow: hidden; }
-    .lv-btn {
-      padding: 10px 20px; border: none; font-family: inherit; font-size: 0.65em;
-      cursor: pointer; transition: all 0.2s; font-weight: bold;
-      background: #8D6E63; color: #FFE0B2;
-    }
-    .lv-btn.g1 { background: #5D8C2E; }
-    .lv-btn.g2 { background: #1565C0; }
+    /* Header */
+    .header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .header h1 { color: #FFE0B2; text-shadow: 2px 2px 0 #5D4037; font-size: 0.95em; letter-spacing: 2px; }
+    .header h1 .pick { font-size: 1.2em; animation: pickBounce 1s ease infinite; }
+    @keyframes pickBounce { 0%,100%{transform:translateY(0) rotate(-10deg)} 50%{transform:translateY(-4px) rotate(5deg)} }
+    .level-btns { display: flex; gap: 0; border: 2px solid #4A3020; border-radius: 3px; overflow: hidden; }
+    .lv-btn { padding: 8px 16px; border: none; font-family: inherit; font-size: 0.55em; cursor: pointer; background: #8D6E63; color: #FFE0B2; font-weight: bold; }
+    .lv-btn.g1 { background: #5D8C2E; } .lv-btn.g2 { background: #1565C0; }
     .lv-btn.active { filter: brightness(1.3); box-shadow: inset 0 0 0 3px #FFD54F; }
-    .lv-btn:hover { filter: brightness(1.15); }
 
-    /* ── Character Select ── */
-    .char-select {
-      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-    }
-    .char-select label {
-      color: #3E2723; font-size: 0.55em; white-space: nowrap;
-    }
-    .char-card {
-      width: 60px; height: 80px;
-      background: #E0C9A6; border: 3px solid #8D6E63;
-      cursor: pointer; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 2px;
-      position: relative; transition: all 0.2s;
-      box-shadow: 0 3px 0 #6D4C2E;
-    }
-    .char-card:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #6D4C2E; }
-    .char-card.selected { border-color: #FFD54F; box-shadow: 0 0 0 3px rgba(255,213,79,0.4), 0 3px 0 #6D4C2E; }
-    .char-card .face { font-size: 1.8em; }
-    .char-card .name { font-size: 0.4em; color: #3E2723; }
+    /* Character select */
+    .char-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .char-row label { color: #3E2723; font-size: 0.48em; }
+    .char-card { width: 52px; height: 68px; background: #E0C9A6; border: 2px solid #8D6E63; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-shadow: 0 2px 0 #6D4C2E; transition: all 0.2s; }
+    .char-card:hover { transform: translateY(-2px); }
+    .char-card.selected { border-color: #FFD54F; box-shadow: 0 0 0 3px rgba(255,213,79,0.4), 0 2px 0 #6D4C2E; }
+    .char-card .face { font-size: 1.6em; } .char-card .name { font-size: 0.35em; color: #3E2723; }
 
-    /* ── Stats Bar ── */
-    .stats-bar {
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
-    .stat-item {
-      flex: 1; min-width: 80px; background: #5D4037;
-      border: 3px solid #3E2723; padding: 8px 10px;
-      color: #FFE0B2; text-align: center;
-      box-shadow: 0 3px 0 #3E2723;
-    }
-    .stat-item .val { font-size: 1em; margin-top: 4px; color: #FFD54F; }
-    .stat-item .lbl { font-size: 0.4em; opacity: 0.7; }
+    /* Stats */
+    .hud { display: flex; gap: 6px; flex-wrap: wrap; }
+    .hud-item { flex: 1; min-width: 60px; background: #5D4037; border: 2px solid #3E2723; padding: 6px 8px; color: #FFE0B2; text-align: center; box-shadow: 0 2px 0 #3E2723; }
+    .hud-item .val { font-size: 0.8em; margin-top: 2px; color: #FFD54F; } .hud-item .lbl { font-size: 0.35em; opacity: 0.75; }
+    .xp-wrap { width: 100%; height: 16px; background: #3E2723; border: 2px solid #4A3020; position: relative; }
+    .xp-fill { height: 100%; background: linear-gradient(90deg, #66BB6A, #AED581); transition: width 0.4s; }
+    .xp-text { position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size: 0.4em; color: #FFE0B2; text-shadow: 1px 1px 0 #000; }
 
-    /* ── XP Bar ── */
-    .xp-wrap {
-      width: 100%; height: 20px;
-      background: #3E2723; border: 3px solid #4A3020;
-      position: relative;
-    }
-    .xp-fill {
-      height: 100%; background: linear-gradient(90deg, #66BB6A, #AED581);
-      transition: width 0.5s ease;
-      position: relative;
-    }
-    .xp-fill::after {
-      content: ''; position: absolute; right: -4px; top: 0; bottom: 0;
-      width: 8px; background: #FFD54F;
-    }
-    .xp-text {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-size: 0.45em; color: #FFE0B2; text-shadow: 1px 1px 0 #000;
-      white-space: nowrap;
-    }
+    /* Path View */
+    .path-box { position: relative; height: 150px; background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 55%, #7C9C3A 55%, #8B5E3C 100%); border: 3px solid #4A3020; overflow: hidden; }
+    .path-nodes { position: absolute; bottom: 55px; left: 40px; right: 40px; display: flex; align-items: center; gap: 0; height: 36px; }
+    .path-line { height: 5px; background: #8D6E63; flex: 1; margin: 0 -1px; border-top: 1px solid #A1887F; border-radius: 2px; }
+    .pn { flex-shrink: 0; width: 32px; height: 32px; border: 2px solid #4A3020; display: flex; align-items: center; justify-content: center; font-size: 0.9em; transition: all 0.3s; }
+    .pn.pend { background: #BDBDBD; } .pn.actv { background: #FFD54F; border-color: #F9A825; transform: scale(1.2); animation: nodeGlow 0.7s ease infinite alternate; }
+    .pn.ok { background: #66BB6A; border-color: #388E3C; } .pn.bad { background: #EF5350; border-color: #C62828; }
+    @keyframes nodeGlow { 0%{box-shadow:0 0 6px rgba(255,213,79,0.6)} 100%{box-shadow:0 0 16px rgba(255,213,79,0.9)} }
 
-    /* ── Path View ── */
-    .path-wrapper {
-      position: relative; height: 180px; overflow: hidden;
-      background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 50%, #7C9C3A 50%, #8B5E3C 100%);
-      border: 4px solid #4A3020;
-      box-shadow: inset 0 4px 0 rgba(255,255,255,0.1);
-      border-radius: 2px;
-    }
-    /* ground blocks */
-    .ground-blocks {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
-      display: flex; flex-wrap: nowrap;
-    }
-    .ground-blocks::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 12px;
-      background: var(--grass-top);
-    }
-    .ground-block {
-      width: 48px; height: 80px; background: var(--dirt);
-      border: 1px solid #7A4E2D;
-      position: relative; flex-shrink: 0;
-    }
-    .ground-block::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 12px;
-      background: var(--grass-top);
-    }
+    .char-sprite { position: absolute; bottom: 34px; font-size: 2.5em; transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 10; filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.3)); pointer-events: none; }
+    .char-sprite.jump { animation: charJump 0.5s ease; }
+    @keyframes charJump { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-28px) rotate(-5deg)} }
 
-    /* path nodes */
-    .path-nodes {
-      position: absolute; bottom: 90px; left: 60px; right: 60px;
-      display: flex; align-items: center; gap: 0;
-      height: 50px;
+    /* Challenge */
+    .ch-area { min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ch-card { background: #FFF8E1; border: 4px solid #8D6E63; box-shadow: 0 5px 0 #5D4037, 0 6px 16px rgba(0,0,0,0.25); padding: 20px; width: 100%; max-width: 680px; animation: cardIn 0.4s ease; }
+    @keyframes cardIn { 0%{transform:translateY(16px) scale(0.96); opacity:0} 100%{transform:translateY(0) scale(1); opacity:1} }
+    .ch-card .ch-label { font-size: 0.45em; color: #8D6E63; margin-bottom: 8px; }
+    .ch-card .ch-sentence { font-size: 1.05em; color: #3E2723; margin-bottom: 14px; line-height: 1.6; text-align: center; font-family: -apple-system,'PingFang SC',sans-serif; font-weight: 600; }
+    .ch-card .ch-clue { font-size: 0.55em; color: #8D6E63; text-align: center; margin-bottom: 12px; font-style: italic; }
+    .ch-card .ch-input-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
+    .ch-card .ch-input {
+      font-family: 'Press Start 2P', monospace; font-size: 1.1em;
+      padding: 12px 16px; width: 200px; text-align: center;
+      border: 4px solid #BDBDBD; background: #fff;
+      letter-spacing: 6px; text-transform: lowercase;
+      outline: none; transition: border-color 0.2s;
     }
-    .path-node {
-      display: flex; flex-direction: column; align-items: center;
-      position: relative; z-index: 2;
-    }
-    .path-line {
-      height: 6px; background: #8D6E63;
-      flex: 1; margin: 0 -2px;
-      border-top: 2px solid #A1887F;
-    }
-    .node-block {
-      width: 40px; height: 40px;
-      border: 3px solid #4A3020;
-      position: relative; cursor: default;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2em;
-      transition: all 0.3s;
-      flex-shrink: 0;
-    }
-    .node-block.pending { background: #BDBDBD; }
-    .node-block.active { 
-      background: #FFD54F; animation: nodeGlow 0.8s ease infinite alternate;
-      border-color: #F9A825; transform: scale(1.15);
-    }
-    .node-block.done { background: #66BB6A; border-color: #388E3C; }
-    .node-block.wrong { background: #EF5350; border-color: #C62828; }
-    @keyframes nodeGlow {
-      0% { box-shadow: 0 0 8px rgba(255,213,79,0.6); }
-      100% { box-shadow: 0 0 20px rgba(255,213,79,0.9); }
-    }
+    .ch-card .ch-input:focus { border-color: #F9A825; }
+    .ch-card .ch-input.correct { border-color: #66BB6A; background: #E8F5E9; }
+    .ch-card .ch-input.wrong { border-color: #EF5350; background: #FFEBEE; animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
 
-    /* ── Character Sprite ── */
-    .char-sprite {
-      position: absolute; bottom: 40px;
-      font-size: 2.8em;
-      transition: left 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-      z-index: 10; filter: drop-shadow(2px 4px 0 rgba(0,0,0,0.3));
-      pointer-events: none;
-    }
-    .char-sprite.jumping {
-      animation: charJump 0.5s ease;
-    }
-    @keyframes charJump {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-30px) rotate(-5deg); }
-    }
+    /* Timer */
+    .timer-bar-wrap { width: 100%; height: 12px; background: #E0E0E0; border: 2px solid #BDBDBD; margin-bottom: 12px; position: relative; border-radius: 2px; overflow: hidden; }
+    .timer-bar { height: 100%; background: #66BB6A; transition: width 1s linear, background 0.5s; border-radius: 1px; }
+    .timer-bar.warn { background: #FFA726; } .timer-bar.danger { background: #EF5350; animation: dangerPulse 0.5s ease infinite alternate; }
+    @keyframes dangerPulse { 0%{opacity:1} 100%{opacity:0.5} }
+    .timer-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.5em; color: #3E2723; font-weight: bold; }
 
-    /* ── Challenge Card ── */
-    .challenge-area {
-      min-height: 200px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
-    .challenge-card {
-      background: #FFF8E1; border: 5px solid #8D6E63;
-      box-shadow: 0 6px 0 #5D4037, 0 8px 20px rgba(0,0,0,0.3);
-      padding: 24px; width: 100%; max-width: 700px;
-      position: relative;
-      animation: cardIn 0.5s ease;
-    }
-    @keyframes cardIn {
-      0% { transform: translateY(20px) scale(0.95); opacity: 0; }
-      100% { transform: translateY(0) scale(1); opacity: 1; }
-    }
+    /* Buttons */
+    .mc-btn { padding: 12px 24px; font-family: inherit; font-size: 0.5em; background: #5D8C2E; color: #FFE0B2; border: 3px solid #33691E; box-shadow: 0 4px 0 #33691E; cursor: pointer; transition: all 0.15s; }
+    .mc-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #33691E; }
+    .mc-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #33691E; }
+    .mc-btn.blue { background: #1565C0; border-color: #0D47A1; box-shadow: 0 4px 0 #0D47A1; }
 
-    .challenge-card .ch-hint {
-      font-size: 0.55em; color: #8D6E63; margin-bottom: 12px;
-      font-family: 'Press Start 2P', sans-serif;
-    }
-    .challenge-card .ch-sentence {
-      font-size: 1.3em; color: #3E2723; margin-bottom: 24px;
-      line-height: 1.6; text-align: center;
-      font-family: -apple-system, 'PingFang SC', sans-serif;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-    .challenge-card .ch-blank {
-      display: inline-block; min-width: 80px;
-      border-bottom: 4px solid #F9A825;
-      padding: 4px 12px; margin: 0 6px;
-      color: #E65100; font-weight: 800;
-      font-family: 'Press Start 2P', sans-serif;
-      font-size: 0.8em;
-      text-align: center;
-      transition: all 0.3s;
-    }
-    .challenge-card .ch-blank.filled {
-      background: #FFF8E1; border-color: #66BB6A;
-    }
+    /* Toast */
+    .toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); padding: 12px 24px; font-family: inherit; font-size: 0.5em; z-index: 100; pointer-events: none; border: 3px solid; box-shadow: 0 4px 0 rgba(0,0,0,0.2); animation: toastIn 0.4s ease, toastOut 0.4s ease 2s forwards; opacity: 0; }
+    .toast.show { opacity: 1; } .toast.ok { background: #C8E6C9; border-color: #388E3C; color: #2E7D32; }
+    .toast.bad { background: #FFCDD2; border-color: #C62828; color: #B71C1C; }
+    .toast.great { background: #FFF9C4; border-color: #F9A825; color: #F57F17; }
+    @keyframes toastIn { 0%{opacity:0;transform:translateX(-50%) translateY(-16px)} 100%{opacity:1;transform:translateX(-50%) translateY(0)} }
+    @keyframes toastOut { 0%{opacity:1} 100%{opacity:0;transform:translateX(-50%) translateY(-16px)} }
 
-    .options-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    }
-    .opt-btn {
-      padding: 14px 20px; font-size: 0.8em;
-      font-family: 'Press Start 2P', sans-serif;
-      background: #EEEEEE; border: 4px solid #BDBDBD;
-      cursor: pointer; color: #3E2723;
-      box-shadow: 0 4px 0 #9E9E9E;
-      transition: all 0.15s; text-align: center;
-      position: relative;
-    }
-    .opt-btn:hover { background: #E0E0E0; transform: translateY(-2px); box-shadow: 0 6px 0 #9E9E9E; }
-    .opt-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #9E9E9E; }
-    .opt-btn.correct {
-      background: #66BB6A; border-color: #388E3C; color: #fff;
-      box-shadow: 0 4px 0 #2E7D32; animation: correctPop 0.5s ease;
-    }
-    .opt-btn.wrong {
-      background: #EF5350; border-color: #C62828; color: #fff;
-      box-shadow: 0 4px 0 #B71C1C; animation: wrongShake 0.4s ease;
-    }
-    .opt-btn.wrong::after {
-      content: '✕'; position: absolute; right: 8px; top: 50%;
-      transform: translateY(-50%); font-size: 1.2em;
-    }
-    @keyframes correctPop {
-      0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); }
-    }
-    @keyframes wrongShake {
-      0%,100% { transform: translateX(0); }
-      20% { transform: translateX(-8px); }
-      40% { transform: translateX(8px); }
-      60% { transform: translateX(-6px); }
-      80% { transform: translateX(4px); }
-    }
+    /* Victory / Egg */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { 0%{opacity:0} 100%{opacity:1} }
+    .ov-card { background: var(--panel-bg); border: 5px solid var(--panel-border); box-shadow: 0 6px 0 #4A3020, 0 8px 30px rgba(0,0,0,0.5); padding: 24px; text-align: center; max-width: 480px; width: 90%; }
+    .ov-card h2 { color: #FFD54F; font-size: 0.8em; text-shadow: 2px 2px 0 #5D4037; margin-bottom: 12px; }
+    .ov-card .egg-icon { font-size: 4em; margin: 12px 0; animation: eggBounce 0.6s ease infinite alternate; }
+    @keyframes eggBounce { 0%{transform:translateY(0)} 100%{transform:translateY(-12px)} }
+    .ov-card p { color: #3E2723; font-size: 0.5em; line-height: 1.8; }
+    .ov-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    .ov-table th, .ov-table td { padding: 6px 10px; font-size: 0.45em; border: 2px solid #8D6E63; }
+    .ov-table th { background: #5D4037; color: #FFE0B2; }
+    .ov-table td { color: #3E2723; }
+    .ov-table .fail { color: #E53935; font-weight: bold; }
 
-    /* ── Feedback Toast ── */
-    .feedback {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      padding: 14px 28px; border-radius: 4px;
-      font-family: 'Press Start 2P', sans-serif; font-size: 0.6em;
-      z-index: 100; pointer-events: none;
-      border: 4px solid; box-shadow: 0 6px 0 rgba(0,0,0,0.3);
-      animation: toastIn 0.4s ease, toastOut 0.4s ease 1.6s forwards;
-      opacity: 0;
-    }
-    .feedback.show { opacity: 1; }
-    .feedback.good { background: #C8E6C9; border-color: #388E3C; color: #2E7D32; }
-    .feedback.bad { background: #FFCDD2; border-color: #C62828; color: #B71C1C; }
-    .feedback.great { background: #FFF9C4; border-color: #F9A825; color: #F57F17; }
-    @keyframes toastIn { 0% { opacity: 0; transform: translateX(-50%) translateY(-20px); } 100% { opacity: 1; transform: translateX(-50%) translateY(0); } }
-    @keyframes toastOut { 0% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+    /* Particles */
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 60; }
+    .p { position: absolute; font-size: 1.1em; animation: pUp 0.9s ease forwards; }
+    @keyframes pUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-70px) scale(0.3)} }
 
-    /* ── Victory Screen ── */
-    .victory-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 50; animation: fadeIn 0.5s ease;
-    }
-    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
-    .victory-card {
-      background: var(--panel-bg); border: 6px solid var(--panel-border);
-      box-shadow: 0 8px 0 #4A3020, 0 10px 40px rgba(0,0,0,0.5);
-      padding: 32px; text-align: center; max-width: 400px; width: 90%;
-    }
-    .victory-card h2 { color: #FFD54F; font-size: 1em; text-shadow: 3px 3px 0 #5D4037; margin-bottom: 16px; }
-    .victory-card .stars { font-size: 2.5em; margin: 16px 0; }
-    .victory-card p { color: #3E2723; font-size: 0.55em; line-height: 1.8; }
-    .mc-btn {
-      padding: 14px 32px; font-family: inherit; font-size: 0.6em;
-      background: #5D8C2E; color: #FFE0B2; border: 4px solid #33691E;
-      box-shadow: 0 5px 0 #33691E; cursor: pointer;
-      transition: all 0.15s; margin-top: 16px;
-    }
-    .mc-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #33691E; }
-    .mc-btn:active { transform: translateY(2px); box-shadow: 0 3px 0 #33691E; }
-    .mc-btn.blue { background: #1565C0; border-color: #0D47A1; box-shadow: 0 5px 0 #0D47A1; }
+    /* Import */
+    .import-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .import-row h3 { font-size: 0.45em; margin: 0; }
+    .import-row input[type="file"] { padding: 4px; border: 2px dashed #8D6E63; cursor: pointer; font-family: inherit; font-size: 0.4em; }
+    .imsg { font-size: 0.4em; font-weight: 600; } .imsg.ok { color: #2E7D32; } .imsg.err { color: #C62828; }
+    .wstats { font-size: 0.38em; color: #5D4037; margin-left: auto; }
 
-    /* ── Particles ── */
-    .particle-container {
-      position: fixed; inset: 0; pointer-events: none; z-index: 60;
-    }
-    .particle {
-      position: absolute; font-size: 1.2em;
-      animation: particleUp 1s ease forwards;
-    }
-    @keyframes particleUp {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-80px) scale(0.3); }
-    }
-
-    /* ── Import Section ── */
-    .import-section {
-      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-    }
-    .import-section h3 { font-size: 0.5em; margin: 0; white-space: nowrap; }
-    .import-section input[type="file"] { padding: 6px; border: 3px dashed #8D6E63; cursor: pointer; font-family: inherit; font-size: 0.45em; }
-    .import-msg { font-size: 0.45em; font-weight: 600; }
-    .import-msg.ok { color: #2E7D32; }
-    .import-msg.err { color: #C62828; }
-    .word-stats { font-size: 0.4em; color: #5D4037; margin-left: auto; }
-
-    /* ── Grass Bottom ── */
-    .grass-rows {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 20px;
-      background: repeating-linear-gradient(
-        90deg,
-        var(--grass-top) 0px, var(--grass-top) 4px,
-        #4A7A1E 4px, #4A7A1E 8px
-      );
-      z-index: 0; border-top: 3px solid #3E6A12;
-    }
+    .grass-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 16px; background: repeating-linear-gradient(90deg, var(--grass-top) 0px, var(--grass-top) 4px, #4A7A1E 4px, #4A7A1E 8px); z-index: 0; border-top: 2px solid #3E6A12; }
+    .link-row { font-size: 0.4em; text-align: center; color: #5D4037; }
+    .link-row a { color: #1565C0; }
 
     @media (max-width: 640px) {
-      .header h1 { font-size: 0.8em; }
-      .challenge-card .ch-sentence { font-size: 1em; }
-      .options-grid { grid-template-columns: 1fr; }
-      .opt-btn { font-size: 0.65em; padding: 12px 14px; }
-      .char-sprite { font-size: 2em; }
-      .path-wrapper { height: 140px; }
+      .header h1 { font-size: 0.7em; } .ch-card .ch-sentence { font-size: 0.85em; }
+      .char-sprite { font-size: 2em; } .path-box { height: 120px; }
+      .ch-card .ch-input { width: 160px; font-size: 0.9em; }
     }
   </style>
 </head>
 <body>
-
-<div class="clouds">
-  <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
-</div>
-<div class="grass-rows"></div>
-<div class="particle-container" id="particles"></div>
+<div class="clouds"><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div></div>
+<div class="grass-footer"></div>
+<div class="particles" id="particles"></div>
 
 <div class="app">
   <!-- Header -->
   <div class="mc-panel header">
-    <h1><span class="pick">⛏️</span>牛津树单词冒险</h1>
+    <h1><span class="pick">⛏️</span>Word-Knight</h1>
     <div class="level-btns">
-      <button class="lv-btn g1 active" id="tabG1" onclick="setLevel('G1')">🌱 G1 初级</button>
-      <button class="lv-btn g2" id="tabG2" onclick="setLevel('G2')">🌳 G2 进阶</button>
+      <button class="lv-btn g1 active" id="tabG1" onclick="setLevel('G1')">🌱 G1</button>
+      <button class="lv-btn g2" id="tabG2" onclick="setLevel('G2')">🌳 G2</button>
     </div>
   </div>
 
-  <!-- Character Select -->
-  <div class="mc-panel char-select">
-    <label>选择角色:</label>
-    <div class="char-card selected" onclick="selectChar('biff')" id="charBiff">
-      <div class="face">👧🏻‍</div><div class="name">Biff</div>
-    </div>
-    <div class="char-card" onclick="selectChar('chip')" id="charChip">
-      <div class="face">🧒🏻</div><div class="name">Chip</div>
-    </div>
-    <div class="char-card" onclick="selectChar('kipper')" id="charKipper">
-      <div class="face">👦🏻</div><div class="name">Kipper</div>
-    </div>
-    <div class="char-card" onclick="selectChar('wilma')" id="charWilma">
-      <div class="face">👧🏽</div><div class="name">Wilma</div>
-    </div>
+  <!-- Characters -->
+  <div class="mc-panel char-row">
+    <label>角色:</label>
+    <div class="char-card selected" id="charBiff" onclick="selChar('biff')"><div class="face">👧🏻‍</div><div class="name">Biff</div></div>
+    <div class="char-card" id="charChip" onclick="selChar('chip')"><div class="face">🧒🏻</div><div class="name">Chip</div></div>
+    <div class="char-card" id="charKipper" onclick="selChar('kipper')"><div class="face">👦🏻</div><div class="name">Kipper</div></div>
+    <div class="char-card" id="charWilma" onclick="selChar('wilma')"><div class="face">👧🏽</div><div class="name">Wilma</div></div>
   </div>
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <div class="stat-item"><div class="lbl">🏆 得分</div><div class="val" id="totalScore">0</div></div>
-    <div class="stat-item"><div class="lbl">🔥 连击</div><div class="val" id="comboVal">0</div></div>
-    <div class="stat-item"><div class="lbl">📊 进度</div><div class="val" id="progressVal">0/8</div></div>
-    <div class="stat-item"><div class="lbl">⭐ 最高分</div><div class="val" id="bestVal">—</div></div>
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-item"><div class="lbl">🏆 得分</div><div class="val" id="s">0</div></div>
+    <div class="hud-item"><div class="lbl">🔥 连击</div><div class="val" id="c">0</div></div>
+    <div class="hud-item"><div class="lbl">📊 进度</div><div class="val" id="p">0/8</div></div>
+    <div class="hud-item"><div class="lbl">🕐 剩余</div><div class="val" id="t">40s</div></div>
   </div>
+  <div class="xp-wrap"><div class="xp-fill" id="xpFill" style="width:0%"></div><div class="xp-text" id="xpText">0/100</div></div>
 
-  <!-- XP Bar -->
-  <div class="xp-wrap">
-    <div class="xp-fill" id="xpFill" style="width: 0%"></div>
-    <div class="xp-text" id="xpText">XP 0/100</div>
-  </div>
-
-  <!-- Path View -->
-  <div class="mc-panel" style="padding: 0; overflow: hidden;">
-    <div class="path-wrapper" id="pathView">
-      <div class="ground-blocks" id="groundBlocks"></div>
+  <!-- Path -->
+  <div class="mc-panel" style="padding:0;overflow:hidden;">
+    <div class="path-box" id="pathView">
       <div class="path-nodes" id="pathNodes"></div>
-      <div class="char-sprite" id="charSprite" style="left: 10px;">👧🏻‍</div>
+      <div class="char-sprite" id="charSprite" style="left:10px;">👧🏻‍</div>
     </div>
   </div>
 
-  <!-- Challenge Area -->
-  <div class="mc-panel challenge-area" id="challengeArea">
-    <div style="color: #5D4037; font-size: 0.55em; text-align: center; padding: 40px;">
-      👆 选择一个角色和级别，然后开始冒险！
+  <!-- Challenge -->
+  <div class="mc-panel ch-area" id="chArea">
+    <div style="color:#5D4037;font-size:0.48em;text-align:center;padding:36px;">
+      选择角色和级别，开始冒险吧！
     </div>
   </div>
 
   <!-- Controls -->
-  <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-    <button class="mc-btn" id="startBtn" onclick="startAdventure()">⚔️ 开始冒险</button>
-    <button class="mc-btn blue" id="restartBtn" onclick="restartGame()" style="display:none;">🔄 重新开始</button>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+    <button class="mc-btn" id="startBtn" onclick="start()">⚔️ 开始冒险</button>
+    <button class="mc-btn blue" id="rstBtn" style="display:none;" onclick="rst()">🔄 重新开始</button>
   </div>
 
   <!-- Import -->
-  <div class="mc-panel import-section">
-    <h3>📥 上传字库 (CSV)</h3>
+  <div class="mc-panel import-row">
+    <h3>📥 上传CSV</h3>
     <input type="file" id="csvFile" accept=".csv">
-    <span class="import-msg" id="importMsg"></span>
-    <span class="word-stats" id="wordStats"></span>
+    <span class="imsg" id="imsg"></span>
+    <span class="wstats" id="wstats"></span>
+  </div>
+
+  <div class="link-row">
+    <a href="/dashboard" target="_blank">📊 闯关看板 Dashboard</a>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="feedback" id="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════
-//  Minecraft × Oxford Tree Word Adventure
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
+//  Word-Knight - Minecraft × Oxford Tree
+// ════════════════════════════════════════
 
 const API = window.location.hostname === 'localhost'
   ? 'http://localhost:3000'
-  : window.location.origin;
+  : 'https://oxford-word-knight-api.glitch.me';
 
-// ── State ──
-let oxfordLevel = 'G1';
-let selectedChar = 'biff';
-let challenges = [];
-let currentIndex = 0;
-let score = 0;
-let comboCount = 0;
-let maxCombo = 0;
-let xp = 0;
-let streakCorrect = 0;
-let answeredThisRound = false;
-let bestScores = {};
-let soundEnabled = true;
+const FACES = { biff:'👧🏻‍', chip:'🧒🏻', kipper:'👦🏻', wilma:'👧🏽' };
+const NAMES = { biff:'Biff', chip:'Chip', kipper:'Kipper', wilma:'Wilma' };
+const N = 8;       // nodes
+const T_SEC = 40; // seconds per node
 
-const CHAR_FACES = {
-  biff: '👧🏻‍', chip: '🧒🏻', kipper: '👦🏻', wilma: '👧🏽'
-};
-const CHAR_NAMES = {
-  biff: 'Biff', chip: 'Chip', kipper: 'Kipper', wilma: 'Wilma'
-};
+let level = 'G1', chr = 'biff';
+let items = [], idx = 0, score = 0, combo = 0, maxCombo = 0, xp = 0;
+let timerId = null, timeLeft = 0;
+let logs = []; // [{word, correct, timeout}]
+let aud = null;
+let apiBase = API;
 
-// ── Audio context for simple beeps ──
-let audioCtx = null;
-function beep(freq, duration, type = 'square') {
-  if (!soundEnabled) return;
+// Try server URL override
+const u = window.location.search;
+const m = u.match(/[?&]api=([^&]+)/);
+if (m) apiBase = decodeURIComponent(m[1]);
+
+function beep(f,d,t='square') {
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = type; osc.frequency.value = freq;
-    gain.gain.value = 0.08; gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + duration);
-  } catch(e) {}
+    if(!aud) aud = new (window.AudioContext||window.webkitAudioContext)();
+    const o = aud.createOscillator(), g = aud.createGain();
+    o.type=t; o.frequency.value=f; g.gain.value=0.06; g.gain.exponentialRampToValueAtTime(0.001,aud.currentTime+d);
+    o.connect(g); g.connect(aud.destination); o.start(); o.stop(aud.currentTime+d);
+  }catch(e){}
 }
+function beepOk() { beep(523,0.1); setTimeout(()=>beep(659,0.1),100); setTimeout(()=>beep(784,0.15),200); }
+function beepNo() { beep(180,0.35,'sawtooth'); }
+function beepComboFn() { beep(784,0.07); setTimeout(()=>beep(988,0.07),70); setTimeout(()=>beep(1175,0.1),140); }
+function beepWin() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18),i*140)); }
 
-function beepCorrect() { beep(523, 0.1); setTimeout(() => beep(659, 0.1), 100); setTimeout(() => beep(784, 0.15), 200); }
-function beepWrong() { beep(200, 0.3, 'sawtooth'); }
-function beepCombo() { beep(784, 0.08); setTimeout(() => beep(988, 0.08), 80); setTimeout(() => beep(1175, 0.12), 160); }
-function beepVictory() {
-  [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, 0.2), i * 150));
+function toast(msg,cls='ok') {
+  const e = document.getElementById('toast');
+  e.textContent = msg; e.className = 'toast '+cls; e.classList.add('show');
+  setTimeout(()=>e.classList.remove('show'),2400);
 }
-
-// ── Toast ──
-function showToast(msg, cls = 'good') {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'feedback ' + cls;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2000);
-}
-
-// ── Particles ──
-function spawnParticles(x, y, emoji, count = 8) {
-  const container = document.getElementById('particles');
-  for (let i = 0; i < count; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.textContent = emoji;
-    p.style.left = (x + (Math.random() - 0.5) * 120) + 'px';
-    p.style.top = (y + (Math.random() - 0.5) * 60) + 'px';
-    p.style.animationDuration = (0.6 + Math.random() * 0.8) + 's';
-    container.appendChild(p);
-    setTimeout(() => p.remove(), 1600);
+function particles(x,y,emoji='✨',n=8) {
+  const c = document.getElementById('particles');
+  for(let i=0;i<n;i++){
+    const p = document.createElement('div'); p.className='p'; p.textContent=emoji;
+    p.style.left=(x+(Math.random()-0.5)*100)+'px'; p.style.top=(y+(Math.random()-0.5)*50)+'px';
+    p.style.animationDuration=(0.5+Math.random()*0.7)+'s'; c.appendChild(p);
+    setTimeout(()=>p.remove(),1400);
   }
 }
 
-// ── Select Character ──
-function selectChar(name) {
-  selectedChar = name;
-  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('char' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('selected');
-  document.getElementById('charSprite').textContent = CHAR_FACES[name];
+function selChar(name) {
+  chr = name;
+  document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('char'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('selected');
+  document.getElementById('charSprite').textContent = FACES[name];
 }
-
-// ── Select Level ──
-function setLevel(level) {
-  oxfordLevel = level;
-  document.getElementById('tabG1').classList.toggle('active', level === 'G1');
-  document.getElementById('tabG2').classList.toggle('active', level === 'G2');
-  restartGame();
+function setLevel(l) {
+  level = l;
+  document.getElementById('tabG1').classList.toggle('active', l==='G1');
+  document.getElementById('tabG2').classList.toggle('active', l==='G2');
+  rst();
 }
-
-// ── Draw Ground Blocks ──
-function drawGround() {
-  const container = document.getElementById('groundBlocks');
-  const count = Math.ceil(window.innerWidth / 48) + 4;
-  let html = '';
-  for (let i = 0; i < count; i++) { html += '<div class="ground-block"></div>'; }
-  container.innerHTML = html;
-}
-
-// ── Draw Path Nodes ──
-const NODE_COUNT = 8;
 
 function drawNodes() {
-  const container = document.getElementById('pathNodes');
-  let html = '';
-  for (let i = 0; i < NODE_COUNT; i++) {
-    const cls = i < currentIndex ? 'done' : (i === currentIndex ? 'active' : 'pending');
-    const icon = i < currentIndex ? '✅' : (i === currentIndex ? '❓' : '⬜');
-    html += `<div class="path-node"><div class="node-block ${cls}">${icon}</div></div>`;
-    if (i < NODE_COUNT - 1) html += '<div class="path-line"></div>';
+  const c = document.getElementById('pathNodes');
+  let h = '';
+  for(let i=0; i<N; i++) {
+    let cls = 'pend', ic = '⬜';
+    if (i < idx) {
+      const lg = logs[i];
+      cls = lg && lg.correct ? 'ok' : 'bad';
+      ic = lg && lg.correct ? '✅' : '❌';
+    } else if (i === idx) { cls = 'actv'; ic = '❓'; }
+    h += `<div class="pn ${cls}">${ic}</div>`;
+    if (i < N-1) h += '<div class="path-line"></div>';
   }
-  container.innerHTML = html;
+  c.innerHTML = h;
+}
+function moveChar() {
+  const s = document.getElementById('charSprite');
+  const w = document.getElementById('pathNodes').offsetWidth;
+  const step = w / N;
+  s.style.left = (step * idx + step/2 - 14) + 'px';
+  s.textContent = FACES[chr];
+  s.classList.add('jump'); setTimeout(()=>s.classList.remove('jump'),500);
+}
+function updHUD() {
+  document.getElementById('s').textContent = score;
+  document.getElementById('c').textContent = combo;
+  document.getElementById('p').textContent = idx + '/' + items.length;
+  document.getElementById('t').textContent = timeLeft + 's';
+  document.getElementById('xpFill').style.width = xp+'%';
+  document.getElementById('xpText').textContent = 'XP ' + xp + '/100';
 }
 
-// ── Move Character ──
-function moveCharacter() {
-  const sprite = document.getElementById('charSprite');
-  const pathWidth = document.getElementById('pathNodes').offsetWidth;
-  const step = pathWidth / (NODE_COUNT);
-  const left = step * currentIndex + step / 2 - 16;
-  sprite.style.left = left + 'px';
-  sprite.textContent = CHAR_FACES[selectedChar];
-}
-
-function jumpCharacter() {
-  const sprite = document.getElementById('charSprite');
-  sprite.classList.add('jumping');
-  setTimeout(() => sprite.classList.remove('jumping'), 500);
-}
-
-// ── Render Challenge ──
 function renderChallenge() {
-  const area = document.getElementById('challengeArea');
-  if (currentIndex >= challenges.length) {
-    showVictory();
-    return;
-  }
+  if (idx >= items.length) { showVictory(); return; }
+  const ch = items[idx];
+  timeLeft = T_SEC;
+  updHUD();
+  startTimer();
 
-  const ch = challenges[currentIndex];
-  const sentenceDisplay = ch.sentenceBlank.split('____');
-  
+  const area = document.getElementById('chArea');
   area.innerHTML = `
-    <div class="challenge-card">
-      <div class="ch-hint">💡 ${ch.hint}</div>
-      <div class="ch-sentence">
-        ${sentenceDisplay[0]}<span class="ch-blank" id="blankSlot">?</span>${sentenceDisplay[1] || ''}
+    <div class="ch-card">
+      <div class="ch-label">💡 ${ch.hint}</div>
+      <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar" style="width:100%"></div><div class="timer-num" id="timerNum">${T_SEC}s</div></div>
+      <div class="ch-sentence">${ch.clue || ch.sentence}</div>
+      <div class="ch-input-wrap">
+        <span style="font-size:1.2em;color:#3E2723;">${ch.blanked}</span>
       </div>
-      <div class="options-grid" id="optionsGrid">
-        ${ch.options.map((opt, i) => `
-          <button class="opt-btn" onclick="answer('${opt.replace(/'/g, "\\'")}', ${i}, this)" data-word="${opt.replace(/"/g, '&quot;')}">
-            ${opt}
-          </button>
-        `).join('')}
+      <div class="ch-input-wrap">
+        <input class="ch-input" id="ansInput" type="text" maxlength="${ch.answerLen}" placeholder="补全字母" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button class="mc-btn" id="submitBtn" onclick="checkAnswer()">✓</button>
       </div>
     </div>
   `;
-  
-  answeredThisRound = false;
+
+  const inp = document.getElementById('ansInput');
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+  setTimeout(() => inp.focus(), 100);
 }
 
-// ── Answer ──
-function answer(word, idx, btn) {
-  if (answeredThisRound) return;
-  answeredThisRound = true;
-  
-  const ch = challenges[currentIndex];
-  const correct = word.toLowerCase() === ch.word.toLowerCase();
-  const blank = document.getElementById('blankSlot');
-  const btnEl = btn;
-  
+function startTimer() {
+  clearInterval(timerId);
+  timerId = setInterval(() => {
+    timeLeft--;
+    const bar = document.getElementById('timerBar');
+    const num = document.getElementById('timerNum');
+    if (!bar || !num) { clearInterval(timerId); return; }
+    const pct = (timeLeft / T_SEC) * 100;
+    bar.style.width = pct + '%';
+    bar.className = 'timer-bar' + (pct < 30 ? ' danger' : (pct < 60 ? ' warn' : ''));
+    num.textContent = timeLeft + 's';
+    document.getElementById('t').textContent = timeLeft + 's';
+    if (timeLeft <= 0) { clearInterval(timerId); handleTimeout(); }
+  }, 1000);
+}
+
+function handleTimeout() {
+  const ch = items[idx];
+  logs.push({ word: ch.word, correct: false, timeout: true, userAnswer: '(超时)' });
+  combo = 0;
+  beepNo();
+  toast('⏰ 时间到！', 'bad');
+  const inp = document.getElementById('ansInput');
+  if (inp) { inp.disabled = true; inp.classList.add('wrong'); }
+  const sb = document.getElementById('submitBtn');
+  if (sb) sb.disabled = true;
+  const blank = document.getElementById('timerBar');
+  if (blank) { blank.style.width = '0%'; blank.className = 'timer-bar danger'; }
+
+  setTimeout(() => advance(), 1500);
+}
+
+function checkAnswer() {
+  clearInterval(timerId);
+  const inp = document.getElementById('ansInput');
+  const ans = (inp.value || '').trim().toLowerCase();
+  const ch = items[idx];
+  const correct = ans === ch.hidden;
+
   if (correct) {
-    btnEl.classList.add('correct');
-    blank.textContent = ch.word;
-    blank.classList.add('filled');
-    comboCount++;
-    if (comboCount > maxCombo) maxCombo = comboCount;
-    streakCorrect++;
-    
-    let points = 10;
-    if (comboCount >= 10) { points = 50; beepCombo(); showToast('💎 ' + comboCount + '连击！传奇！', 'great'); }
-    else if (comboCount >= 5) { points = 30; beepCombo(); showToast('⭐ ' + comboCount + '连击！', 'good'); }
-    else if (comboCount >= 3) { points = 20; beepCombo(); } 
-    else { beepCorrect(); }
-    
-    score += points;
-    xp = Math.min(100, xp + points);
-    
-    // Particles
-    const rect = blank.getBoundingClientRect();
-    spawnParticles(rect.left + rect.width / 2, rect.top, '✨', 10);
-    jumpCharacter();
-    
-    // Advance after delay
-    setTimeout(() => {
-      currentIndex++;
-      drawNodes();
-      moveCharacter();
-      updateHUD();
-      if (currentIndex < challenges.length) {
-        setTimeout(renderChallenge, 400);
-      } else {
-        xp = 100;
-        updateHUD();
-        beepVictory();
-        setTimeout(showVictory, 600);
-      }
-    }, 800);
-    
+    combo++;
+    if (combo > maxCombo) maxCombo = combo;
+    let pts = 10;
+    if (combo >= 10) { pts = 50; beepComboFn(); toast('💎 '+combo+'连击！传奇！', 'great'); }
+    else if (combo >= 5) { pts = 30; beepComboFn(); toast('⭐ '+combo+'连击！', 'ok'); }
+    else if (combo >= 3) { pts = 20; beepComboFn(); }
+    else { beepOk(); }
+    score += Math.round(pts * (1 + timeLeft / T_SEC));
+    xp = Math.min(100, xp + pts);
+    inp.classList.add('correct'); inp.disabled = true;
+    document.getElementById('submitBtn').disabled = true;
+    const rect = inp.getBoundingClientRect();
+    particles(rect.left+rect.width/2, rect.top);
+    logs.push({ word: ch.word, correct: true, timeout: false, userAnswer: ans });
+    setTimeout(() => advance(), 700);
   } else {
-    btnEl.classList.add('wrong');
-    comboCount = 0;
-    streakCorrect = 0;
-    beepWrong();
-    showToast('❌ 再试试！', 'bad');
-    
-    // Allow retry after shake
-    setTimeout(() => {
-      btnEl.classList.remove('wrong');
-      answeredThisRound = false;
-    }, 600);
+    beepNo();
+    inp.classList.add('wrong');
+    inp.value = '';
+    setTimeout(() => { inp.classList.remove('wrong'); inp.focus(); }, 500);
   }
-  
-  updateHUD();
+  updHUD();
 }
 
-// ── Update HUD ──
-function updateHUD() {
-  document.getElementById('totalScore').textContent = score;
-  document.getElementById('comboVal').textContent = comboCount;
-  document.getElementById('progressVal').textContent = currentIndex + '/' + challenges.length;
-  document.getElementById('xpFill').style.width = xp + '%';
-  document.getElementById('xpText').textContent = 'XP ' + xp + '/100';
-  
-  // Best score
-  const best = bestScores[oxfordLevel] || 0;
-  if (score > best) {
-    bestScores[oxfordLevel] = score;
-    localStorage.setItem('oxford_mc_best', JSON.stringify(bestScores));
+function advance() {
+  clearInterval(timerId);
+  idx++;
+  drawNodes();
+  moveChar();
+  updHUD();
+  if (idx < items.length) {
+    setTimeout(renderChallenge, 500);
+  } else {
+    xp = 100; updHUD();
+    beepWin();
+    // Post log
+    fetch(apiBase + '/api/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        character: NAMES[chr], level,
+        score, maxCombo,
+        wordsTotal: items.length,
+        wordsCorrect: logs.filter(l=>l.correct).length,
+        wordsTimeout: logs.filter(l=>l.timeout).length,
+        wordsWrong: logs.filter(l=>!l.correct && !l.timeout).length,
+        details: logs
+      })
+    }).catch(()=>{});
+    setTimeout(showVictory, 800);
   }
-  document.getElementById('bestVal').textContent = (bestScores[oxfordLevel] || score);
 }
 
-// ── Victory ──
+// ── Easter Egg ──
+const EGGS = [
+  { icon:'🔑', title:'🔮 魔法钥匙！', desc:'你发现了一把闪闪发光的 Magic Key！<br>它会在下一次冒险中带你去到意想不到的地方…' },
+  { icon:'👹', title:'🪨 小心巨人！', desc:'一个 Giant 从山洞里走了出来！<br>但他看到你答对了所有单词，就友好地挥手离开了~' },
+  { icon:'🐉', title:'🔥 龙之宝藏', desc:'你在城堡深处发现了一条 Dragon 守护的宝藏！<br>它赞赏你的单词功力，送你一颗宝石。' },
+  { icon:'🏴‍☠️', title:'⚓ 海盗勋章', desc:'Pirate船长被你征服了！<br>"你的词汇量比我的地图还大！"他大笑着说。' },
+  { icon:'👑', title:'🏰 皇冠加冕', desc:'国王为你戴上 Crown！<br>"勇敢的 Word-Knight，王国因你而骄傲！"' },
+  { icon:'🌟', title:'✨ 星光之路', desc:'你走过的路径上，每一颗星星都在闪耀。<br>新的冒险正在等待你… Bravo！' },
+];
+function randomEgg() { return EGGS[Math.floor(Math.random() * EGGS.length)]; }
+
 function showVictory() {
-  const area = document.getElementById('challengeArea');
-  const stars = maxCombo >= 8 ? '⭐⭐⭐' : (maxCombo >= 4 ? '⭐⭐' : '⭐');
+  const area = document.getElementById('chArea');
+  const egg = randomEgg();
+  const correctN = logs.filter(l=>l.correct).length;
+  const failN = logs.filter(l=>!l.correct).length;
+  const stars = correctN === N ? '⭐⭐⭐' : (correctN >= N * 0.7 ? '⭐⭐' : '⭐');
+
+  let failRows = '';
+  logs.forEach((l,i) => {
+    if (!l.correct) {
+      failRows += `<tr><td>${i+1}</td><td class="fail">${l.word}</td><td class="fail">${l.timeout ? '⏰ 超时' : '❌ 错误'}</td></tr>`;
+    }
+  });
+
   area.innerHTML = `
-    <div style="text-align:center; padding: 30px;">
-      <div style="font-size: 2em; margin-bottom: 8px;">${stars}</div>
-      <h2 style="color:#FFD54F; font-size:0.8em;">冒险完成！</h2>
-      <p style="color:#3E2723; font-size:0.55em;">
-        🏆 总分: ${score}<br>
-        🔥 最高连击: ${maxCombo}<br>
-        👤 角色: ${CHAR_NAMES[selectedChar]}
-      </p>
-      <button class="mc-btn" onclick="restartGame()" style="margin-top:12px;">🔄 再来一次</button>
+    <div style="text-align:center; padding:20px;">
+      <div class="egg-icon">${egg.icon}</div>
+      <h2>${egg.title}</h2>
+      <p>${egg.desc}</p>
+      <div style="margin:12px 0;">${stars}</div>
+      <p>🏆 ${score} 分 · 🔥 ${maxCombo} 连击 · ✅ ${correctN}/${N} 正确</p>
+      ${failN ? `<table class="ov-table"><thead><tr><th>#</th><th>单词</th><th>状态</th></tr></thead><tbody>${failRows}</tbody></table>` : ''}
+      <p style="margin-top:12px;">👤 ${NAMES[chr]} · 📚 ${level}</p>
+      <button class="mc-btn" onclick="rst()" style="margin-top:12px;">🔄 再来一次</button>
     </div>
   `;
   document.getElementById('startBtn').style.display = 'none';
-  document.getElementById('restartBtn').style.display = 'inline-block';
+  document.getElementById('rstBtn').style.display = 'inline-block';
 }
 
-// ── Fetch Challenges ──
-async function loadChallenges() {
+async function loadItems() {
   try {
-    const count = NODE_COUNT;
-    const res = await fetch(`${API}/api/challenges?level=${oxfordLevel}&count=${count}`);
+    const res = await fetch(`${apiBase}/api/challenges?level=${level}&count=${N}`);
     const data = await res.json();
-    if (data.error) {
-      document.getElementById('challengeArea').innerHTML = `
-        <div style="text-align:center; padding:30px; color:#C62828;">
-          ⚠️ 字库为空，请先上传CSV文件
-        </div>`;
+    if (data.error || !data.length) {
+      document.getElementById('chArea').innerHTML = `<div style="text-align:center;padding:30px;color:#C62828;">⚠️ ${data.error || '字库为空，请先上传CSV'}</div>`;
       return false;
     }
     if (data.length < 4) {
-      document.getElementById('challengeArea').innerHTML = `
-        <div style="text-align:center; padding:30px; color:#E65100;">
-          ⚠️ 字库不足（需要至少4个单词），请上传更多单词
-        </div>`;
+      document.getElementById('chArea').innerHTML = `<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足，需要至少4个单词</div>`;
       return false;
     }
-    challenges = data;
+    items = data;
     return true;
-  } catch (e) {
-    document.getElementById('challengeArea').innerHTML = `
-      <div style="text-align:center; padding:30px; color:#C62828;">
-        ❌ 无法连接服务器
-      </div>`;
+  } catch(e) {
+    document.getElementById('chArea').innerHTML = `<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接服务器</div>`;
     return false;
   }
 }
 
-// ── Start Adventure ──
-async function startAdventure() {
-  const loaded = await loadChallenges();
-  if (!loaded) return;
-  
-  currentIndex = 0;
-  score = 0;
-  comboCount = 0;
-  maxCombo = 0;
-  xp = 0;
-  streakCorrect = 0;
-  
-  drawNodes();
-  moveCharacter();
-  updateHUD();
-  renderChallenge();
-  
+async function start() {
+  const ok = await loadItems(); if (!ok) return;
+  idx = 0; score = 0; combo = 0; maxCombo = 0; xp = 0; logs = [];
+  timeLeft = T_SEC; clearInterval(timerId);
+  drawNodes(); moveChar(); updHUD(); renderChallenge();
   document.getElementById('startBtn').style.display = 'none';
-  document.getElementById('restartBtn').style.display = 'inline-block';
+  document.getElementById('rstBtn').style.display = 'inline-block';
 }
 
-async function restartGame() {
-  currentIndex = 0;
-  score = 0;
-  comboCount = 0;
-  maxCombo = 0;
-  xp = 0;
-  streakCorrect = 0;
-  challenges = [];
-  
+function rst() {
+  clearInterval(timerId);
+  idx = 0; score = 0; combo = 0; maxCombo = 0; xp = 0; logs = []; items = [];
+  timeLeft = T_SEC;
+  drawNodes(); moveChar(); updHUD();
+  document.getElementById('chArea').innerHTML = `<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:36px;">准备好了吗？点击"开始冒险"！</div>`;
   document.getElementById('startBtn').style.display = 'inline-block';
-  document.getElementById('restartBtn').style.display = 'none';
-  document.getElementById('challengeArea').innerHTML = `
-    <div style="color:#5D4037; font-size:0.55em; text-align:center; padding:40px;">
-      👆 准备好了就点击"开始冒险"！
-    </div>`;
-  
-  drawNodes();
-  moveCharacter();
-  updateHUD();
+  document.getElementById('rstBtn').style.display = 'none';
 }
 
-// ── Init ──
 function init() {
-  const saved = localStorage.getItem('oxford_mc_best');
-  if (saved) bestScores = JSON.parse(saved);
-  drawGround();
-  drawNodes();
-  moveCharacter();
-  updateHUD();
-  loadStats();
-  
-  window.addEventListener('resize', () => {
-    drawGround();
-    drawNodes();
-    moveCharacter();
-  });
+  drawNodes(); moveChar(); updHUD(); loadStats();
+  window.addEventListener('resize', ()=>{ drawNodes(); moveChar(); });
 }
-
-// ── Stats ──
 async function loadStats() {
   try {
-    const res = await fetch(`${API}/api/stats`);
-    const data = await res.json();
-    if (data.length) {
-      document.getElementById('wordStats').textContent =
-        data.map(s => `${s.oxford_level}:${s.count}词`).join(' | ');
-    }
-  } catch(e) {}
+    const res = await fetch(`${apiBase}/api/stats`);
+    const d = await res.json();
+    if(d.length) document.getElementById('wstats').textContent = d.map(s=>`${s.oxford_level}:${s.count}词`).join(' | ');
+  }catch(e){}
 }
 
-// ── CSV Import ──
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('csvFile').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const msg = document.getElementById('importMsg');
-    msg.textContent = '⏳ 导入中...';
-    msg.className = 'import-msg';
-    const reader = new FileReader();
-    reader.onload = async () => {
+// CSV Import
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('csvFile').addEventListener('change', e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const m = document.getElementById('imsg');
+    m.textContent='⏳...'; m.className='imsg';
+    const r = new FileReader();
+    r.onload = async ()=>{
       try {
-        const res = await fetch(`${API}/api/import`, { method: 'POST', body: reader.result });
+        const res = await fetch(`${apiBase}/api/import`,{method:'POST',body:r.result});
         const d = await res.json();
-        if (d.success) {
-          msg.textContent = '✅ ' + d.message;
-          msg.className = 'import-msg ok';
-          loadStats();
-        } else {
-          msg.textContent = '❌ ' + d.error;
-          msg.className = 'import-msg err';
-        }
-      } catch {
-        msg.textContent = '❌ 请确认后端已启动';
-        msg.className = 'import-msg err';
-      }
+        m.textContent = d.success ? '✅ '+d.message : '❌ '+d.error;
+        m.className = 'imsg '+(d.success?'ok':'err');
+        if(d.success) loadStats();
+      } catch { m.textContent='❌ 服务器未响应'; m.className='imsg err'; }
     };
-    reader.readAsText(file);
+    r.readAsText(f);
   });
 });
-
 init();
 </script>
 </body>
