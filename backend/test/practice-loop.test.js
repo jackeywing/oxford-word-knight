@@ -1,6 +1,7 @@
 // 闭环端到端测试：出题 → 故意答错 → 画像写入 → 推荐命中 → 答对后权重回落
 const B = process.env.BASE || 'http://localhost:3000';
-const P = 'loopkid';
+// 每次跑用独立 player：固定名字会让学情跨轮累积，断言随历史状态飘（偶发失败的真凶）
+const P = 'loop_' + Date.now().toString(36);
 let pass = 0, fail = 0;
 const ok = (n, c, x) => { if (c) { pass++; console.log('  ✅ ' + n + (x ? '  → ' + x : '')); } else { fail++; console.log('  ❌ ' + n + (x ? '  → ' + x : '')); } };
 const get = async (u) => (await fetch(B + u)).json();
@@ -102,6 +103,9 @@ const post = async (u, b) => (await fetch(B + u, { method: 'POST', headers: { 'C
   ok('全新玩家 recommend 不返回 error', !recFresh.error, recFresh.error || 'ok');
   ok('全新玩家有推荐理由文案', typeof recFresh.reason === 'string' && recFresh.reason.length > 0,
     (recFresh.reason || '').slice(0, 40));
+
+  // 收尾：清掉本次测试玩家的学情，不污染真实数据
+  try { await get('/api/practice/reset?player=' + P); } catch (e) {}
 
   console.log(`\n=== 汇总 ===\n  passed ${pass} / failed ${fail}`);
   process.exit(fail ? 1 : 0);
