@@ -148,6 +148,39 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 `practice` 块字段：`total / correct / accuracy / avgMs / players / byType / byPlayer / daily / recent / weakPhonemes / troubleWords`。
 
+## 🗂️ 词库浏览（`/lexicon`）
+
+浏览器打开 **http://localhost:3000/lexicon**，用于核对题库真实内容：
+
+- **总览磁贴**：总行数 / 唯一单词 / 重复冗余 / 短语数 / 平均词长 / 有例句数 / 含人物名数
+- **分布**：级别、音节数直方图、首字母直方图
+- **检索**：按单词/提示/句子搜索，可按级别、类型（单词/短语/重复）筛选与排序
+- **词条表**：单词 / 级别 / 音节 / 字母数 / 音素组合 / 中文提示 / 所在句
+- **重复告警**：若有重复词条会红字标出（正常应为 0）
+
+接口：`GET /api/lexicon` → `{ stats, words }`。
+
+### 词库现状（实测）
+
+| 指标 | 值 |
+|---|---|
+| 导入行数 → 唯一词 | 164 → **158**（合并 6 个重复：red / blue / come / make / put / old） |
+| 级别 | G1 **24** · G2 **134** |
+| 音节分布 | 1 音节 93 · 2 音节 52 · 3 音节 12 · 4 音节 1 |
+| 平均词长 | 5.2 |
+| 含空格短语 | 10（`more than` / `each one` / `too … to` …） |
+| 含人物名句子 | 54（biff 15 · kipper 14 · chip 12 · wilma 8 · floppy 4 · mum/dad 各 2 · gran 1） |
+
+```bash
+node backend/import-words.js --dry   # 看去重差异，不写库
+node backend/import-words.js         # 去重导入（幂等，带 LOWER(word) 唯一索引）
+node backend/test/dedup.test.js      # 200 轮 × 10 题，断言轮内无重复
+```
+
+> ⚠️ **题库不是牛津树全库**。牛津树官方为 **800+ 本书、12+ 个 Stage**；本项目词库是
+> 人工整理的 **158 词抽样**，文件名为 `sample-words.csv`，且只有 G1/G2 **年级**标签、
+> **没有 Stage 字段**。要覆盖全 Stage 需要按 Stage 补齐词表并新增 stage 字段。
+
 ## 🚀 GitHub Pages 静态版
 
 ```bash

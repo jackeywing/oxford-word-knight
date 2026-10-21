@@ -136,6 +136,14 @@ const server = http.createServer((req, res) => {
         const filtered = mine.concat(neutral);
         if (filtered.length >= limit) words = filtered;
       }
+      // 防御：即使库里混入重复词，同一轮也不允许出现两次
+      const seenWord = new Set();
+      words = words.filter((w) => {
+        const k = String(w.word).trim().toLowerCase();
+        if (seenWord.has(k)) return false;
+        seenWord.add(k);
+        return true;
+      });
       words = words.slice(0, limit);
       if (!words.length)
         return json(res, { error: 'No words found for ' + level, words: [] });
@@ -183,6 +191,63 @@ const server = http.createServer((req, res) => {
   }
 
   // ── POST /api/import ──
+  // ── GET /api/lexicon ── 词库全量 + 统计（后台浏览用）
+  if (req.method === 'GET' && pathname === '/api/lexicon') {
+    try {
+      const rows = db.prepare(
+        'SELECT id, word, hint, sentence, oxford_level FROM words ORDER BY oxford_level, LOWER(word)'
+      ).all();
+      const byWord = new Map();
+      for (const r of rows) {
+        const k = String(r.word).trim().toLowerCase();
+        byWord.set(k, (byWord.get(k) || 0) + 1);
+      }
+      const duplicates = [...byWord.entries()]
+        .filter(([, n]) => n > 1)
+        .map(([word, count]) => ({ word, count }))
+        .sort((a, b) => b.count - a.count || a.word.localeCompare(b.word));
+
+      const isPhrase = (w) => /\s/.test(String(w).trim());
+      const sylBuckets = { 1: 0, 2: 0, 3: 0, 4: 0, '5+': 0 };
+      const byLevel = {};
+      const letters = {};
+      let lenSum = 0;
+      for (const r of rows) {
+        const n = practice.syllableCount(r.word);
+        sylBuckets[Math.min(n, 5)] = (sylBuckets[Math.min(n, 5)] || 0) + 1;
+        if (n >= 5) sylBuckets['5+'] = (sylBuckets['5+'] || 0) + 1;
+        byLevel[r.oxford_level] = (byLevel[r.oxford_level] || 0) + 1;
+        const c = String(r.word).trim().toLowerCase()[0] || '#';
+        letters[c] = (letters[c] || 0) + 1;
+        lenSum += String(r.word).trim().length;
+      }
+
+      const stats = {
+        rows: rows.length,
+        unique: byWord.size,
+        duplicates,
+        phrases: rows.filter((r) => isPhrase(r.word)).length,
+        byLevel,
+        avgLen: rows.length ? Math.round((lenSum / rows.length) * 10) / 10 : 0,
+        syllables: sylBuckets,
+        letters,
+        withSentence: rows.filter((r) => String(r.sentence).trim()).length,
+        withCharacter: rows.filter((r) => practice.charactersIn(r.sentence).length > 0).length,
+      };
+
+      const words = rows.map((r) => ({
+        ...r,
+        syllables: practice.syllableCount(r.word),
+        letters: String(r.word).trim().length,
+        isPhrase: isPhrase(r.word),
+        phonemes: practice.phonemesOf(r.word).map((p) => p.grapheme),
+        characters: practice.charactersIn(r.sentence),
+      }));
+      json(res, { stats, words });
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
   if (req.method === 'POST' && pathname === '/api/import') {
     let body = '';
     req.on('data', c => body += c);
@@ -353,6 +418,9 @@ const server = http.createServer((req, res) => {
   }
 
   // ── GET /practice ── 音素 / 音节特训页面
+  if (req.method === 'GET' && (pathname === '/lexicon' || pathname === '/lexicon.html'))
+    return serveFile(res, 'frontend/lexicon.html', 'text/html; charset=utf-8');
+
   if (req.method === 'GET' && (pathname === '/practice' || pathname === '/practice.html'))
     return serveFile(res, 'frontend/practice.html', 'text/html; charset=utf-8');
 

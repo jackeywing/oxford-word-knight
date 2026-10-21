@@ -42,7 +42,20 @@ function readCsv(file) {
   }
   return rows;
 }
-const BANK = readCsv('g2-words.csv').concat(readCsv('sample-words.csv'));
+const _rawBank = readCsv('g2-words.csv').concat(readCsv('sample-words.csv'));
+// 两个 CSV 有 6 个词重叠（red/blue/come/make/put/old）——不去重会导致同一轮抽到两次
+const BANK = (() => {
+  const seen = new Map();
+  for (const r of _rawBank) {
+    const k = String(r.word).trim().toLowerCase();
+    const prev = seen.get(k);
+    if (!prev) { seen.set(k, r); continue; }
+    if ((r.sentence || '').length > (prev.sentence || '').length) seen.set(k, r);
+  }
+  const out = [...seen.values()];
+  if (out.length !== _rawBank.length) console.log(`词库去重: ${_rawBank.length} → ${out.length}`);
+  return out;
+})();
 
 /* ── 2. 从 practice.js 抽出可复用的纯逻辑块 ── */
 const syllablesBlock = practiceSrc.slice(
