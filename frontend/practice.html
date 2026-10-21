@@ -221,17 +221,50 @@ const noB=()=>beep(180,.3,'sawtooth');
 const cbB=()=>{beep(784,.07);setTimeout(()=>beep(988,.07),70);setTimeout(()=>beep(1175,.1),140)};
 
 /* ── 语音合成（真实发音，替代截图里的静态音波） ── */
+/* ── 角色音色：男生用男声，女生用女声，Floppy 用更高更轻的宠物音 ── */
+const VOICE_PROFILE={
+  biff:  {gender:'female', pitch:1.15},
+  chip:  {gender:'male',   pitch:0.85},
+  kipper:{gender:'male',   pitch:0.95},
+  wilma: {gender:'female', pitch:1.08},
+  floppy:{gender:'female', pitch:1.45},
+};
+// Samantha 里含 "man"，所以 male 判定要排除 female 命中项
+const FEMALE_RE=/female|woman|samantha|victoria|karen|serena|kate|martha|moira|fiona|tessa|susan|zira|aria|jenny|michelle|ava|allison|nicky/i;
+const MALE_RE=/\bmale\b|daniel|alex|fred|oliver|aaron|arthur|george|david|mark|guy|ryan|james|liam/i;
+
+function pickVoice(gender){
+  try{
+    const all=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+    if(!all.length) return null;
+    const gb=all.filter(v=>/en[-_]GB/i.test(v.lang));
+    const pool=gb.length?gb:all;
+    const want=(v)=> gender==='male'
+      ? (MALE_RE.test(v.name) && !FEMALE_RE.test(v.name))
+      : FEMALE_RE.test(v.name);
+    return pool.find(want) || all.find(want) || pool[0];
+  }catch(e){ return null; }
+}
+
 function speak(text,rate=0.85){
   try{
     if(!('speechSynthesis' in window)) return false;
     speechSynthesis.cancel();
+    const prof=VOICE_PROFILE[ch]||VOICE_PROFILE.biff;
     const u=new SpeechSynthesisUtterance(String(text));
-    u.lang='en-GB'; u.rate=rate; u.pitch=1;
-    const v=speechSynthesis.getVoices().find(x=>/en-GB/i.test(x.lang))||speechSynthesis.getVoices().find(x=>/^en/i.test(x.lang));
-    if(v) u.voice=v;
+    u.lang='en-GB'; u.rate=rate; u.pitch=prof.pitch;
+    const v=pickVoice(prof.gender);
+    if(v){ u.voice=v; u.lang=v.lang; }
     speechSynthesis.speak(u);
     return true;
   }catch(e){ return false; }
+}
+
+/* 切换角色后立刻用新音色报一次名字，家长能马上听出差别 */
+function demoVoice(){
+  const nm=(typeof NM!=='undefined'&&NM[ch])||'';
+  if(!nm) return;
+  setTimeout(()=>speak('Hello, I am '+nm+'.',0.9),80);
 }
 
 function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+c+' show';setTimeout(()=>e.className='toast '+c,2300)}
@@ -239,7 +272,7 @@ function pt(x,y,e='✨',n=8){const c=document.getElementById('pcs');for(let j=0;
 
 function sel(n){ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
   document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');
-  document.getElementById('csprite').textContent=F[n];}
+  document.getElementById('csprite').textContent=F[n]; demoVoice();}
 
 function dn(){const c=document.getElementById('pnodes');let h='';
   for(let j=0;j<N;j++){let cls='',ic='⬜';
