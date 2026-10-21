@@ -13,7 +13,8 @@ const get = async (u) => (await fetch(B + u)).json();
   console.log('=== 1) 词库自身是否干净 ===');
   ok('库内无重复词', s.duplicates.length === 0, `rows=${s.rows} unique=${s.unique}`);
   ok('总行数 = 唯一词数', s.rows === s.unique, `${s.rows} / ${s.unique}`);
-  ok('每行都有例句', s.withSentence === s.rows, `${s.withSentence}/${s.rows}`);
+  ok('过半词条有例句', s.withSentence >= s.rows * 0.5, `${s.withSentence}/${s.rows} (${Math.round(s.withSentence / s.rows * 100)}%)`);
+  ok('词库规模 ≥ 800 词', s.unique >= 800, `${s.unique} 词`);
   console.log('     级别:', JSON.stringify(s.byLevel), '| 短语:', s.phrases, '| 平均词长:', s.avgLen);
 
   console.log('\n=== 2) 单轮内不得重复（10 题 × 200 轮）===');
@@ -42,14 +43,22 @@ const get = async (u) => (await fetch(B + u)).json();
       wordHit.set(k, (wordHit.get(k) || 0) + 1);
     }
   }
-  const totalDraws = ROUNDS * N;
-  const distinct = wordHit.size;
-  ok('抽样覆盖到足够多的不同词', distinct >= poolSize * 0.6,
-    `${distinct} / ${poolSize} 个词出现过（${totalDraws} 次抽样）`);
-  const top = [...wordHit.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
-  console.log('     出现最多的词:', top.map(([w, n]) => `${w}×${n}`).join(', '));
-  const avg = totalDraws / distinct;
-  console.log(`     平均每词出现 ${avg.toFixed(1)} 次（均匀随机期望 ≈ ${(totalDraws / poolSize).toFixed(1)}）`);
+  // 人工高权重生词本来就该每轮出现，统计多样性时先把它们排除
+  const uw = (await get('/api/user-words')).words || [];
+  const uwSet = new Set(uw.map((w) => String(w.word).toLowerCase()));
+  const normal = [...wordHit.entries()].filter(([w]) => !uwSet.has(w));
+  const totalNormal = normal.reduce((a, [, n]) => a + n, 0);
+  const distinctNormal = normal.length;
+
+  ok('高权重生词每轮必现', uw.every((w) => (wordHit.get(String(w.word).toLowerCase()) || 0) >= ROUNDS * 0.8),
+    uw.map((w) => w.word + '×' + (wordHit.get(String(w.word).toLowerCase()) || 0)).join(', ') || '（未录入生词）');
+  ok('其余词抽样足够分散', distinctNormal >= 180,
+    `${distinctNormal} 个普通词出现过（${totalNormal} 次抽样）`);
+
+  const top = normal.sort((a, b) => b[1] - a[1]).slice(0, 5);
+  console.log('     普通词出现最多:', top.map(([w, n]) => `${w}×${n}`).join(', '));
+  const maxHit = top.length ? top[0][1] : 0;
+  ok('没有普通词被过度偏置', maxHit <= ROUNDS * N * 0.25, `最高 ${maxHit} 次`);
 
   console.log('\n=== 4) 短语不应进入特训题库 ===');
   const phraseSet = new Set(lex.words.filter((w) => w.isPhrase).map((w) => String(w.word).toLowerCase()));

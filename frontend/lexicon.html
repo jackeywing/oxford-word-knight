@@ -59,6 +59,28 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
   <div class="note" id="distLetter" style="margin-top:10px;"></div>
 </div>
 
+<h2>⭐ 我的重点生词 <span class="dim">（手动录入，权重越高越优先出题）</span></h2>
+<div class="panel">
+  <div class="ctl">
+    <input id="uwWord" placeholder="单词 *" style="width:150px;">
+    <input id="uwHint" placeholder="中文提示" style="width:140px;">
+    <input id="uwSent" placeholder="例句（可留空，留空则用中文提示做填空）" style="flex:1;min-width:240px;">
+    <select id="uwW">
+      <option value="5">★★★★★ 最高</option>
+      <option value="4">★★★★ 高</option>
+      <option value="3" selected>★★★ 中</option>
+      <option value="2">★★ 低</option>
+      <option value="1">★ 最低</option>
+    </select>
+    <button class="btn" onclick="addUserWord()">➕ 加入</button>
+  </div>
+  <div class="note" id="uwMsg" style="margin-bottom:8px;">录入后该词会同步进主词库，并在每轮答题中优先出现（最多占 40%）。</div>
+  <table>
+    <thead><tr><th>单词</th><th class="c" style="width:90px;">权重</th><th>提示</th><th>例句</th><th>备注</th><th class="c" style="width:70px;">操作</th></tr></thead>
+    <tbody id="uwRows"><tr><td colspan="6" class="c dim">暂无</td></tr></tbody>
+  </table>
+</div>
+
 <h2>🔍 词条列表 <span class="dim" id="cnt"></span></h2>
 <div class="panel">
   <div class="ctl">
@@ -98,6 +120,59 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
 
 <script>
 let DATA = null, VIEW = [];
+let UWMAP = new Map();   // word -> weight（我的重点生词）
+
+async function loadUserWords(){
+  try{
+    const r = await fetch('/api/user-words'); const d = await r.json();
+    const rows = d.words || [];
+    UWMAP = new Map(rows.map(w => [String(w.word).toLowerCase(), w.weight]));
+    const tb = document.getElementById('uwRows');
+    if(!rows.length){ tb.innerHTML = '<tr><td colspan="6" class="c dim">暂无，先在上面录入一个生词</td></tr>'; return; }
+    tb.innerHTML = rows.map(w => `<tr>
+      <td class="gold">${w.word}</td>
+      <td class="c">${'★'.repeat(Math.round(w.weight))}</td>
+      <td class="dim">${w.hint||''}</td>
+      <td class="dim">${(w.sentence||'').slice(0,70)}</td>
+      <td class="dim">${w.note||''}</td>
+      <td class="c"><button class="btn" style="background:#C62828;border-color:#B71C1C;padding:4px 8px;" onclick="delUserWord('${String(w.word).replace(/'/g,"\\'")}')">删除</button></td>
+    </tr>`).join('');
+  }catch(e){ console.error(e); }
+}
+
+async function addUserWord(){
+  const word = document.getElementById('uwWord').value.trim();
+  const msg = document.getElementById('uwMsg');
+  if(!word){ msg.textContent = '⚠️ 请先输入单词'; msg.className = 'note red'; return; }
+  try{
+    const r = await fetch('/api/user-words', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        word,
+        hint: document.getElementById('uwHint').value.trim(),
+        sentence: document.getElementById('uwSent').value.trim(),
+        weight: Number(document.getElementById('uwW').value) || 3
+      })
+    });
+    const d = await r.json();
+    if(d.error){ msg.textContent = '⚠️ ' + d.error; msg.className = 'note red'; return; }
+    msg.textContent = '✅ 已加入「' + word + '」，每轮答题会优先出现';
+    msg.className = 'note green';
+    document.getElementById('uwWord').value = '';
+    document.getElementById('uwHint').value = '';
+    document.getElementById('uwSent').value = '';
+    await loadUserWords(); await load();
+  }catch(e){ msg.textContent = '⚠️ 请求失败：' + e.message; msg.className = 'note red'; }
+}
+
+async function delUserWord(word){
+  if(!confirm('确定移除「' + word + '」？')) return;
+  await fetch('/api/user-words/delete', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ word })
+  });
+  await loadUserWords(); await load();
+}
 
 async function load(){
   try{
@@ -180,7 +255,7 @@ function applyFilter(){
     const ph = (w.phonemes||[]).map(g=>`<span class="badge ph">${g}</span>`).join('') || '<span class="dim">—</span>';
     return `<tr>
       <td class="c dim">${i+1}</td>
-      <td class="${isDup?'dup':''}">${w.word}${isDup?' ⚠️':''}${w.isPhrase?' <span class="badge phr">短语</span>':''}</td>
+      <td class="${isDup?'dup':''}">${w.word}${isDup?' ⚠️':''}${w.isPhrase?' <span class="badge phr">短语</span>':''}${(UWMAP.get(String(w.word).toLowerCase())?' <span class="badge ph" title="我的重点生词">★'+UWMAP.get(String(w.word).toLowerCase())+'</span>':'')}</td>
       <td class="c"><span class="badge ${w.oxford_level.toLowerCase()}">${w.oxford_level}</span></td>
       <td class="c">${w.syllables}</td>
       <td class="c">${w.letters}</td>
@@ -190,6 +265,8 @@ function applyFilter(){
     </tr>`;
   }).join('');
 }
+
+loadUserWords();
 
 ['q','lv','kind','sort'].forEach(id=>{
   const el = document.getElementById(id);

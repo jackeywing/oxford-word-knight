@@ -11,7 +11,8 @@
     "test:loop": "node backend/test/practice-loop.test.js",
     "test:character": "node backend/test/character.test.js",
     "test:dedup": "node backend/test/dedup.test.js",
-    "import-words": "node backend/import-words.js"
+    "import-words": "node backend/import-words.js",
+    "lexicon": "node backend/build-lexicon.js"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",

@@ -42,7 +42,10 @@ function readCsv(file) {
   }
   return rows;
 }
-const _rawBank = readCsv('g2-words.csv').concat(readCsv('sample-words.csv'));
+// 优先用 build-lexicon.js 产出的合并词库（含 stage、已去重、已补例句）
+const _rawBank = fs.existsSync(path.join(ROOT, 'words-merged.csv'))
+  ? readCsv('words-merged.csv')
+  : readCsv('g2-words.csv').concat(readCsv('sample-words.csv'));
 // 两个 CSV 有 6 个词重叠（red/blue/come/make/put/old）——不去重会导致同一轮抽到两次
 const BANK = (() => {
   const seen = new Map();

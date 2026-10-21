@@ -164,22 +164,55 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 | 指标 | 值 |
 |---|---|
-| 导入行数 → 唯一词 | 164 → **158**（合并 6 个重复：red / blue / come / make / put / old） |
-| 级别 | G1 **24** · G2 **134** |
-| 音节分布 | 1 音节 93 · 2 音节 52 · 3 音节 12 · 4 音节 1 |
-| 平均词长 | 5.2 |
-| 含空格短语 | 10（`more than` / `each one` / `too … to` …） |
-| 含人物名句子 | 54（biff 15 · kipper 14 · chip 12 · wilma 8 · floppy 4 · mum/dad 各 2 · gran 1） |
+| 唯一词 | **912**（含人工录入的生词） |
+| 级别 | G1 **492** · G2 **420** |
+| stage 分布 | S1 **177** · S2 **291** · S3 **284** · S4 **160** |
+| 有例句 | 505 / 912 = **55%**（其余用中文提示做填空） |
+| 音节分布 | 1 音节 557 · 2 音节 278 · 3 音节 72 · 4 音节 4 |
+| 平均词长 | 5.1 |
+| 含空格短语 | 10（`more than` / `each one` / `too … to` …，仅主游戏可用，特训题库自动排除） |
+| 含人物名句子 | 57（biff/kipper/chip/wilma/floppy/mum/dad/gran） |
+| 重复词 | **0** |
+
+### 词库来源与可信度
+
+| 来源 | 内容 | 说明 |
+|---|---|---|
+| `g2-words.csv` / `sample-words.csv` | 项目原有 164 行 | 带牛津树风格例句；`sample-words.csv` 的句子是**已挖空**格式，导入时自动把词填回 |
+| `data/core-sight.csv` | Dolch 220 / Fry 常用词 | 公开通用高频词表 —— **不是**牛津树官方词表 |
+| `data/core-nouns.csv` | 具象名词（家具/动物/食物/场景） | 唯一允许套模板生成例句的一类 |
+| `data/core-phonics.csv` | 拼读家族（ight/ake/ee/oa/ai/ou/ow/sh/ch/th/ar/or）+ 形容词动词 | |
+| `data/core-extra.csv` | 常用动词/名词/形容词补全 | |
+| `data/sentences.csv` | 117 条手写例句 | 优先级低于原有词库的真实句子 |
+| `user_words` 表 | 人工录入的高权重生词 | 见下节 |
+
+> **stage 的含义**：按词频与拼读难度划分的阅读阶梯（1 最基础 → 4 内容词），
+> **不是**牛津树官方的 Stage 编号。牛津树官方为 **800+ 本书、12+ 个 Stage**，
+> 本项目词库是覆盖高频核心的**重建**，不是官方 Stage 词表的逐级照搬。
 
 ```bash
-node backend/import-words.js --dry   # 看去重差异，不写库
-node backend/import-words.js         # 去重导入（幂等，带 LOWER(word) 唯一索引）
-node backend/test/dedup.test.js      # 200 轮 × 10 题，断言轮内无重复
+node backend/import-words.js --dry    # 看去重差异，不写库
+node backend/build-lexicon.js --dry   # 看合并/去重/例句生成结果，不写库
+node backend/build-lexicon.js         # 重建词库（合并 → 还原挖空 → 补例句 → 写库 + words-merged.csv）
+node backend/test/dedup.test.js       # 200 轮 × 10 题，断言轮内无重复 + 规模 ≥800
 ```
 
-> ⚠️ **题库不是牛津树全库**。牛津树官方为 **800+ 本书、12+ 个 Stage**；本项目词库是
-> 人工整理的 **158 词抽样**，文件名为 `sample-words.csv`，且只有 G1/G2 **年级**标签、
-> **没有 Stage 字段**。要覆盖全 Stage 需要按 Stage 补齐词表并新增 stage 字段。
+**例句生成纪律**（避免教错）：
+- 原有词库的真实句子 > `data/sentences.csv` 手写句 > 具象名词模板
+- **动词、副词、抽象名词、虚词一律不套模板** —— 模板必然写出 `She likes to open.` / `Do you worry it?` 这类病句
+- 所有例句都必须包含该词本身，否则克漏字挖不到空，自动退化为中文提示填空
+
+### ⭐ 我的重点生词（`/lexicon` 页面手动录入）
+
+在词库浏览页顶部可录入想重点练的生词：单词 / 中文提示 / 例句 / 权重（★1–★5）。
+
+- 录入后自动同步进主词库，并进入抽题池
+- **权重越高越优先**：每轮答题中高权重生词最多占 **40%**，按权重降序优先占位
+- 主词条表里会显示 `★N` 标记，便于核对
+- 接口：`GET /api/user-words` · `POST /api/user-words` · `POST /api/user-words/delete`
+
+当词库重建（`build-lexicon.js`）时，服务启动会自动把 `user_words` 补回 `words` 表，
+人工生词不会因为重建而丢失。
 
 ## 🚀 GitHub Pages 静态版
 

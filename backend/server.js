@@ -144,6 +144,23 @@ const server = http.createServer((req, res) => {
         seenWord.add(k);
         return true;
       });
+      // 人工高权重生词优先占位：最多占本轮 40%，权重高的排前面
+      try {
+        const uw = db.prepare('SELECT word, weight FROM user_words').all();
+        if (uw.length) {
+          const wmap = new Map(uw.map((u) => [String(u.word).trim().toLowerCase(), Number(u.weight) || 3]));
+          const quota = Math.max(1, Math.ceil(limit * 0.4));
+          const pri = words
+            .filter((w) => wmap.has(String(w.word).trim().toLowerCase()))
+            .sort((a, b) => (wmap.get(b.word.trim().toLowerCase()) || 0) - (wmap.get(a.word.trim().toLowerCase()) || 0))
+            .slice(0, quota);
+          if (pri.length) {
+            const priIds = new Set(pri.map((p) => p.id));
+            words = pri.concat(words.filter((w) => !priIds.has(w.id)));
+          }
+        }
+      } catch (e) { /* user_words 表可能尚未建立 */ }
+
       words = words.slice(0, limit);
       if (!words.length)
         return json(res, { error: 'No words found for ' + level, words: [] });
@@ -191,6 +208,95 @@ const server = http.createServer((req, res) => {
   }
 
   // ── POST /api/import ──
+  // ── 人工高权重生词表（家长/老师手动录入，权重越高越优先出题）──
+  try {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS user_words (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word TEXT NOT NULL,
+        hint TEXT DEFAULT '',
+        sentence TEXT DEFAULT '',
+        weight REAL NOT NULL DEFAULT 3,
+        note TEXT DEFAULT '',
+        created_at TEXT DEFAULT (datetime('now','localtime'))
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_user_words_unique ON user_words(LOWER(word));
+    `);
+    // 人工生词必须保证在主词库里，否则重建词库后抽不到
+    db.exec(`
+      INSERT INTO words (oxford_level, word, hint, sentence, stage, pos)
+      SELECT 'G2', u.word, u.hint, u.sentence, NULL, ''
+        FROM user_words u
+       WHERE LOWER(u.word) NOT IN (SELECT LOWER(word) FROM words)
+    `);
+  } catch (e) { /* 表已存在 */ }
+
+  // ── GET /api/user-words ── 人工高权重生词
+  if (req.method === 'GET' && pathname === '/api/user-words') {
+    try {
+      const rows = db.prepare(
+        'SELECT id, word, hint, sentence, weight, note, created_at FROM user_words ORDER BY weight DESC, LOWER(word)'
+      ).all();
+      json(res, { words: rows });
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // ── POST /api/user-words ── 新增/更新（body: {word, hint?, sentence?, weight?, note?}）
+  if (req.method === 'POST' && pathname === '/api/user-words') {
+    let body = '';
+    req.on('data', (c) => { body += c; if (body.length > 1e5) req.destroy(); });
+    req.on('end', () => {
+      try {
+        const b = JSON.parse(body || '{}');
+        const word = String(b.word || '').trim();
+        if (!word) return json(res, { error: 'word 不能为空' }, 400);
+        if (!/^[A-Za-z][A-Za-z' -]*$/.test(word)) return json(res, { error: '只接受英文字母单词' }, 400);
+        const hint = String(b.hint || '').trim();
+        const sentence = String(b.sentence || '').trim();
+        const note = String(b.note || '').trim();
+        const weight = Math.max(1, Math.min(5, Number(b.weight) || 3));
+
+        db.prepare(`
+          INSERT INTO user_words (word, hint, sentence, weight, note) VALUES (?, ?, ?, ?, ?)
+          ON CONFLICT(LOWER(word)) DO UPDATE SET
+            hint     = CASE WHEN excluded.hint <> ''     THEN excluded.hint     ELSE hint END,
+            sentence = CASE WHEN excluded.sentence <> '' THEN excluded.sentence ELSE sentence END,
+            note     = CASE WHEN excluded.note <> ''     THEN excluded.note     ELSE note END,
+            weight   = excluded.weight
+        `).run(word, hint, sentence, weight, note);
+
+        // 同步进主词库，保证能被抽到（已存在则只补空缺）
+        db.prepare(`
+          INSERT INTO words (oxford_level, word, hint, sentence, stage, pos) VALUES ('G2', ?, ?, ?, NULL, '')
+          ON CONFLICT(LOWER(word)) DO UPDATE SET
+            hint     = CASE WHEN hint = ''     THEN excluded.hint     ELSE hint END,
+            sentence = CASE WHEN sentence = '' THEN excluded.sentence ELSE sentence END
+        `).run(word, hint, sentence);
+
+        const saved = db.prepare('SELECT * FROM user_words WHERE LOWER(word) = LOWER(?)').get(word);
+        json(res, { success: true, word: saved });
+      } catch (e) { json(res, { error: e.message }, 500); }
+    });
+    return;
+  }
+
+  // ── POST /api/user-words/delete ── body: {word}
+  if (req.method === 'POST' && pathname === '/api/user-words/delete') {
+    let body = '';
+    req.on('data', (c) => { body += c; });
+    req.on('end', () => {
+      try {
+        const b = JSON.parse(body || '{}');
+        const word = String(b.word || '').trim();
+        if (!word) return json(res, { error: 'word 不能为空' }, 400);
+        db.prepare('DELETE FROM user_words WHERE LOWER(word) = LOWER(?)').run(word);
+        json(res, { success: true });
+      } catch (e) { json(res, { error: e.message }, 500); }
+    });
+    return;
+  }
+
   // ── GET /api/lexicon ── 词库全量 + 统计（后台浏览用）
   if (req.method === 'GET' && pathname === '/api/lexicon') {
     try {
