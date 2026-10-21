@@ -270,7 +270,72 @@ const server = http.createServer((req, res) => {
         ORDER BY day DESC, character_name
         LIMIT 60
       `).all();
-      json(res, { summary, recent, daily });
+      /* ── 音素 / 音节特训统计（practice_events / phoneme_state / word_state）── */
+      const pTotals = db.prepare(`
+        SELECT COUNT(*) n,
+               COALESCE(SUM(is_correct), 0) ok,
+               COALESCE(ROUND(AVG(response_ms)), 0) avgMs
+          FROM practice_events
+      `).get();
+      const pByType = db.prepare(`
+        SELECT card_type,
+               COUNT(*) n,
+               SUM(is_correct) ok,
+               ROUND(AVG(response_ms)) avgMs
+          FROM practice_events
+         GROUP BY card_type
+         ORDER BY n DESC
+      `).all();
+      const pByPlayer = db.prepare(`
+        SELECT player_id,
+               COUNT(*) n,
+               SUM(is_correct) ok,
+               ROUND(AVG(response_ms)) avgMs,
+               MAX(created_at) lastAt
+          FROM practice_events
+         GROUP BY player_id
+         ORDER BY n DESC
+      `).all();
+      const pDaily = db.prepare(`
+        SELECT date(created_at) day, COUNT(*) n, SUM(is_correct) ok
+          FROM practice_events
+         GROUP BY day
+         ORDER BY day DESC
+         LIMIT 30
+      `).all();
+      const pRecent = db.prepare(
+        'SELECT * FROM practice_events ORDER BY id DESC LIMIT 80'
+      ).all();
+      const pWeak = db.prepare(`
+        SELECT player_id, phoneme, grapheme,
+               ROUND(error_weight, 2) errorWeight, correct, wrong
+          FROM phoneme_state
+         WHERE error_weight > 0
+         ORDER BY error_weight DESC
+         LIMIT 20
+      `).all();
+      const pWords = db.prepare(`
+        SELECT player_id, word, error_count errorCount, correct
+          FROM word_state
+         WHERE error_count > 0
+         ORDER BY error_count DESC, last_seen DESC, word
+         LIMIT 20
+      `).all();
+      const pct = (ok, n) => (n ? Math.round((ok / n) * 100) : 0);
+      const practiceStats = {
+        total: pTotals.n || 0,
+        correct: pTotals.ok || 0,
+        accuracy: pct(pTotals.ok || 0, pTotals.n || 0),
+        avgMs: pTotals.avgMs || 0,
+        players: pByPlayer.length,
+        byType: pByType.map((r) => ({ ...r, accuracy: pct(r.ok || 0, r.n) })),
+        byPlayer: pByPlayer.map((r) => ({ ...r, accuracy: pct(r.ok || 0, r.n) })),
+        daily: pDaily.map((r) => ({ ...r, accuracy: pct(r.ok || 0, r.n) })),
+        recent: pRecent,
+        weakPhonemes: pWeak,
+        troubleWords: pWords,
+      };
+      json(res, { summary, recent, daily, practice: practiceStats });
     } catch (e) { json(res, { error: e.message }, 500); }
     return;
   }
@@ -279,6 +344,9 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && pathname === '/api/dashboard/clear') {
     try {
       db.exec('DELETE FROM game_logs');
+      db.exec('DELETE FROM practice_events');
+      db.exec('DELETE FROM phoneme_state');
+      db.exec('DELETE FROM word_state');
       json(res, { success: true });
     } catch (e) { json(res, { error: e.message }, 500); }
     return;

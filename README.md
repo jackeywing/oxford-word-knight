@@ -126,6 +126,36 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 - `GET /api/words?level=G1` - 随机获取10个单词
 - `GET /api/stats` - 查看字库统计
 - `POST /api/import` - 导入CSV字库
+- `GET /api/dashboard` — 后台看板数据（`summary` / `recent` / `daily` / `practice`）
+- `GET /api/dashboard/clear` — 清空 `game_logs` 与三张特训表
+
+## 📊 后台数据看板
+
+浏览器打开 **http://localhost:3000/dashboard**（同 `/admin`）。
+
+| 区块 | 内容 | 数据源 |
+|---|---|---|
+| 📥 上传字库 CSV | 导入 `word,hint,sentence` | `words` |
+| 🏆 角色总览 | 局数 / 总分 / 均分 / 最高连击 / 对错超时 | `game_logs` |
+| 📅 每日统计 | 按天聚合 | `game_logs` |
+| 📜 最近闯关 | 最近 50 局明细 | `game_logs` |
+| 🎧 **Phonics 总览** | 总答题 / 正确率 / 平均用时 / 参与角色 | `practice_events` |
+| 📊 **分题型统计** | 四类题型各自的题数、正确率（带进度条）、平均用时 | `practice_events` |
+| 👤 **分角色（玩家）** | 每个 player 的题数、正确率、耗时、最后活动 | `practice_events` |
+| 🎯 **薄弱音素 Top 20** | 音素 / 字母组合 / 错误权重 / 对错次数 | `phoneme_state` |
+| 📕 **易错词 Top 20** | 错得最多的词 | `word_state` |
+| 📜 **最近答题日志** | 最近 80 条逐题记录（题型 / 题目 / 考点 / 对错 / 用时） | `practice_events` |
+
+`practice` 块字段：`total / correct / accuracy / avgMs / players / byType / byPlayer / daily / recent / weakPhonemes / troubleWords`。
+
+## 🚀 GitHub Pages 静态版
+
+```bash
+npm run pages     # 重新生成 docs/phonics.html（内嵌引擎 + 164 词 + localStorage）
+```
+
+- `docs/index.html` — 单词冒险（164 词，含人物台词过滤）
+- `docs/phonics.html` — 音素特训（纯前端，零后端依赖，构建带语法自检）
 
 ## 项目结构
 ```
@@ -145,4 +175,4 @@ oxford-word-knight/
 - better-sqlite3 `^13` (SQLite数据库) — *v11 无法在 Node 26 编译，已升级*
 - csv-parse (CSV解析)
 
-> ⚠️ GitHub Pages 的 `docs/index.html` 是纯静态版，**不含特训**（特训依赖后端与学情库）。
+> ⚠️ 后台看板依赖 Node + SQLite，**GitHub Pages 静态版没有**（静态版学情存在浏览器 localStorage，可用特训页的「📈 我的学情」查看本人数据）。

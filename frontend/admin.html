@@ -31,6 +31,16 @@ input[type="file"] { padding:4px; border:2px dashed #8D6E63; cursor:pointer; fon
 .msg { font-size:0.38em; } .msg.ok{color:var(--green)} .msg.err{color:var(--red)}
 .stats { font-size:0.36em; color:#888; }
 .lnk { font-size:0.38em; color:#888; text-align:center; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
+.tile { background:#4A3020; border:2px solid #5D4037; padding:10px; text-align:center; }
+.tile .k { font-size:0.32em; color:#BCAAA4; margin-bottom:6px; }
+.tile .v { font-size:0.7em; color:var(--gold); }
+.tile .v.green { color:var(--green); } .tile .v.red { color:var(--red); }
+.bar { height:6px; background:#5D4037; position:relative; margin-top:3px; }
+.bar > i { display:block; height:100%; background:var(--green); }
+.chip { display:inline-block; padding:1px 5px; background:#1565C0; color:#fff; border-radius:2px; font-size:0.9em; }
+.t-syl{background:#7CB342;color:#fff} .t-pho{background:#8E24AA;color:#fff}
+.t-rule{background:#FB8C00;color:#fff} .t-sight{background:#00ACC1;color:#fff}
 .lnk a { color:#1565C0; }
 </style>
 </head>
@@ -70,6 +80,29 @@ input[type="file"] { padding:4px; border:2px dashed #8D6E63; cursor:pointer; fon
 <div class="panel"><table><thead><tr><th>时间</th><th>角色</th><th>级别</th><th>得分</th><th>连击</th><th>✅</th><th>❌</th><th>⏰</th></tr></thead>
   <tbody id="rec"><tr><td colspan="8">—</td></tr></tbody></table></div>
 
+<h2>🎧 Phonics 总览</h2>
+<div class="panel"><div class="tiles" id="pTotals"></div></div>
+
+<h2>📊 分题型统计</h2>
+<div class="panel"><table><thead><tr><th>题型</th><th>答题数</th><th>正确</th><th>正确率</th><th>平均用时</th></tr></thead>
+  <tbody id="pType"><tr><td colspan="5">—</td></tr></tbody></table></div>
+
+<h2>👤 分角色（玩家）</h2>
+<div class="panel"><table><thead><tr><th>玩家</th><th>答题数</th><th>正确率</th><th>平均用时</th><th>最后活动</th></tr></thead>
+  <tbody id="pPlayer"><tr><td colspan="5">—</td></tr></tbody></table></div>
+
+<h2>🎯 薄弱音素 Top 20</h2>
+<div class="panel"><table><thead><tr><th>玩家</th><th>音素</th><th>字母组合</th><th>错误权重</th><th>错</th><th>对</th></tr></thead>
+  <tbody id="pWeak"><tr><td colspan="6">—</td></tr></tbody></table></div>
+
+<h2>📕 易错词 Top 20</h2>
+<div class="panel"><table><thead><tr><th>玩家</th><th>单词</th><th>错误次数</th><th>答对次数</th></tr></thead>
+  <tbody id="pWords"><tr><td colspan="4">—</td></tr></tbody></table></div>
+
+<h2>📜 最近答题日志（80 条）</h2>
+<div class="panel"><table><thead><tr><th>时间</th><th>玩家</th><th>题型</th><th>题目</th><th>考点</th><th>结果</th><th>用时</th></tr></thead>
+  <tbody id="pRecent"><tr><td colspan="7">—</td></tr></tbody></table></div>
+
 <div class="lnk"><a href="/">🎮 返回游戏</a></div>
 </div>
 
@@ -88,8 +121,56 @@ async function rf() {
     const re = document.getElementById('rec');
     if(!d.recent||!d.recent.length){re.innerHTML='<tr><td colspan="8">暂无</td></tr>'}
     else re.innerHTML=d.recent.map(r=>`<tr><td>${r.created_at}</td><td>${r.character_name}</td><td><span class="badge ${r.level.toLowerCase()}">${r.level}</span></td><td class="gold">${r.score}</td><td>${r.max_combo}</td><td class="green">${r.words_correct}</td><td class="red">${r.words_wrong}</td><td>${r.words_timeout}</td></tr>`).join('');
+    renderPractice(d.practice || {});
   } catch(e) { console.error(e); }
 }
+const TYPE_LABEL = {
+  SYLLABLE_COUNTING:   ['音节计数', 't-syl'],
+  PHONEME_DISCRIMINATION: ['音素辨析', 't-pho'],
+  PHONICS_CONTEXT_MATCH:  ['拼读规则', 't-rule'],
+  SIGHT_WORD_FLASH:    ['视觉词闪现', 't-sight'],
+};
+const tLabel = t => (TYPE_LABEL[t] || [t, 't-syl']);
+const pctCls = v => v >= 70 ? 'green' : (v >= 40 ? 'gold' : 'red');
+const sec = ms => ms >= 1000 ? (ms / 1000).toFixed(1) + 's' : (ms || 0) + 'ms';
+
+function renderPractice(p) {
+  const set = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
+  const empty = (cols) => `<tr><td colspan="${cols}">暂无</td></tr>`;
+
+  set('pTotals', [
+    ['总答题数', p.total || 0, ''],
+    ['正确率', (p.accuracy || 0) + '%', pctCls(p.accuracy || 0)],
+    ['平均用时', sec(p.avgMs || 0), ''],
+    ['参与角色', p.players || 0, ''],
+  ].map(([k, v, c]) => `<div class="tile"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`).join(''));
+
+  set('pType', !p.byType || !p.byType.length ? empty(5) : p.byType.map(r => {
+    const [lab, cls] = tLabel(r.card_type);
+    return `<tr><td><span class="badge ${cls}">${lab}</span></td><td>${r.n}</td><td class="green">${r.ok}</td>
+      <td class="${pctCls(r.accuracy)}">${r.accuracy}%<div class="bar"><i style="width:${r.accuracy}%"></i></div></td>
+      <td>${sec(r.avgMs)}</td></tr>`;
+  }).join(''));
+
+  set('pPlayer', !p.byPlayer || !p.byPlayer.length ? empty(5) : p.byPlayer.map(r =>
+    `<tr><td>${r.player_id}</td><td>${r.n}</td><td class="${pctCls(r.accuracy)}">${r.accuracy}%</td>
+     <td>${sec(r.avgMs)}</td><td>${r.lastAt || ''}</td></tr>`).join(''));
+
+  set('pWeak', !p.weakPhonemes || !p.weakPhonemes.length ? empty(6) : p.weakPhonemes.map(r =>
+    `<tr><td>${r.player_id}</td><td class="gold">${r.phoneme}</td><td><span class="chip">${r.grapheme || '—'}</span></td>
+     <td class="red">${r.errorWeight}</td><td class="red">${r.wrong || 0}</td><td class="green">${r.correct || 0}</td></tr>`).join(''));
+
+  set('pWords', !p.troubleWords || !p.troubleWords.length ? empty(4) : p.troubleWords.map(r =>
+    `<tr><td>${r.player_id}</td><td class="gold">${r.word}</td><td class="red">${r.errorCount}</td><td class="green">${r.correct || 0}</td></tr>`).join(''));
+
+  set('pRecent', !p.recent || !p.recent.length ? empty(7) : p.recent.map(r => {
+    const [lab, cls] = tLabel(r.card_type);
+    return `<tr><td>${r.created_at}</td><td>${r.player_id}</td><td><span class="badge ${cls}">${lab}</span></td>
+      <td>${r.word || ''}</td><td>${r.focus || ''}</td>
+      <td class="${r.is_correct ? 'green' : 'red'}">${r.is_correct ? '✅' : '❌'}</td><td>${sec(r.response_ms)}</td></tr>`;
+  }).join(''));
+}
+
 async function clr() { if(!confirm('确认清空？'))return; await fetch(API+'/api/dashboard/clear'); rf(); }
 
 async function st() {
