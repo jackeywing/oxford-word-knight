@@ -37,6 +37,13 @@
     .header h1 .pick { font-size:1.2em; animation:pickBounce 1s ease infinite; }
     @keyframes pickBounce { 0%,100%{transform:translateY(0) rotate(-10deg)} 50%{transform:translateY(-4px) rotate(5deg)} }
 
+    .nav-tabs { display:flex; gap:6px; padding:8px; }
+    .tab { flex:1; text-align:center; text-decoration:none; font-family:inherit; font-size:0.46em;
+      padding:12px 10px; background:#E0C9A6; color:#5D4037; border:2px solid #8D6E63;
+      box-shadow:0 3px 0 #6D4C2E; transition:all 0.15s; line-height:1.4; }
+    .tab:hover { transform:translateY(-2px); box-shadow:0 5px 0 #6D4C2E; }
+    .tab.active { background:#FFD54F; color:#3E2723; border-color:#F9A825; box-shadow:0 3px 0 #C17900; }
+
     .char-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .char-row label { color:#3E2723; font-size:0.48em; }
     .char-card { width:52px; height:68px; background:#E0C9A6; border:2px solid #8D6E63; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 2px 0 #6D4C2E; transition:all 0.2s; }
@@ -128,12 +135,18 @@
     <h1><span class="pick">⛏️</span>Word-Knight</h1>
   </div>
 
+  <div class="mc-panel nav-tabs">
+    <a class="tab active" href="/">⛏️ Word Adventure</a>
+    <a class="tab" href="/practice">🎧 Phonics</a>
+  </div>
+
   <div class="mc-panel char-row">
     <label>角色:</label>
     <div class="char-card selected" id="charBiff" onclick="sel('biff')"><div class="face">👧🏻‍</div><div class="name">Biff</div></div>
     <div class="char-card" id="charChip" onclick="sel('chip')"><div class="face">🧒🏻</div><div class="name">Chip</div></div>
     <div class="char-card" id="charKipper" onclick="sel('kipper')"><div class="face">👦🏻</div><div class="name">Kipper</div></div>
     <div class="char-card" id="charWilma" onclick="sel('wilma')"><div class="face">👧🏽</div><div class="name">Wilma</div></div>
+    <div class="char-card" id="charFloppy" onclick="sel('floppy')"><div class="face">🐶</div><div class="name">Floppy</div></div>
   </div>
 
   <div class="hud">
@@ -157,6 +170,7 @@
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
     <button class="mc-btn" id="goBtn" onclick="go()">⚔️ 开始冒险</button>
     <button class="mc-btn blue" id="rstBtn" style="display:none;" onclick="rst()">🔄 重新开始</button>
+    <a class="mc-btn" href="/practice" style="text-decoration:none;background:#6A1B9A;border-color:#4A148C;box-shadow:0 4px 0 #4A148C;">🎧 音素特训</a>
   </div>
 </div>
 
@@ -164,8 +178,8 @@
 
 <script>
 const API='/api';
-const F={biff:'👧🏻‍',chip:'🧒🏻',kipper:'👦🏻',wilma:'👧🏽'};
-const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma'};
+const F={biff:'👧🏻‍',chip:'🧒🏻',kipper:'👦🏻',wilma:'👧🏽',floppy:'🐶'};
+const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma',floppy:'Floppy'};
 const N=8,TS=40;
 
 let lv='G2',ch='biff',qs=[],i=0,sc=0,cb=0,mc=0,xp=0,ti=null,tl=0,ls=[],aud=null;
@@ -308,7 +322,7 @@ function victory(){
   document.getElementById('rstBtn').style.display='inline-block';
 }
 
-async function load(){try{const r=await fetch(`${API}/challenges?level=${lv}&count=${N}`),d=await r.json();if(d.error||!d.length){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">⚠️ 字库为空</div>`;return false}if(d.length<4){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>`;return false}qs=d;return true}catch(e){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接</div>`;return false}}
+async function load(){try{const r=await fetch(`${API}/challenges?level=${lv}&count=${N}&character=${ch}`),d=await r.json();if(d.error||!d.length){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">⚠️ 字库为空</div>`;return false}if(d.length<4){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>`;return false}qs=d;return true}catch(e){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接</div>`;return false}}
 
 async function go(){const ok=await load();if(!ok)return;i=0;sc=0;cb=0;mc=0;xp=0;ls=[];tl=TS;clearInterval(ti);dn();mc_();hud();draw();document.getElementById('goBtn').style.display='none';document.getElementById('rstBtn').style.display='inline-block'}
 

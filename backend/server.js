@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const Database = require('better-sqlite3');
 const { parse } = require('csv-parse/sync');
+const createPractice = require('./practice');
 
 const PORT = process.env.PORT || 3000;
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'db.sqlite3');
@@ -36,6 +37,9 @@ db.exec(`
     created_at TEXT DEFAULT (datetime('now','localtime'))
   )
 `);
+
+// ── 音素 / 音节特训引擎 ──
+const practice = createPractice(db);
 
 // ── Helpers ──
 function setCORS(res) {
@@ -121,9 +125,18 @@ const server = http.createServer((req, res) => {
     if (!level || !['G1', 'G2'].includes(level)) level = 'G1';
     const limit = Math.min(Math.max(parseInt(count) || 8, 1), 30);
     try {
-      const words = db.prepare(
-        'SELECT id, word, hint, sentence FROM words WHERE oxford_level = ? ORDER BY RANDOM() LIMIT ?'
-      ).all(level, limit);
+      const ch = query.character;
+      let words = db.prepare(
+        'SELECT id, word, hint, sentence FROM words WHERE oxford_level = ? ORDER BY RANDOM()'
+      ).all(level);
+      if (ch) {
+        // 只保留「本角色出场」或「中立叙述」的句子，角色台词排前面
+        const mine = words.filter(w => practice.charactersIn(w.sentence).includes(ch));
+        const neutral = words.filter(w => practice.charactersIn(w.sentence).length === 0);
+        const filtered = mine.concat(neutral);
+        if (filtered.length >= limit) words = filtered;
+      }
+      words = words.slice(0, limit);
       if (!words.length)
         return json(res, { error: 'No words found for ' + level, words: [] });
       const challenges = words.map(w => {
@@ -267,6 +280,76 @@ const server = http.createServer((req, res) => {
     try {
       db.exec('DELETE FROM game_logs');
       json(res, { success: true });
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // ── GET /practice ── 音素 / 音节特训页面
+  if (req.method === 'GET' && (pathname === '/practice' || pathname === '/practice.html'))
+    return serveFile(res, 'frontend/practice.html', 'text/html; charset=utf-8');
+
+  // ── GET /api/practice/next?level=G1&type=syllable|phoneme|phonics|sight&player=biff ──
+  if (req.method === 'GET' && pathname === '/api/practice/next') {
+    try {
+      const card = practice.nextTask({
+        player: query.player || 'guest',
+        level: ['G1', 'G2'].includes(query.level) ? query.level : 'G1',
+        type: query.type,
+        character: query.character || '',
+      });
+      json(res, card);
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // ── POST /api/practice/answer  { player, card, response, response_ms } ──
+  if (req.method === 'POST' && pathname === '/api/practice/answer') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => {
+      try {
+        const { player, card, response, response_ms } = JSON.parse(body);
+        if (!card || card.correct === undefined)
+          return json(res, { error: 'card required' }, 400);
+        const result = practice.answer({ player, card, response, response_ms });
+        json(res, result);
+      } catch (e) { json(res, { error: e.message }, 400); }
+    });
+    return;
+  }
+
+  // ── GET /api/practice/characters ── 牛津树人物清单（含 Floppy）
+  if (req.method === 'GET' && pathname === '/api/practice/characters') {
+    json(res, Object.entries(practice.CHARACTERS).map(([id, c]) => ({ id, ...c })));
+    return;
+  }
+
+  // ── GET /api/practice/profile?player=biff ──
+  if (req.method === 'GET' && pathname === '/api/practice/profile') {
+    try { json(res, practice.profile(query.player || 'guest')); }
+    catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // ── GET /api/practice/recommend?level=G1&player=biff ──
+  if (req.method === 'GET' && pathname === '/api/practice/recommend') {
+    try {
+      json(res, practice.recommend(
+        query.player || 'guest',
+        ['G1', 'G2'].includes(query.level) ? query.level : 'G1'
+      ));
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // ── GET /api/practice/reset?player=biff ── 清空该玩家的学情
+  if (req.method === 'GET' && pathname === '/api/practice/reset') {
+    try {
+      const p = query.player || 'guest';
+      db.prepare('DELETE FROM phoneme_state WHERE player_id = ?').run(p);
+      db.prepare('DELETE FROM word_state WHERE player_id = ?').run(p);
+      db.prepare('DELETE FROM practice_events WHERE player_id = ?').run(p);
+      json(res, { success: true, player: p });
     } catch (e) { json(res, { error: e.message }, 500); }
     return;
   }

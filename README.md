@@ -44,6 +44,84 @@ curl -X POST http://localhost:3000/api/import \
   --data-binary @sample-words.csv
 ```
 
+## 🎧 音素 · 音节特训（practice.html）
+
+在原有拼写闯关之外，新增一条"语音意识"练习线，入口在主页面底部的 **🎧 音素特训** 按钮，或直接访问 `/practice`。
+
+### 四种题型
+
+| 类型 | 说明 | 判定 |
+|---|---|---|
+| `SYLLABLE_COUNTING` 音节计数 | 看单词 / 听发音，数音节，拍手读 | 选数字（正确答案 ±1 为干扰项） |
+| `PHONEME_DISCRIMINATION` 音素辨析 | 听发音，在最小对立对中二选一 | ship / sheep、right / light … |
+| `PHONICS_CONTEXT_MATCH` 拼读规则 | 牛津树原句挖空，选同规则家族词 | 字母组合 sh/ch/th/ee/igh… |
+| `SIGHT_WORD_FLASH` 视觉词闪现 | 单词闪现 800ms 后消失，选中文意思 | Dolch 高频词 |
+
+发音用浏览器原生 **Web Speech API**（`speechSynthesis`，en-GB），无需音频文件。
+
+### 人物与题干一致性
+
+两个模块顶部都有常驻切换标签 **`⛏️ Word Adventure` / `🎧 Phonics`**。
+
+角色栏共 5 个牛津树形象：**Biff · Chip · Kipper · Wilma · Floppy（宠物狗）**。
+
+出题时会读取句子里出现的人名（`charactersIn()`）：
+
+| 句子 | 在 Biff 名下 | 在 Floppy 名下 |
+|---|---|---|
+| `This book is for you, said Biff.` | ✅ 本人台词，优先抽中 | ❌ 不出现 |
+| `Floppy ran out of the garden.` | ❌ 不出现 | ✅ 本人台词，优先抽中 |
+| `They walked across the old bridge.` | ✅ 旁白，兜底 | ✅ 旁白，兜底 |
+
+- **绝不**把他人专属台词放进当前角色（`Biff 名下不会出现 Wilma 的句子`）
+- 台词归属优先：同一规则内若有本人出场句，权重 ×3，尽量让角色"说自己说过的话"
+- 过滤后若不足 4 条，自动回退全库，保证永远出得满 8 题
+
+> 当前字库中 164 条句子：**56 条含人名、108 条为旁白**。Floppy 只有 4 句（`out / asleep / brown / dog`），
+> 若想让宠物戏份更足，往词库 CSV 里补含 `Floppy` 的句子即可，无需改代码。
+
+
+### 反馈闭环（核心）
+
+```
+出题（按薄弱项加权） → 答题 → 即时反馈 + 讲解 → 写回学情表 → 下一题更偏向薄弱项 → 学情页展示 + 靶向推荐
+```
+
+- **答错**：给出正确切分 / 音素对比 / 规则家族词，`phoneme_state.error_weight` **累加**
+- **答对**：`error_weight` **回落**（秒答回落更多），形成正负双向调节
+- **推荐**：按权重最高的字母组合，从当前字库中挑出全部含该组合的词（等价"诊断即推书"）
+- **每轮 8 题**，固定覆盖 4 种题型各 2 次
+
+### 新增 API
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/practice` | 特训页面 |
+| GET | `/api/practice/next?level=G2&type=phoneme&player=biff` | 出题（type 可选，缺省随机） |
+| POST | `/api/practice/answer` | `{player, card, response, response_ms}` → 判定 + 反馈 + 写回学情 |
+| GET | `/api/practice/profile?player=biff` | 学情画像（薄弱音素 / 困难词 / 正确率） |
+| GET | `/api/practice/recommend?level=G2&player=biff` | 靶向回流推荐 |
+| GET | `/api/practice/reset?player=biff` | 清空该玩家学情 |
+
+### 新增数据表
+
+```sql
+phoneme_state(player_id, phoneme, grapheme, error_weight, correct, wrong, last_seen)
+word_state(player_id, word, error_count, correct, expected, actual, last_seen)
+practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, created_at)
+```
+
+> 原设计方案基于 Neo4j 知识图谱；本项目是 SQLite，故用上述关系表等价建模
+> （`phoneme_state.error_weight` ≈ `STRUGGLES_WITH`，`practice_events` ≈ 事件流）。
+> 出题只用**当前字库里的真实单词**，未引入外部词表。
+
+### 音节切分准确率
+
+内置启发式切分（元音组 + 辅音丛归属 + 词尾静音 e + C+le 规则）+ 常见不规则词覆盖表。
+对 60 个常用牛津词汇实测 **60/60 = 100%**（见 `test_syllable.js` 口径）。
+
+---
+
 ## API
 - `GET /api/words?level=G1` - 随机获取10个单词
 - `GET /api/stats` - 查看字库统计
@@ -53,14 +131,18 @@ curl -X POST http://localhost:3000/api/import \
 ```
 oxford-word-knight/
 ├── backend/
-│   └── server.js       # Node.js 后端
+│   ├── server.js       # Node.js 后端
+│   └── practice.js     # 音素/音节特训引擎
 ├── frontend/
-│   └── index.html      # 游戏前端
+│   ├── index.html      # 游戏前端
+│   └── practice.html   # 音素·音节特训
 ├── sample-words.csv    # 示例字库
 └── package.json
 ```
 
 ## 依赖
-- Node.js v18+
-- better-sqlite3 (SQLite数据库)
+- Node.js v18+（已在 v26 验证）
+- better-sqlite3 `^13` (SQLite数据库) — *v11 无法在 Node 26 编译，已升级*
 - csv-parse (CSV解析)
+
+> ⚠️ GitHub Pages 的 `docs/index.html` 是纯静态版，**不含特训**（特训依赖后端与学情库）。
