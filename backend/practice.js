@@ -596,14 +596,17 @@ module.exports = function createPractice(db) {
   function recommend(player, level) {
     const p = player || 'guest';
     const bank = wordsInBank(level);
-    // 只有带字母组合的薄弱项才能回到词库层面做匹配
-    const weak = db.prepare(`
+    // 诊断（focus）与匹配（找词）要分开：
+    //   allWeak —— 所有薄弱音素，含没有字母组合的（如 /ʃ/），用于告诉孩子「你弱在哪」
+    //   weak    —— 其中带字母组合的，才可能回到词库层面匹配到词
+    const allWeak = db.prepare(`
       SELECT phoneme, grapheme, error_weight FROM phoneme_state
-       WHERE player_id = ? AND error_weight > 0 AND grapheme <> ''
+       WHERE player_id = ? AND error_weight > 0
        ORDER BY error_weight DESC LIMIT 3
     `).all(p);
+    const weak = allWeak.filter((w) => w.grapheme);
 
-    if (!weak.length) {
+    if (!allWeak.length) {
       return troubleWordFallback(p, level)
         || { reason: '还没有明显薄弱点，继续按进度练习就好', focus: [], words: [] };
     }
@@ -619,15 +622,20 @@ module.exports = function createPractice(db) {
         });
       }
     }
-    // 薄弱组合在本级字库里一个词都没有 → 退回"错过的词"，不要返回空推荐
+    const focus = allWeak.map((w) => ({
+      grapheme: w.grapheme || '', phoneme: w.phoneme, weight: Math.round(w.error_weight * 100) / 100,
+    }));
+
+    // 薄弱组合在本级字库里一个词都没有 → 退回"错过的词"，但诊断结论不能丢：
+    // 孩子确实有这个薄弱点，focus 必须照常给出，否则 UI 会显示"没有焦点"
     if (!picked.length) {
       const fb = troubleWordFallback(p, level);
-      if (fb) return fb;
+      if (fb) return { ...fb, focus };
     }
 
     return {
       reason: reasons.length ? '优先补这些音：' + reasons.join('；') : '继续巩固',
-      focus: weak.map((w) => ({ grapheme: w.grapheme, phoneme: w.phoneme, weight: Math.round(w.error_weight * 100) / 100 })),
+      focus,
       words: picked.slice(0, 12),
     };
   }
