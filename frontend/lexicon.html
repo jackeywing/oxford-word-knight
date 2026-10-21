@@ -104,10 +104,11 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
     <thead><tr>
       <th class="c" style="width:38px;">#</th>
       <th>单词</th><th class="c" style="width:60px;">级别</th>
+      <th class="c" style="width:56px;">stage</th>
       <th class="c" style="width:60px;">音节</th><th class="c" style="width:60px;">字母</th>
       <th>音素组合</th><th>提示</th><th>所在句</th>
     </tr></thead>
-    <tbody id="rows"><tr><td colspan="8" class="c">加载中…</td></tr></tbody>
+    <tbody id="rows"><tr><td colspan="9" class="c">加载中…</td></tr></tbody>
   </table>
 </div>
 
@@ -178,7 +179,7 @@ async function load(){
   try{
     const r = await fetch('/api/lexicon');
     DATA = await r.json();
-    if(DATA.error){ document.getElementById('rows').innerHTML = '<tr><td colspan="8" class="c red">'+DATA.error+'</td></tr>'; return; }
+    if(DATA.error){ document.getElementById('rows').innerHTML = '<tr><td colspan="9" class="c red">'+DATA.error+'</td></tr>'; return; }
     renderStats(); applyFilter();
   }catch(e){
     document.getElementById('rows').innerHTML = '<tr><td colspan="8" class="c red">加载失败：'+e.message+'</td></tr>';
@@ -214,6 +215,9 @@ function renderStats(){
       const w = Math.round(v/maxL*80);
       return `<span class="gold">${k.toUpperCase()}</span> <span class="bar" style="width:${w}px"></span> ${v}`;
     }).join(' &nbsp; ');
+
+  document.getElementById('distLevel').innerHTML += ' &nbsp;｜&nbsp; <b class="gold">stage</b>：' +
+    Object.entries(s.byStage||{}).sort().map(([k,v])=>`${k} ${v} 条`).join(' &nbsp; ');
 
   const dw = document.getElementById('dupWarn');
   if(s.duplicates.length){
@@ -257,6 +261,7 @@ function applyFilter(){
       <td class="c dim">${i+1}</td>
       <td class="${isDup?'dup':''}">${w.word}${isDup?' ⚠️':''}${w.isPhrase?' <span class="badge phr">短语</span>':''}${(UWMAP.get(String(w.word).toLowerCase())?' <span class="badge ph" title="我的重点生词">★'+UWMAP.get(String(w.word).toLowerCase())+'</span>':'')}</td>
       <td class="c"><span class="badge ${w.oxford_level.toLowerCase()}">${w.oxford_level}</span></td>
+      <td class="c ${w.stage?'gold':'dim'}">${w.stage?('S'+w.stage):'—'}</td>
       <td class="c">${w.syllables}</td>
       <td class="c">${w.letters}</td>
       <td>${ph}</td>

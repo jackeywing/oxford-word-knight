@@ -301,7 +301,7 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && pathname === '/api/lexicon') {
     try {
       const rows = db.prepare(
-        'SELECT id, word, hint, sentence, oxford_level FROM words ORDER BY oxford_level, LOWER(word)'
+        'SELECT id, word, hint, sentence, oxford_level, stage, pos FROM words ORDER BY oxford_level, LOWER(word)'
       ).all();
       const byWord = new Map();
       for (const r of rows) {
@@ -339,6 +339,7 @@ const server = http.createServer((req, res) => {
         letters,
         withSentence: rows.filter((r) => String(r.sentence).trim()).length,
         withCharacter: rows.filter((r) => practice.charactersIn(r.sentence).length > 0).length,
+        byStage: rows.reduce((a, r) => { const k = r.stage ? 'S' + r.stage : '未分级'; a[k] = (a[k] || 0) + 1; return a; }, {}),
       };
 
       const words = rows.map((r) => ({
