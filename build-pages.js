@@ -140,9 +140,12 @@ function genSyllable(p, level, character) {
     const ph = phonemesOf(r.word);
     const hit = ph.filter(x => weakSet.has(x.grapheme)).length;
     const syl = syllableCount(r.word);
-    return { row: r, syl, ph, score: 1 + syl * 0.8 + hit * 1.5 + Math.random() * 0.8 };
+    return { row: r, syl, ph, score: 1 + syl * 0.8 + hit * 1.5 + prioWeight(r.word) * 3 + Math.random() * 0.8 };
   }).sort((a, b) => b.score - a.score);
-  const pick = scored[Math.floor(Math.random() * Math.min(5, scored.length))];
+  // 优先级：若榜首就是人工重点生词，60% 直接取它（否则仍从前 5 随机，保留多样性）
+  const pick = (prioWeight(scored[0].row.word) > 0 && Math.random() < 0.6)
+    ? scored[0]
+    : scored[Math.floor(Math.random() * Math.min(5, scored.length))];
   const n = pick.syl, opts = [];
   if (n > 1) opts.push(n - 1);
   opts.push(n + 1);
@@ -208,7 +211,11 @@ function genPhonics(p, level, character) {
   const hitsSingle = preferred.filter(r => single.test(String(r.word).trim()));
   const poolSingle = bank.filter(r => single.test(String(r.word).trim()));
   const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);
-  const targetRow = usePool[Math.floor(Math.random() * usePool.length)];
+  // 优先词在该规则内命中时，优先当目标词
+  const _prioHits = usePool.filter((r) => prioWeight(r.word) > 0);
+  const targetRow = (_prioHits.length && Math.random() < 0.6)
+    ? _prioHits[Math.floor(Math.random() * _prioHits.length)]
+    : usePool[Math.floor(Math.random() * usePool.length)];
   const target = targetRow.word;
   const sameRule = usePool.filter(r => norm(r.word) !== norm(target)).slice(0, 2);
   const decoys = poolSingle.filter(r => !norm(r.word).includes(chosen.pt.grapheme)).slice(0, 1);
@@ -251,11 +258,47 @@ function genSight(p, level, character) {
   };
 }
 
-function nextTask(p, level, type, character) {
+function genTask(p, level, type, character) {
   const T = ['syllable', 'phoneme', 'phonics', 'sight'].indexOf(type) >= 0 ? type
     : ['syllable', 'phoneme', 'phonics', 'sight'][Math.floor(Math.random() * 4)];
   const f = { syllable: genSyllable, phoneme: genPhoneme, phonics: genPhonics, sight: genSight }[T];
   return f(p, level, character) || genSyllable(p, level, character);
+}
+
+/* 线上版的人工重点生词：存在 localStorage（与 lexicon.html 同源共享） */
+const PRIO_KEY = 'owk_user_words';
+function priorityWords() {
+  try {
+    return (JSON.parse(localStorage.getItem(PRIO_KEY) || '[]') || [])
+      .map((u) => ({ w: String(u.word || '').trim().toLowerCase(), weight: Number(u.weight) || 3 }))
+      .filter((x) => x.w);
+  } catch (e) { return []; }
+}
+
+function prioWeight(word) {
+  const k = String(word || '').trim().toLowerCase();
+  if (!k) return 0;
+  const hit = priorityWords().find((x) => x.w === k);
+  return hit ? hit.weight : 0;
+}
+
+function nextTask(p, level, type, character) {
+  const prio = priorityWords();
+  if (!prio.length) return genTask(p, level, type, character);
+
+  const set = new Set(prio.map((x) => x.w));
+  const keyOf = (c) => String(c && (c.word || c.correct || c.audio_text) || '').trim().toLowerCase();
+  const first = genTask(p, level, type, character);
+  if (!first || set.has(keyOf(first))) return first;
+
+  // 约 45% 的题目强制落到人工重点生词上（重试几次，抽不到就用原题）
+  if (Math.random() < 0.45) {
+    for (let k = 0; k < 12; k++) {
+      const c = genTask(p, level, type, character);
+      if (c && set.has(keyOf(c))) return c;
+    }
+  }
+  return first;
 }
 
 /* ---- 判定 + 学情写回 ---- */
@@ -470,12 +513,21 @@ console.log('word bank embedded:', BANK.length, 'words');
     // 数据内嵌
     .replace("try{\n    const r = await fetch('/api/lexicon');\n    DATA = await r.json();",
              'try{\n    DATA = LEXICON;')
-    // 静态版不能逐词改权重：先把这个函数换成提示桩，
-    // 否则它内部的 /api/user-words/delete 会被下面的 delUserWord 规则误匹配
+    // 静态版：逐词改权重写 localStorage（同源，游戏页会读它）
     .replace(/async function setManualWeight\(word, val\)\{[\s\S]*?\n\}\n/,
-      "async function setManualWeight(){ const m=document.getElementById('uwMsg');"
-      + " m.textContent='⚠️ 线上静态版无法调整权重，请用本地 http://localhost:3000/lexicon';"
-      + " m.className='note red'; }\n")
+      "async function setManualWeight(word, val){\n"
+      + "  const v = Number(val) || 0;\n"
+      + "  if(v > 0) uwAdd({ word, weight: v }); else uwDel(word);\n"
+      + "  const hit = (DATA.words||[]).find(w => String(w.word).toLowerCase() === String(word).toLowerCase());\n"
+      + "  if(hit) hit.manualWeight = v > 0 ? v : 0;\n"
+      + "  if(v > 0) UWMAP.set(String(word).toLowerCase(), v); else UWMAP.delete(String(word).toLowerCase());\n"
+      + "  await loadUserWords(); applyFilter();\n"
+      + "  const m=document.getElementById('uwMsg');\n"
+      + "  m.textContent = v > 0\n"
+      + "    ? '✅ 「'+word+'」手动权重 = '+v+'★（已存本浏览器，刷新本页/游戏页立即生效）'\n"
+      + "    : '✓ 已取消「'+word+'」的手动权重';\n"
+      + "  m.className = 'note ' + (v > 0 ? 'green' : 'dim');\n"
+      + "}\n")
     // 人工生词 → localStorage
     .replace("const r = await fetch('/api/user-words'); const d = await r.json();",
              'const d = { words: uwLoad() };')
@@ -486,13 +538,11 @@ console.log('word bank embedded:', BANK.length, 'words');
     // 静态站没有后端：文案必须如实说明"只存在本浏览器"
     // 顶部横幅：静态版不影响任何出题
     .replace(/<div class="banner" id="scopeBanner">[\s\S]*?<\/div>/,
-      '<div class="banner warn">⚠️ <b>这是线上静态页（GitHub Pages）</b>：这里<b>不能影响出题</b>。'
-      + '页面数据在构建时写死，任何权重调整都不会改变线上题目；'
-      + '要改线上出题必须「重新构建 + 推送」。'
-      + '<br>✅ 真正影响出题的是本地后台 <code>localhost:3000/lexicon</code>（以及它读取的 SQLite）。</div>')
-    // 手动权重列在静态版只读
-    .replace(/<td class="c"><input class="winput"[\s\S]*?<\/td>/,
-      "<td class='c dim'>${w.manualWeight ? ('★' + w.manualWeight) : '—'}</td>")
+      '<div class="banner">✅ <b>线上版：权重存在你当前这个浏览器里（localStorage）</b>，'
+      + '和游戏页同源，<b>改完立刻影响本浏览器上的出题</b>（最多占每轮 40%）。'
+      + '<br>⚠️ 换设备 / 换浏览器 / 清缓存后失效；要全局生效请用本地后台 '
+      + '<code>localhost:3000/lexicon</code> 或重新构建推送。</div>')
+    // 手动权重列保持可编辑（写 localStorage）
     .replace('录入后该词会同步进主词库，并在每轮答题中优先出现（最多占 40%）。',
              '⚠️ 静态版没有后端：这里录入的生词<b>只保存在当前浏览器</b>，用于自己核对清单，不会进入线上题库。要真正影响出题，请用本地 http://localhost:3000/lexicon 。')
     .replace("msg.textContent = '✅ 已加入「' + word + '」，每轮答题会优先出现';",

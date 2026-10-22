@@ -239,7 +239,30 @@ async function c_load() {
         if (seenW.has(k)) return false; seenW.add(k); return true; }); }
     if (!pool.length) { document.getElementById('chArea').innerHTML = '<div style="text-align:center;padding:30px;color:#C62828;">⚠️ 字库为空</div>'; return false; }
     if (pool.length < 4) { document.getElementById('chArea').innerHTML = '<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>'; return false; }
+    // 先打乱，再插优先词——顺序反了会被洗掉（早期 bug）
     c_shuffle(pool);
+
+    // 线上版人工重点生词（lexicon.html 写入的 localStorage，同源共享）
+    // 跨级别取：给 G1 的词加了权重，玩 G2 时也该出现
+    try {
+      const _prio = (JSON.parse(localStorage.getItem('owk_user_words') || '[]') || [])
+        .map(u => ({ w: String(u.word || '').trim().toLowerCase(), weight: Number(u.weight) || 3 }))
+        .filter(x => x.w)
+        .sort((a, b) => b.weight - a.weight);
+      if (_prio.length) {
+        const _quota = Math.max(1, Math.ceil(N * 0.4));
+        const _picked = [];
+        for (const p of _prio.slice(0, _quota)) {
+          const hit = WORDS.find(w => String(w.word).trim().toLowerCase() === p.w);
+          if (hit && !_picked.some(x => String(x.word).toLowerCase() === p.w)) _picked.push(hit);
+        }
+        if (_picked.length) {
+          const _ids = new Set(_picked.map(x => String(x.word).toLowerCase()));
+          pool = _picked.concat(pool.filter(w => !_ids.has(String(w.word).trim().toLowerCase())));
+        }
+      }
+    } catch (e) { /* localStorage 不可用则忽略 */ }
+
     pool = pool.slice(0, N);
     qs = pool.map(w => { const cz = c_makeCloze(w.word); const clue = w.sentence ? c_sentenceWithCloze(w.sentence, w.word, cz) : '____ (' + w.hint + ')'; return { word: w.word, hint: w.hint, sentence: w.sentence || '', clue, blanked: cz.blanked, hidden: cz.hidden, answerLen: cz.answerLen }; });
     return true;

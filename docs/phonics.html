@@ -343,9 +343,12 @@ function genSyllable(p, level, character) {
     const ph = phonemesOf(r.word);
     const hit = ph.filter(x => weakSet.has(x.grapheme)).length;
     const syl = syllableCount(r.word);
-    return { row: r, syl, ph, score: 1 + syl * 0.8 + hit * 1.5 + Math.random() * 0.8 };
+    return { row: r, syl, ph, score: 1 + syl * 0.8 + hit * 1.5 + prioWeight(r.word) * 3 + Math.random() * 0.8 };
   }).sort((a, b) => b.score - a.score);
-  const pick = scored[Math.floor(Math.random() * Math.min(5, scored.length))];
+  // 优先级：若榜首就是人工重点生词，60% 直接取它（否则仍从前 5 随机，保留多样性）
+  const pick = (prioWeight(scored[0].row.word) > 0 && Math.random() < 0.6)
+    ? scored[0]
+    : scored[Math.floor(Math.random() * Math.min(5, scored.length))];
   const n = pick.syl, opts = [];
   if (n > 1) opts.push(n - 1);
   opts.push(n + 1);
@@ -411,7 +414,11 @@ function genPhonics(p, level, character) {
   const hitsSingle = preferred.filter(r => single.test(String(r.word).trim()));
   const poolSingle = bank.filter(r => single.test(String(r.word).trim()));
   const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);
-  const targetRow = usePool[Math.floor(Math.random() * usePool.length)];
+  // 优先词在该规则内命中时，优先当目标词
+  const _prioHits = usePool.filter((r) => prioWeight(r.word) > 0);
+  const targetRow = (_prioHits.length && Math.random() < 0.6)
+    ? _prioHits[Math.floor(Math.random() * _prioHits.length)]
+    : usePool[Math.floor(Math.random() * usePool.length)];
   const target = targetRow.word;
   const sameRule = usePool.filter(r => norm(r.word) !== norm(target)).slice(0, 2);
   const decoys = poolSingle.filter(r => !norm(r.word).includes(chosen.pt.grapheme)).slice(0, 1);
@@ -454,11 +461,47 @@ function genSight(p, level, character) {
   };
 }
 
-function nextTask(p, level, type, character) {
+function genTask(p, level, type, character) {
   const T = ['syllable', 'phoneme', 'phonics', 'sight'].indexOf(type) >= 0 ? type
     : ['syllable', 'phoneme', 'phonics', 'sight'][Math.floor(Math.random() * 4)];
   const f = { syllable: genSyllable, phoneme: genPhoneme, phonics: genPhonics, sight: genSight }[T];
   return f(p, level, character) || genSyllable(p, level, character);
+}
+
+/* 线上版的人工重点生词：存在 localStorage（与 lexicon.html 同源共享） */
+const PRIO_KEY = 'owk_user_words';
+function priorityWords() {
+  try {
+    return (JSON.parse(localStorage.getItem(PRIO_KEY) || '[]') || [])
+      .map((u) => ({ w: String(u.word || '').trim().toLowerCase(), weight: Number(u.weight) || 3 }))
+      .filter((x) => x.w);
+  } catch (e) { return []; }
+}
+
+function prioWeight(word) {
+  const k = String(word || '').trim().toLowerCase();
+  if (!k) return 0;
+  const hit = priorityWords().find((x) => x.w === k);
+  return hit ? hit.weight : 0;
+}
+
+function nextTask(p, level, type, character) {
+  const prio = priorityWords();
+  if (!prio.length) return genTask(p, level, type, character);
+
+  const set = new Set(prio.map((x) => x.w));
+  const keyOf = (c) => String(c && (c.word || c.correct || c.audio_text) || '').trim().toLowerCase();
+  const first = genTask(p, level, type, character);
+  if (!first || set.has(keyOf(first))) return first;
+
+  // 约 45% 的题目强制落到人工重点生词上（重试几次，抽不到就用原题）
+  if (Math.random() < 0.45) {
+    for (let k = 0; k < 12; k++) {
+      const c = genTask(p, level, type, character);
+      if (c && set.has(keyOf(c))) return c;
+    }
+  }
+  return first;
 }
 
 /* ---- 判定 + 学情写回 ---- */

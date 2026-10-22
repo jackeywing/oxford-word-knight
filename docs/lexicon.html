@@ -56,7 +56,7 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
 <div class="wrap">
 <h1>🗂️ Word-Knight 词库浏览</h1>
 
-<div class="banner warn">⚠️ <b>这是线上静态页（GitHub Pages）</b>：这里<b>不能影响出题</b>。页面数据在构建时写死，任何权重调整都不会改变线上题目；要改线上出题必须「重新构建 + 推送」。<br>✅ 真正影响出题的是本地后台 <code>localhost:3000/lexicon</code>（以及它读取的 SQLite）。</div>
+<div class="banner">✅ <b>线上版：权重存在你当前这个浏览器里（localStorage）</b>，和游戏页同源，<b>改完立刻影响本浏览器上的出题</b>（最多占每轮 40%）。<br>⚠️ 换设备 / 换浏览器 / 清缓存后失效；要全局生效请用本地后台 <code>localhost:3000/lexicon</code> 或重新构建推送。</div>
 
 <div id="dupWarn"></div>
 
@@ -172,7 +172,19 @@ async function loadUserWords(){
 }
 
 /* 单个单词手动调权重：0/空 = 取消；1-5 = 优先出题权重 */
-async function setManualWeight(){ const m=document.getElementById('uwMsg'); m.textContent='⚠️ 线上静态版无法调整权重，请用本地 http://localhost:3000/lexicon'; m.className='note red'; }
+async function setManualWeight(word, val){
+  const v = Number(val) || 0;
+  if(v > 0) uwAdd({ word, weight: v }); else uwDel(word);
+  const hit = (DATA.words||[]).find(w => String(w.word).toLowerCase() === String(word).toLowerCase());
+  if(hit) hit.manualWeight = v > 0 ? v : 0;
+  if(v > 0) UWMAP.set(String(word).toLowerCase(), v); else UWMAP.delete(String(word).toLowerCase());
+  await loadUserWords(); applyFilter();
+  const m=document.getElementById('uwMsg');
+  m.textContent = v > 0
+    ? '✅ 「'+word+'」手动权重 = '+v+'★（已存本浏览器，刷新本页/游戏页立即生效）'
+    : '✓ 已取消「'+word+'」的手动权重';
+  m.className = 'note ' + (v > 0 ? 'green' : 'dim');
+}
 
 async function addUserWord(){
   const word = document.getElementById('uwWord').value.trim();
@@ -296,7 +308,9 @@ function applyFilter(){
       <td class="c"><span class="badge ${w.oxford_level.toLowerCase()}">${w.oxford_level}</span></td>
       <td class="c ${w.stage?'gold':'dim'}">${w.stage?('S'+w.stage):'—'}</td>
       <td class="c"><span class="wt ${w.weight.basis==='estimated'?'dim':'gold'}">${w.weight.value}</span><br><span class="badge ${w.weight.basis==='direct'?'w-direct':(w.weight.basis==='propagated'?'w-prop':'w-est')}">${w.weight.basis==='direct'?'直连':(w.weight.basis==='propagated'?'传播':'估算')}</span></td>
-      <td class='c dim'>${w.manualWeight ? ('★' + w.manualWeight) : '—'}</td>
+      <td class="c"><input class="winput" type="number" min="0" max="5" step="1" value="${w.manualWeight||''}" placeholder="—"
+        title="0/留空 = 取消手动加权；1-5 = 优先出题权重"
+        onchange="setManualWeight('${String(w.word).replace(/'/g,"\\'")}', this.value)"></td>
       <td class="c">${w.syllables}</td>
       <td class="c">${w.letters}</td>
       <td>${ph}</td>
