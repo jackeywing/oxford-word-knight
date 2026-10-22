@@ -657,6 +657,7 @@ async function nextCard(){
   card=await fetchCard(plan[i]);
   if(!card){renderError();return;}
   t0=Date.now();
+  tl=TS; flashUsed=0;
   renderCard();
   startTimer();
 }
@@ -705,6 +706,7 @@ function renderCard(){
     body=`${typeBadge(t)}
       <div class="ch-prompt">${card.prompt}</div>
       <div class="flash-word" id="flashW">${card.word}</div>
+      <button class="mc-btn blue" id="flashAgain" onclick="flashAgain()" style="display:none;">🔁 再看一次（不扣时间）</button>
       <div class="opts" id="opts" style="visibility:hidden;">
         ${card.options.map(o=>`<button class="opt wide" onclick="pick('${o}',this)">${o}</button>`).join('')}
       </div>`;
@@ -722,26 +724,55 @@ function renderCard(){
 
   if(t==='PHONEME_DISCRIMINATION') setTimeout(()=>speak(card.audio_text,0.75),320);
   if(t==='SIGHT_WORD_FLASH'){
-    setTimeout(()=>{
-      const w=document.getElementById('flashW');
-      if(w){ w.className='flash-hidden'; w.textContent='? ? ?'; }
-      const o=document.getElementById('opts'); if(o) o.style.visibility='visible';
-    }, card.flash_ms||800);
+    setTimeout(hideFlash, card.flash_ms||800);
   }
+}
+
+let tl=TS;   // 剩余秒数：放在模块级，回放视觉词时才能暂停/续跑
+
+function paintTimer(){
+  const b=document.getElementById('tbar'); if(!b) return;
+  b.style.width=(Math.max(tl,0)/TS*100)+'%';
+  b.style.background=tl<10?'#EF5350':(tl<20?'#FFA726':'#66BB6A');
+}
+
+/* ── 视觉词闪现：一次没看清可以回放同样时长再作答 ── */
+let flashUsed=0;
+
+function hideFlash(){
+  const w=document.getElementById('flashW');
+  if(w){ w.className='flash-hidden'; w.textContent='? ? ?'; }
+  const o=document.getElementById('opts'); if(o) o.style.visibility='visible';
+  const b=document.getElementById('flashAgain'); if(b && !answered) b.style.display='inline-block';
+  resumeTimer();
+}
+
+function flashAgain(){
+  if(answered) return;
+  const w=document.getElementById('flashW'); if(!w) return;
+  flashUsed++;
+  const b=document.getElementById('flashAgain'); if(b) b.style.display='none';
+  const o=document.getElementById('opts'); if(o) o.style.visibility='hidden';
+  pauseTimer();                         // 回放期间停表，避免"还没看清就超时"
+  w.className='flash-word'; w.textContent=card.word;
+  setTimeout(hideFlash, card.flash_ms||800);
 }
 
 function startTimer(){
   clearInterval(timerId);
-  let left=TS;
-  const bar=()=>document.getElementById('tbar');
+  paintTimer();
   timerId=setInterval(()=>{
-    left--;
-    const b=bar(); if(!b){clearInterval(timerId);return;}
-    b.style.width=(left/TS*100)+'%';
-    b.style.background=left<10?'#EF5350':(left<20?'#FFA726':'#66BB6A');
-    if(left<=0){clearInterval(timerId); if(!answered) pick(null,null,true);}
+    tl--;
+    if(!document.getElementById('tbar')){clearInterval(timerId);return;}
+    paintTimer();
+    if(tl<=0){clearInterval(timerId); if(!answered) pick(null,null,true);}
   },1000);
 }
+
+let timerPaused=false;
+function pauseTimer(){ clearInterval(timerId); timerPaused=true; }
+// 只有真的暂停过才续跑：首次闪现结束时表本来在跑，不能重启（会攒出额外的一拍）
+function resumeTimer(){ if(timerPaused && !answered){ timerPaused=false; startTimer(); } }
 
 /* ── 答题 ── */
 async function pick(val,btn,timeout=false){
