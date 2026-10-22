@@ -563,25 +563,55 @@ function pickVoice(gender){
   try{
     const all=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
     if(!all.length) return null;
-    const gb=all.filter(v=>/en[-_]GB/i.test(v.lang));
-    const pool=gb.length?gb:all;
+    // 关键：能用本地语音就别用网络语音。
+    // Chrome 的 "Google UK English Female/Male" 是网络语音，离线或网络受限时会**静默失败**——
+    // 表现就是"点了没声音、也没有报错"。macOS 自带语音（Daniel/Samantha…）是 localService，稳定。
+    const local=all.filter(v=>v.localService);
     const want=(v)=> gender==='male'
       ? (MALE_RE.test(v.name) && !FEMALE_RE.test(v.name))
       : FEMALE_RE.test(v.name);
-    return pool.find(want) || all.find(want) || pool[0];
+    for (const pool of [local, all]) {
+      if (!pool.length) continue;
+      const gb=pool.filter(v=>/en[-_]GB/i.test(v.lang));
+      const hit=gb.find(want) || pool.find(want);
+      if (hit) return hit;
+    }
+    return local[0] || all[0];
   }catch(e){ return null; }
 }
 
 function speak(text,rate=0.85){
   try{
-    if(!('speechSynthesis' in window)) return false;
-    speechSynthesis.cancel();
+    if(!('speechSynthesis' in window)){
+      if(typeof toast==='function') toast('⚠️ 这个浏览器不支持发音','bad');
+      return false;
+    }
     const prof=VOICE_PROFILE[ch]||VOICE_PROFILE.biff;
-    const u=new SpeechSynthesisUtterance(String(text));
-    u.lang='en-GB'; u.rate=rate; u.pitch=prof.pitch;
-    const v=pickVoice(prof.gender);
-    if(v){ u.voice=v; u.lang=v.lang; }
-    speechSynthesis.speak(u);
+    let retried=false;
+
+    const say=(useVoice,isRetry)=>{
+      const u=new SpeechSynthesisUtterance(String(text));
+      u.lang='en-GB'; u.rate=rate; u.pitch=prof.pitch;
+      if(useVoice){ u.voice=useVoice; u.lang=useVoice.lang||'en-GB'; }
+      // 指定语音出错 → 退回系统默认语音
+      u.onerror=()=>{ if(useVoice && !retried){ retried=true; say(null,true); } };
+      speechSynthesis.speak(u);
+      // 静默失败兜底：Chrome 有时不报错也不出声，700ms 后仍是空闲就换默认语音重来
+      if(!isRetry){
+        setTimeout(()=>{
+          if(!retried && !speechSynthesis.speaking && !speechSynthesis.pending){
+            retried=true; say(null,true);
+          }
+        },700);
+      }
+    };
+
+    // 只有在确实需要打断时才先 cancel+延迟；首次点击保持同步调用，避免破坏用户手势链
+    const busy = speechSynthesis.speaking || speechSynthesis.pending;
+    const v = pickVoice(prof.gender);
+    try{ console.log('[voice]', ch, prof.gender, '→', v ? (v.name+' / '+v.lang+' / local='+v.localService) : '系统默认', 'pitch='+prof.pitch); }catch(e){}
+    speechSynthesis.cancel();
+    if(busy) setTimeout(()=>say(v), 60); else say(v);
     return true;
   }catch(e){ return false; }
 }
