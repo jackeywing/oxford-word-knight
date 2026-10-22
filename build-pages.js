@@ -375,3 +375,95 @@ fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, 'phonics.html'), html, 'utf8');
 console.log('wrote docs/phonics.html', (html.length / 1024).toFixed(1) + ' KB');
 console.log('word bank embedded:', BANK.length, 'words');
+
+/* ═══════════════════════════════════════════════════════════
+   静态版词库浏览页 docs/lexicon.html
+   数据在构建期内嵌（与 /api/lexicon 同口径）；
+   人工生词改存 localStorage（静态站没有后端，无法共享）
+   ═══════════════════════════════════════════════════════════ */
+{
+  const LEX_ROWS = BANK.map((r, i) => {
+    const w = String(r.word).trim();
+    return {
+      id: i + 1,
+      word: w,
+      hint: r.hint || '',
+      sentence: r.sentence || '',
+      oxford_level: r.oxford_level || 'G2',
+      stage: Number(r.stage) || null,
+      syllables: practice.syllableCount(w),
+      letters: w.length,
+      isPhrase: /\s/.test(w),
+      phonemes: (() => { const t = w.toLowerCase().replace(/[^a-z]/g, ''); return practice.PHONEME_PATTERNS.filter((p) => t.includes(p.grapheme)).map((p) => p.grapheme); })(),
+      characters: practice.charactersIn(r.sentence),
+    };
+  });
+
+  const cnt = (arr, fn) => arr.reduce((a, x) => { const k = fn(x); a[k] = (a[k] || 0) + 1; return a; }, {});
+  const wordCount = new Map();
+  for (const r of LEX_ROWS) {
+    const k = r.word.toLowerCase();
+    wordCount.set(k, (wordCount.get(k) || 0) + 1);
+  }
+  const sylBuckets = { 1: 0, 2: 0, 3: 0, 4: 0, '5+': 0 };
+  for (const r of LEX_ROWS) { const n = Math.min(r.syllables, 5); sylBuckets[n] = (sylBuckets[n] || 0) + 1; }
+
+  const LEX_STATS = {
+    rows: LEX_ROWS.length,
+    unique: wordCount.size,
+    duplicates: [...wordCount.entries()].filter(([, n]) => n > 1).map(([word, count]) => ({ word, count })),
+    phrases: LEX_ROWS.filter((r) => r.isPhrase).length,
+    byLevel: cnt(LEX_ROWS, (r) => r.oxford_level),
+    byStage: cnt(LEX_ROWS, (r) => (r.stage ? 'S' + r.stage : '未分级')),
+    avgLen: Math.round((LEX_ROWS.reduce((a, r) => a + r.letters, 0) / LEX_ROWS.length) * 10) / 10,
+    syllables: sylBuckets,
+    letters: cnt(LEX_ROWS, (r) => String(r.word)[0].toLowerCase()),
+    withSentence: LEX_ROWS.filter((r) => r.sentence).length,
+    withCharacter: LEX_ROWS.filter((r) => r.characters.length > 0).length,
+  };
+
+  let lexTpl = fs.readFileSync(path.join(ROOT, 'frontend/lexicon.html'), 'utf8');
+  lexTpl = lexTpl
+    .replace(/<title>[^<]*<\/title>/, '<title>🗂️ Word-Knight 词库浏览</title>')
+    .replace(/href="\/"/g, 'href="./index.html"')
+    .replace(/href="\/practice"/g, 'href="./phonics.html"')
+    // 静态站没有数据看板，别留一个指向首页的假链接
+    .replace(/\s*<a href="\/dashboard">🛠️ 数据看板<\/a>/g, '')
+    .replace(/href="\/lexicon"/g, 'href="./lexicon.html"')
+    // 数据内嵌
+    .replace("try{\n    const r = await fetch('/api/lexicon');\n    DATA = await r.json();",
+             'try{\n    DATA = LEXICON;')
+    // 人工生词 → localStorage
+    .replace("const r = await fetch('/api/user-words'); const d = await r.json();",
+             'const d = { words: uwLoad() };')
+    .replace(/const r = await fetch\('\/api\/user-words', \{[\s\S]*?\n    \}\);\n    const d = await r\.json\(\);/,
+             'const d = uwAdd({ word, hint: document.getElementById("uwHint").value.trim(), sentence: document.getElementById("uwSent").value.trim(), weight: Number(document.getElementById("uwW").value) || 3 });')
+    .replace(/await fetch\('\/api\/user-words\/delete', \{[\s\S]*?\n  \}\);/,
+             'uwDel(word);')
+    // 静态站没有后端：文案必须如实说明"只存在本浏览器"
+    .replace('录入后该词会同步进主词库，并在每轮答题中优先出现（最多占 40%）。',
+             '⚠️ 静态版没有后端：这里录入的生词<b>只保存在当前浏览器</b>，用于自己核对清单，不会进入线上题库。要真正影响出题，请用本地 http://localhost:3000/lexicon 。')
+    .replace("msg.textContent = '✅ 已加入「' + word + '」，每轮答题会优先出现';",
+             "msg.textContent = '✅ 已记录「' + word + '」（仅本浏览器可见，不影响线上题库）';");
+
+  // 注入数据
+  const inject = `const LEXICON = ${JSON.stringify({ stats: LEX_STATS, words: LEX_ROWS })};\n`
+    + `/* 静态版：人工生词存浏览器本地 */\n`
+    + `function uwLoad(){ try{ return JSON.parse(localStorage.getItem('owk_user_words')||'[]'); }catch(e){ return []; } }\n`
+    + `function uwSave(a){ try{ localStorage.setItem('owk_user_words', JSON.stringify(a)); }catch(e){} }\n`
+    + `function uwAdd(o){ const a=uwLoad(); const k=String(o.word).trim().toLowerCase();\n`
+    + `  if(!k) return { error:'word 不能为空' };\n`
+    + `  const i=a.findIndex(x=>String(x.word).toLowerCase()===k);\n`
+    + `  const rec={ word:o.word, hint:o.hint||'', sentence:o.sentence||'', weight:o.weight||3, note:'' };\n`
+    + `  if(i>=0) a[i]=rec; else a.push(rec); uwSave(a); return { success:true, word:rec }; }\n`
+    + `function uwDel(w){ const a=uwLoad().filter(x=>String(x.word).toLowerCase()!==String(w).toLowerCase()); uwSave(a); }\n`;
+
+  lexTpl = lexTpl.replace('<script>', '<script>\n' + inject);
+
+  const lexScript = lexTpl.slice(lexTpl.indexOf('<script>') + 8, lexTpl.lastIndexOf('</script>'));
+  try { new Function(lexScript); } catch (e) { throw new Error('lexicon script syntax error: ' + e.message); }
+  if (lexTpl.includes("/api/")) console.warn('⚠️ lexicon 仍残留 /api/ 调用:', (lexTpl.match(/\/api\/[a-z-]+/g) || []).join(', '));
+
+  fs.writeFileSync(path.join(OUT, 'lexicon.html'), lexTpl, 'utf8');
+  console.log('wrote docs/lexicon.html', (lexTpl.length / 1024).toFixed(1) + ' KB', '|', LEX_STATS.rows, 'words');
+}
