@@ -31,6 +31,11 @@ tr:hover td{ background:#4A3020; }
 .badge.w-prop{ background:#EF6C00; color:#fff; }
 .badge.w-est{ background:#546E7A; color:#fff; }
 .wt{ font-size:1.05em; }
+.winput{ width:52px; font-family:inherit; font-size:0.95em; padding:3px 4px; text-align:center;
+  background:#2D1F0E; color:var(--gold); border:2px solid #5D4037; }
+.winput:focus{ outline:none; border-color:var(--gold); }
+.banner{ border:3px solid #2E7D32; background:#1B3A1B; padding:10px; margin-bottom:10px; font-size:0.38em; line-height:1.9; color:#C8E6C9; }
+.banner.warn{ border-color:#C62828; background:#3E1A1A; color:#FFCDD2; }
 .badge.phr{ background:#8D6E63; color:#fff; }
 .bar{ display:inline-block; height:8px; background:var(--green); vertical-align:middle; }
 .warn{ border:3px solid #C62828; background:#3E1A1A; padding:10px; margin-bottom:10px; font-size:0.38em; line-height:1.9; }
@@ -50,6 +55,11 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
 <body>
 <div class="wrap">
 <h1>🗂️ Word-Knight 词库浏览</h1>
+
+<div class="banner" id="scopeBanner">
+  ✅ <b>这是本地后台（localhost:3000）</b>：这里的权重调整<b>会真正影响出题</b>——
+  「我的重点生词」的权重被 <code>/api/challenges</code> 读取，每轮最多占 40% 的题目。
+</div>
 
 <div id="dupWarn"></div>
 
@@ -116,7 +126,8 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
       <th class="c" style="width:38px;">#</th>
       <th>单词</th><th class="c" style="width:60px;">级别</th>
       <th class="c" style="width:56px;">stage</th>
-      <th class="c" style="width:78px;">权重</th>
+      <th class="c" style="width:78px;">图谱权重</th>
+      <th class="c" style="width:66px;">手动★</th>
       <th class="c" style="width:60px;">音节</th><th class="c" style="width:60px;">字母</th>
       <th>音素组合</th><th>提示</th><th>所在句</th>
     </tr></thead>
@@ -150,6 +161,27 @@ async function loadUserWords(){
       <td class="dim">${w.note||''}</td>
       <td class="c"><button class="btn" style="background:#C62828;border-color:#B71C1C;padding:4px 8px;" onclick="delUserWord('${String(w.word).replace(/'/g,"\\'")}')">删除</button></td>
     </tr>`).join('');
+  }catch(e){ console.error(e); }
+}
+
+/* 单个单词手动调权重：0/空 = 取消；1-5 = 优先出题权重 */
+async function setManualWeight(word, val){
+  const v = Number(val) || 0;
+  try{
+    if(v <= 0){
+      await fetch('/api/user-words/delete', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ word }) });
+    } else {
+      await fetch('/api/user-words', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ word, weight: v }) });
+    }
+    // 就地更新，避免整表重绘丢失滚动位置
+    const hit = (DATA.words||[]).find(w => String(w.word).toLowerCase() === String(word).toLowerCase());
+    if(hit) hit.manualWeight = v > 0 ? v : 0;
+    if(v > 0) UWMAP.set(String(word).toLowerCase(), v); else UWMAP.delete(String(word).toLowerCase());
+    await loadUserWords();   // 同步刷新上方「我的重点生词」表
+    applyFilter();
+    const m=document.getElementById('uwMsg');
+    m.textContent = v > 0 ? `✅ 「${word}」手动权重 = ${v}★（会优先出现在每轮答题中）` : `✓ 已取消「${word}」的手动权重`;
+    m.className = 'note ' + (v > 0 ? 'green' : 'dim');
   }catch(e){ console.error(e); }
 }
 
@@ -288,6 +320,9 @@ function applyFilter(){
       <td class="c"><span class="badge ${w.oxford_level.toLowerCase()}">${w.oxford_level}</span></td>
       <td class="c ${w.stage?'gold':'dim'}">${w.stage?('S'+w.stage):'—'}</td>
       <td class="c"><span class="wt ${w.weight.basis==='estimated'?'dim':'gold'}">${w.weight.value}</span><br><span class="badge ${w.weight.basis==='direct'?'w-direct':(w.weight.basis==='propagated'?'w-prop':'w-est')}">${w.weight.basis==='direct'?'直连':(w.weight.basis==='propagated'?'传播':'估算')}</span></td>
+      <td class="c"><input class="winput" type="number" min="0" max="5" step="1" value="${w.manualWeight||''}" placeholder="—"
+        title="0/留空 = 取消手动加权；1-5 = 优先出题权重"
+        onchange="setManualWeight('${String(w.word).replace(/'/g,"\\'")}', this.value)"></td>
       <td class="c">${w.syllables}</td>
       <td class="c">${w.letters}</td>
       <td>${ph}</td>

@@ -31,6 +31,11 @@ tr:hover td{ background:#4A3020; }
 .badge.w-prop{ background:#EF6C00; color:#fff; }
 .badge.w-est{ background:#546E7A; color:#fff; }
 .wt{ font-size:1.05em; }
+.winput{ width:52px; font-family:inherit; font-size:0.95em; padding:3px 4px; text-align:center;
+  background:#2D1F0E; color:var(--gold); border:2px solid #5D4037; }
+.winput:focus{ outline:none; border-color:var(--gold); }
+.banner{ border:3px solid #2E7D32; background:#1B3A1B; padding:10px; margin-bottom:10px; font-size:0.38em; line-height:1.9; color:#C8E6C9; }
+.banner.warn{ border-color:#C62828; background:#3E1A1A; color:#FFCDD2; }
 .badge.phr{ background:#8D6E63; color:#fff; }
 .bar{ display:inline-block; height:8px; background:var(--green); vertical-align:middle; }
 .warn{ border:3px solid #C62828; background:#3E1A1A; padding:10px; margin-bottom:10px; font-size:0.38em; line-height:1.9; }
@@ -50,6 +55,8 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
 <body>
 <div class="wrap">
 <h1>🗂️ Word-Knight 词库浏览</h1>
+
+<div class="banner warn">⚠️ <b>这是线上静态页（GitHub Pages）</b>：这里<b>不能影响出题</b>。页面数据在构建时写死，任何权重调整都不会改变线上题目；要改线上出题必须「重新构建 + 推送」。<br>✅ 真正影响出题的是本地后台 <code>localhost:3000/lexicon</code>（以及它读取的 SQLite）。</div>
 
 <div id="dupWarn"></div>
 
@@ -116,7 +123,8 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
       <th class="c" style="width:38px;">#</th>
       <th>单词</th><th class="c" style="width:60px;">级别</th>
       <th class="c" style="width:56px;">stage</th>
-      <th class="c" style="width:78px;">权重</th>
+      <th class="c" style="width:78px;">图谱权重</th>
+      <th class="c" style="width:66px;">手动★</th>
       <th class="c" style="width:60px;">音节</th><th class="c" style="width:60px;">字母</th>
       <th>音素组合</th><th>提示</th><th>所在句</th>
     </tr></thead>
@@ -162,6 +170,9 @@ async function loadUserWords(){
     </tr>`).join('');
   }catch(e){ console.error(e); }
 }
+
+/* 单个单词手动调权重：0/空 = 取消；1-5 = 优先出题权重 */
+async function setManualWeight(){ const m=document.getElementById('uwMsg'); m.textContent='⚠️ 线上静态版无法调整权重，请用本地 http://localhost:3000/lexicon'; m.className='note red'; }
 
 async function addUserWord(){
   const word = document.getElementById('uwWord').value.trim();
@@ -285,6 +296,7 @@ function applyFilter(){
       <td class="c"><span class="badge ${w.oxford_level.toLowerCase()}">${w.oxford_level}</span></td>
       <td class="c ${w.stage?'gold':'dim'}">${w.stage?('S'+w.stage):'—'}</td>
       <td class="c"><span class="wt ${w.weight.basis==='estimated'?'dim':'gold'}">${w.weight.value}</span><br><span class="badge ${w.weight.basis==='direct'?'w-direct':(w.weight.basis==='propagated'?'w-prop':'w-est')}">${w.weight.basis==='direct'?'直连':(w.weight.basis==='propagated'?'传播':'估算')}</span></td>
+      <td class='c dim'>${w.manualWeight ? ('★' + w.manualWeight) : '—'}</td>
       <td class="c">${w.syllables}</td>
       <td class="c">${w.letters}</td>
       <td>${ph}</td>

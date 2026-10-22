@@ -145,20 +145,21 @@ const server = http.createServer((req, res) => {
         seenWord.add(k);
         return true;
       });
-      // 人工高权重生词优先占位：最多占本轮 40%，权重高的排前面
+      // 人工高权重生词优先占位：最多占本轮 40%，权重高的排前面。
+      // 注意：手动加权的词**不受当前 level 限制**——否则给 G1 的词加了权重，
+      // 玩 G2 时永远抽不到（之前 rabbit 就是这样消失的）。
       try {
-        const uw = db.prepare('SELECT word, weight FROM user_words').all();
-        if (uw.length) {
-          const wmap = new Map(uw.map((u) => [String(u.word).trim().toLowerCase(), Number(u.weight) || 3]));
+        const pri = db.prepare(`
+          SELECT w.id, w.word, w.hint, w.sentence, u.weight
+            FROM user_words u
+            JOIN words w ON LOWER(w.word) = LOWER(u.word)
+           ORDER BY u.weight DESC, RANDOM()
+        `).all();
+        if (pri.length) {
           const quota = Math.max(1, Math.ceil(limit * 0.4));
-          const pri = words
-            .filter((w) => wmap.has(String(w.word).trim().toLowerCase()))
-            .sort((a, b) => (wmap.get(b.word.trim().toLowerCase()) || 0) - (wmap.get(a.word.trim().toLowerCase()) || 0))
-            .slice(0, quota);
-          if (pri.length) {
-            const priIds = new Set(pri.map((p) => p.id));
-            words = pri.concat(words.filter((w) => !priIds.has(w.id)));
-          }
+          const picked = pri.slice(0, quota);
+          const priIds = new Set(picked.map((p) => p.id));
+          words = picked.concat(words.filter((w) => !priIds.has(w.id)));
         }
       } catch (e) { /* user_words 表可能尚未建立 */ }
 
@@ -256,7 +257,13 @@ const server = http.createServer((req, res) => {
         const hint = String(b.hint || '').trim();
         const sentence = String(b.sentence || '').trim();
         const note = String(b.note || '').trim();
-        const weight = Math.max(1, Math.min(5, Number(b.weight) || 3));
+        const raw = Number(b.weight);
+        // 权重 0（或空）表示"取消手动加权"，直接从表里移除
+        if (b.weight !== undefined && b.weight !== '' && (!raw || raw <= 0)) {
+          db.prepare('DELETE FROM user_words WHERE LOWER(word) = LOWER(?)').run(word);
+          return json(res, { success: true, removed: true });
+        }
+        const weight = Math.max(1, Math.min(5, raw || 3));
 
         db.prepare(`
           INSERT INTO user_words (word, hint, sentence, weight, note) VALUES (?, ?, ?, ?, ?)

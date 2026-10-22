@@ -470,6 +470,12 @@ console.log('word bank embedded:', BANK.length, 'words');
     // 数据内嵌
     .replace("try{\n    const r = await fetch('/api/lexicon');\n    DATA = await r.json();",
              'try{\n    DATA = LEXICON;')
+    // 静态版不能逐词改权重：先把这个函数换成提示桩，
+    // 否则它内部的 /api/user-words/delete 会被下面的 delUserWord 规则误匹配
+    .replace(/async function setManualWeight\(word, val\)\{[\s\S]*?\n\}\n/,
+      "async function setManualWeight(){ const m=document.getElementById('uwMsg');"
+      + " m.textContent='⚠️ 线上静态版无法调整权重，请用本地 http://localhost:3000/lexicon';"
+      + " m.className='note red'; }\n")
     // 人工生词 → localStorage
     .replace("const r = await fetch('/api/user-words'); const d = await r.json();",
              'const d = { words: uwLoad() };')
@@ -478,6 +484,15 @@ console.log('word bank embedded:', BANK.length, 'words');
     .replace(/await fetch\('\/api\/user-words\/delete', \{[\s\S]*?\n  \}\);/,
              'uwDel(word);')
     // 静态站没有后端：文案必须如实说明"只存在本浏览器"
+    // 顶部横幅：静态版不影响任何出题
+    .replace(/<div class="banner" id="scopeBanner">[\s\S]*?<\/div>/,
+      '<div class="banner warn">⚠️ <b>这是线上静态页（GitHub Pages）</b>：这里<b>不能影响出题</b>。'
+      + '页面数据在构建时写死，任何权重调整都不会改变线上题目；'
+      + '要改线上出题必须「重新构建 + 推送」。'
+      + '<br>✅ 真正影响出题的是本地后台 <code>localhost:3000/lexicon</code>（以及它读取的 SQLite）。</div>')
+    // 手动权重列在静态版只读
+    .replace(/<td class="c"><input class="winput"[\s\S]*?<\/td>/,
+      "<td class='c dim'>${w.manualWeight ? ('★' + w.manualWeight) : '—'}</td>")
     .replace('录入后该词会同步进主词库，并在每轮答题中优先出现（最多占 40%）。',
              '⚠️ 静态版没有后端：这里录入的生词<b>只保存在当前浏览器</b>，用于自己核对清单，不会进入线上题库。要真正影响出题，请用本地 http://localhost:3000/lexicon 。')
     .replace("msg.textContent = '✅ 已加入「' + word + '」，每轮答题会优先出现';",
