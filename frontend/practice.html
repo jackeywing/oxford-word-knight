@@ -261,31 +261,18 @@ function speak(text,rate=0.85){
       return false;
     }
     const prof=VOICE_PROFILE[ch]||VOICE_PROFILE.biff;
-    let retried=false;
+    const u=new SpeechSynthesisUtterance(String(text));
+    u.lang='en-GB'; u.rate=rate; u.pitch=prof.pitch;
 
-    const say=(useVoice,isRetry)=>{
-      const u=new SpeechSynthesisUtterance(String(text));
-      u.lang='en-GB'; u.rate=rate; u.pitch=prof.pitch;
-      if(useVoice){ u.voice=useVoice; u.lang=useVoice.lang||'en-GB'; }
-      // 指定语音出错 → 退回系统默认语音
-      u.onerror=()=>{ if(useVoice && !retried){ retried=true; say(null,true); } };
-      speechSynthesis.speak(u);
-      // 静默失败兜底：Chrome 有时不报错也不出声，700ms 后仍是空闲就换默认语音重来
-      if(!isRetry){
-        setTimeout(()=>{
-          if(!retried && !speechSynthesis.speaking && !speechSynthesis.pending){
-            retried=true; say(null,true);
-          }
-        },700);
-      }
-    };
-
-    // 只有在确实需要打断时才先 cancel+延迟；首次点击保持同步调用，避免破坏用户手势链
-    const busy = speechSynthesis.speaking || speechSynthesis.pending;
-    const v = pickVoice(prof.gender);
+    // 只选「本地语音」：网络语音（Google UK English *）会静默失败
+    const v=pickVoice(prof.gender);
+    if(v){ u.voice=v; u.lang=v.lang||'en-GB'; }
     try{ console.log('[voice]', ch, prof.gender, '→', v ? (v.name+' / '+v.lang+' / local='+v.localService) : '系统默认', 'pitch='+prof.pitch); }catch(e){}
+
+    // 不做任何"失败重试"：重试会在第一次已经出声的情况下再叠一条默认语音，
+    // 表现就是「男声女声同时响」。宁可偶尔没声，也不要两个声音打架。
     speechSynthesis.cancel();
-    if(busy) setTimeout(()=>say(v), 60); else say(v);
+    speechSynthesis.speak(u);
     return true;
   }catch(e){ return false; }
 }
