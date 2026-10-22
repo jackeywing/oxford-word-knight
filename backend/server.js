@@ -5,6 +5,7 @@ const fs = require('fs');
 const Database = require('better-sqlite3');
 const { parse } = require('csv-parse/sync');
 const createPractice = require('./practice');
+const { buildWeightLookup } = require('./lexicon-weight.js');
 
 const PORT = process.env.PORT || 3000;
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'db.sqlite3');
@@ -342,14 +343,41 @@ const server = http.createServer((req, res) => {
         byStage: rows.reduce((a, r) => { const k = r.stage ? 'S' + r.stage : '未分级'; a[k] = (a[k] || 0) + 1; return a; }, {}),
       };
 
-      const words = rows.map((r) => ({
-        ...r,
-        syllables: practice.syllableCount(r.word),
-        letters: String(r.word).trim().length,
-        isPhrase: isPhrase(r.word),
-        phonemes: practice.phonemesOf(r.word).map((p) => p.grapheme),
-        characters: practice.charactersIn(r.sentence),
-      }));
+      const weightOf = buildWeightLookup(db);
+      const manualMap = new Map(
+        db.prepare('SELECT LOWER(word) w, weight FROM user_words').all().map((u) => [u.w, u.weight])
+      );
+
+      const words = rows.map((r) => {
+        const syllables = practice.syllableCount(r.word);
+        const letters = String(r.word).trim().length;
+        const graphemes = practice.phonemesOf(r.word).map((p) => p.grapheme);
+        return {
+          ...r,
+          syllables,
+          letters,
+          isPhrase: isPhrase(r.word),
+          phonemes: graphemes,
+          characters: practice.charactersIn(r.sentence),
+          weight: weightOf(r.word, { syllables, letters, graphemes, stage: r.stage }),
+          manualWeight: manualMap.get(String(r.word).trim().toLowerCase()) || 0,
+        };
+      });
+
+      const byBasis = (b) => words.filter((w) => w.weight.basis === b);
+      const direct = byBasis('direct'), prop = byBasis('propagated'), est = byBasis('estimated');
+      stats.weight = {
+        directCount: direct.length,
+        propagatedCount: prop.length,
+        estimatedCount: est.length,
+        maxMeasured: direct.length ? Math.max(...direct.map((w) => w.weight.measured)) : 0,
+        avgEstimated: Math.round(
+          (est.reduce((a, w) => a + w.weight.estimated, 0) / Math.max(1, est.length)) * 100
+        ) / 100,
+        top: words.slice().sort((a, b) => b.weight.value - a.weight.value).slice(0, 15)
+          .map((w) => ({ word: w.word, value: w.weight.value, basis: w.weight.basis, players: w.weight.parts.players })),
+      };
+
       json(res, { stats, words });
     } catch (e) { json(res, { error: e.message }, 500); }
     return;

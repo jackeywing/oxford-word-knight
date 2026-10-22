@@ -27,6 +27,10 @@ tr:hover td{ background:#4A3020; }
 .badge{ display:inline-block; padding:2px 6px; border-radius:2px; font-size:0.9em; }
 .badge.g1{ background:#5D8C2E; color:#fff; } .badge.g2{ background:#1565C0; color:#fff; }
 .badge.ph{ background:#4527A0; color:#fff; margin-right:2px; }
+.badge.w-direct{ background:#C62828; color:#fff; }
+.badge.w-prop{ background:#EF6C00; color:#fff; }
+.badge.w-est{ background:#546E7A; color:#fff; }
+.wt{ font-size:1.05em; }
 .badge.phr{ background:#8D6E63; color:#fff; }
 .bar{ display:inline-block; height:8px; background:var(--green); vertical-align:middle; }
 .warn{ border:3px solid #C62828; background:#3E1A1A; padding:10px; margin-bottom:10px; font-size:0.38em; line-height:1.9; }
@@ -92,7 +96,14 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
       <option value="phrase">仅短语</option>
       <option value="dup">仅有重复</option>
     </select>
+    <select id="basis">
+      <option value="">全部依据</option>
+      <option value="direct">直连实测</option>
+      <option value="propagated">音素传播</option>
+      <option value="estimated">纯估算</option>
+    </select>
     <select id="sort">
+      <option value="weight-desc">权重 ↓</option>
       <option value="az">按字母</option>
       <option value="len-asc">词长 ↑</option>
       <option value="len-desc">词长 ↓</option>
@@ -105,6 +116,7 @@ code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
       <th class="c" style="width:38px;">#</th>
       <th>单词</th><th class="c" style="width:60px;">级别</th>
       <th class="c" style="width:56px;">stage</th>
+      <th class="c" style="width:78px;">权重</th>
       <th class="c" style="width:60px;">音节</th><th class="c" style="width:60px;">字母</th>
       <th>音素组合</th><th>提示</th><th>所在句</th>
     </tr></thead>
@@ -197,6 +209,9 @@ function renderStats(){
     ['平均词长', s.avgLen, ''],
     ['有例句', s.withSentence, ''],
     ['含人物名', s.withCharacter, ''],
+    ['直连实测', (s.weight||{}).directCount||0, 'red'],
+    ['音素传播', (s.weight||{}).propagatedCount||0, ''],
+    ['纯估算', (s.weight||{}).estimatedCount||0, ''],
   ].map(([k,v,c])=>`<div class="tile"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`).join('');
 
   document.getElementById('distLevel').innerHTML =
@@ -219,6 +234,13 @@ function renderStats(){
   document.getElementById('distLevel').innerHTML += ' &nbsp;｜&nbsp; <b class="gold">stage</b>：' +
     Object.entries(s.byStage||{}).sort().map(([k,v])=>`${k} ${v} 条`).join(' &nbsp; ');
 
+  if(s.weight){
+    document.getElementById('distLevel').innerHTML += '<br><b class="gold">权重</b>：'
+      + `直连实测 ${s.weight.directCount} · 音素传播 ${s.weight.propagatedCount} · 纯估算 ${s.weight.estimatedCount}`
+      + ` ｜ 最高实测 ${s.weight.maxMeasured} · 估算均值 ${s.weight.avgEstimated}`
+      + '　<span class="dim">（理论权重 = 1 + 词长加成 + 音节加成 + 拼读组合加成 + stage 加成）</span>';
+  }
+
   const dw = document.getElementById('dupWarn');
   if(s.duplicates.length){
     dw.innerHTML = `<div class="warn"><b>⚠️ 发现 ${s.duplicates.length} 个重复词条</b>（共多余 ${dupCount} 行）：`
@@ -239,6 +261,8 @@ function applyFilter(){
     if(kind === 'word' && w.isPhrase) return false;
     if(kind === 'phrase' && !w.isPhrase) return false;
     if(kind === 'dup' && !dupSet.has(String(w.word).toLowerCase())) return false;
+    const basisSel = document.getElementById('basis').value;
+    if(basisSel && w.weight.basis !== basisSel) return false;
     if(q){
       const hay = (w.word+' '+(w.hint||'')+' '+(w.sentence||'')).toLowerCase();
       if(!hay.includes(q)) return false;
@@ -246,7 +270,8 @@ function applyFilter(){
     return true;
   });
 
-  if(sort === 'len-asc')  VIEW.sort((a,b)=>a.letters-b.letters||a.word.localeCompare(b.word));
+  if(sort === 'weight-desc') VIEW.sort((a,b)=>b.weight.value-a.weight.value||a.word.localeCompare(b.word));
+  else if(sort === 'len-asc')  VIEW.sort((a,b)=>a.letters-b.letters||a.word.localeCompare(b.word));
   else if(sort === 'len-desc') VIEW.sort((a,b)=>b.letters-a.letters||a.word.localeCompare(b.word));
   else if(sort === 'syl-desc') VIEW.sort((a,b)=>b.syllables-a.syllables||a.word.localeCompare(b.word));
   else VIEW.sort((a,b)=>String(a.word).localeCompare(String(b.word)));
@@ -262,6 +287,7 @@ function applyFilter(){
       <td class="${isDup?'dup':''}">${w.word}${isDup?' ⚠️':''}${w.isPhrase?' <span class="badge phr">短语</span>':''}${(UWMAP.get(String(w.word).toLowerCase())?' <span class="badge ph" title="我的重点生词">★'+UWMAP.get(String(w.word).toLowerCase())+'</span>':'')}</td>
       <td class="c"><span class="badge ${w.oxford_level.toLowerCase()}">${w.oxford_level}</span></td>
       <td class="c ${w.stage?'gold':'dim'}">${w.stage?('S'+w.stage):'—'}</td>
+      <td class="c"><span class="wt ${w.weight.basis==='estimated'?'dim':'gold'}">${w.weight.value}</span><br><span class="badge ${w.weight.basis==='direct'?'w-direct':(w.weight.basis==='propagated'?'w-prop':'w-est')}">${w.weight.basis==='direct'?'直连':(w.weight.basis==='propagated'?'传播':'估算')}</span></td>
       <td class="c">${w.syllables}</td>
       <td class="c">${w.letters}</td>
       <td>${ph}</td>
@@ -273,7 +299,7 @@ function applyFilter(){
 
 loadUserWords();
 
-['q','lv','kind','sort'].forEach(id=>{
+['q','lv','kind','sort','basis'].forEach(id=>{
   const el = document.getElementById(id);
   el.addEventListener(id==='q' ? 'input' : 'change', applyFilter);
 });

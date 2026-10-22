@@ -382,20 +382,44 @@ console.log('word bank embedded:', BANK.length, 'words');
    人工生词改存 localStorage（静态站没有后端，无法共享）
    ═══════════════════════════════════════════════════════════ */
 {
+  // 构建期如果有数据库，就把图谱权重一并算进来；没有库则全部走理论权重
+  let weightOf = null;
+  try {
+    const Database = require('better-sqlite3');
+    const dbPath = path.join(ROOT, 'backend/db.sqlite3');
+    if (fs.existsSync(dbPath)) {
+      const db = new Database(dbPath, { readonly: true });
+      weightOf = require('./backend/lexicon-weight.js').buildWeightLookup(db);
+      console.log('图谱权重: 已从数据库读取边');
+    }
+  } catch (e) { console.warn('图谱权重: 读取数据库失败，全部使用理论权重 —', e.message); }
+  // 没有数据库时也要有个 lookup（边为空 → 全部走理论权重），只建一次
+  if (!weightOf) {
+    weightOf = require('./backend/lexicon-weight.js')
+      .buildWeightLookup({ prepare: () => ({ all: () => [] }) });
+  }
+
   const LEX_ROWS = BANK.map((r, i) => {
     const w = String(r.word).trim();
+    const syllables = practice.syllableCount(w);
+    const letters = w.length;
+    const graphemes = (() => { const t = w.toLowerCase().replace(/[^a-z]/g, ''); return practice.PHONEME_PATTERNS.filter((p) => t.includes(p.grapheme)).map((p) => p.grapheme); })();
+    const stage = Number(r.stage) || null;
+    const weight = weightOf(w, { syllables, letters, graphemes, stage });
     return {
       id: i + 1,
       word: w,
       hint: r.hint || '',
       sentence: r.sentence || '',
       oxford_level: r.oxford_level || 'G2',
-      stage: Number(r.stage) || null,
-      syllables: practice.syllableCount(w),
-      letters: w.length,
+      stage,
+      syllables,
+      letters,
       isPhrase: /\s/.test(w),
-      phonemes: (() => { const t = w.toLowerCase().replace(/[^a-z]/g, ''); return practice.PHONEME_PATTERNS.filter((p) => t.includes(p.grapheme)).map((p) => p.grapheme); })(),
+      phonemes: graphemes,
       characters: practice.charactersIn(r.sentence),
+      weight,
+      manualWeight: 0,
     };
   });
 
@@ -420,6 +444,19 @@ console.log('word bank embedded:', BANK.length, 'words');
     letters: cnt(LEX_ROWS, (r) => String(r.word)[0].toLowerCase()),
     withSentence: LEX_ROWS.filter((r) => r.sentence).length,
     withCharacter: LEX_ROWS.filter((r) => r.characters.length > 0).length,
+    weight: (() => {
+      const by = (b) => LEX_ROWS.filter((r) => r.weight.basis === b);
+      const direct = by('direct'), prop = by('propagated'), est = by('estimated');
+      return {
+        directCount: direct.length,
+        propagatedCount: prop.length,
+        estimatedCount: est.length,
+        maxMeasured: direct.length ? Math.max(...direct.map((r) => r.weight.measured)) : 0,
+        avgEstimated: Math.round((est.reduce((a, r) => a + r.weight.estimated, 0) / Math.max(1, est.length)) * 100) / 100,
+        top: LEX_ROWS.slice().sort((a, b) => b.weight.value - a.weight.value).slice(0, 15)
+          .map((r) => ({ word: r.word, value: r.weight.value, basis: r.weight.basis, players: r.weight.parts.players })),
+      };
+    })(),
   };
 
   let lexTpl = fs.readFileSync(path.join(ROOT, 'frontend/lexicon.html'), 'utf8');

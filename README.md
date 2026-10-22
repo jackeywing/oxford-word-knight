@@ -202,6 +202,47 @@ node backend/test/dedup.test.js       # 200 轮 × 10 题，断言轮内无重�
 - **动词、副词、抽象名词、虚词一律不套模板** —— 模板必然写出 `She likes to open.` / `Do you worry it?` 这类病句
 - 所有例句都必须包含该词本身，否则克漏字挖不到空，自动退化为中文提示填空
 
+### ⚖️ 图谱权重（`/lexicon` 的「权重」列）
+
+权重来自知识图谱里的**关系边**，不是随便打的分数。当前有数据支撑的边：
+
+| 关系边 | 属性 | 落库位置 |
+|---|---|---|
+| `Player -[struggles_with]-> Phoneme` | `error_weight` | `phoneme_state` |
+| `Player -[struggles_with]-> PhonicsRule` | `fail_count` | 由音素边按 `grapheme` 聚合 |
+| `Player -[NEEDS_PRACTICE]-> Word` | `error_count` | `word_state` |
+| `User -[MANUAL_PRIORITY]-> Word` | `weight` | `user_words`（单独显示 ★） |
+
+节点路径是 `Word -COMPOSED_OF-> Syllable -COMPOSED_OF-> Phoneme`，所以**词权重由它包含的音素边推出**：
+
+```
+实测权重 = Σ_全部玩家 [ 该词音素组合的 error_weight 之和 + 错词次数 × 2 ]
+```
+
+按你的选择：**全部玩家加总**，得到一个全局权重。
+
+#### 三态依据（避免"没考过的词假装被测过"）
+
+| 依据 | 含义 | 当前 |
+|---|---|---|
+| 🔴 **直连** | 这个词**本身**被考过（`NEEDS_PRACTICE` 边存在） | 17 词 |
+| 🟠 **传播** | 词本身没考过，但含玩家薄弱音素（经 `COMPOSED_OF → struggles_with` 传播） | 467 词 |
+| ⚪ **估算** | 完全没有数据，用理论权重兜底 | 428 词 |
+
+#### 理论权重（兜底，界面标「估算」）
+
+```
+估算 = 1 + (词长-3)×0.25 + (音节数-1)×0.8 + 多字母组合数×0.4 + (4-stage)×0.3
+```
+
+系数集中在 `backend/lexicon-weight.js` 的 `EST` 对象里，可直接调。
+
+> 实测最高：`everything` **16.4**（biff + floppy 的音素边 10.4 + 词边 3 次）
+> 估算均值 2.41；`write` 因含 `/r/` 弱项以「传播」得 1.3
+
+页面支持：按权重排序（默认）、按依据筛选（直连 / 传播 / 估算）、「权重」列带依据徽标。
+静态版（Pages）在构建时从数据库读一次边并内嵌，与本地口径一致。
+
 ### ⭐ 我的重点生词（`/lexicon` 页面手动录入）
 
 在词库浏览页顶部可录入想重点练的生词：单词 / 中文提示 / 例句 / 权重（★1–★5）。
