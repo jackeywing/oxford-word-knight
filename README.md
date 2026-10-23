@@ -180,6 +180,42 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 > 主游戏（`/api/challenges`）在服务端按词去重，不需要 exclude。
 
+## 🛠️ 线上后台（静态快照）
+
+**https://jackeywing.github.io/oxford-word-knight/dashboard.html**
+
+Pages 没有后端，所以构建时 `build-pages.js` 会临时拉起后端（:3999）抓一份真实数据，
+把 `/api/dashboard`、`/api/access-log`、`/api/session-events`、`/api/stats` 四个响应内嵌进页面 ——
+**保证与本地口径完全一致**，只是数据冻结在构建时刻。
+
+页面顶部有橙色横幅说明：快照不可实时刷新、不能上传/清空。
+需要实时数据请用本地 `http://localhost:3000/dashboard`。
+
+### 所有日志表都带来源 IP
+
+| 表 | IP 列 |
+|---|---|
+| 角色总览 | `📍 来源 IP` 第一列 |
+| 每日统计 | `📍 来源 IP` 第二列 |
+| 最近闯关 | `📍 来源 IP` 第二列 |
+| 最近答题日志（特训） | `📍 来源 IP` 第二列 |
+| 访问日志 | 有 |
+| 会话事件流 | 有 |
+
+`practice_events` 也补了 `ip` 列（`POST /api/practice/answer` 写入 `clientIp(req)`），
+所以特训答题日志现在也能追溯到来源 IP。旧记录没有 IP，显示 `—`。
+
+## 🔒 角色锁定
+
+一轮进行中不允许中途换人：
+
+- 点其他角色 → 弹确认「角色已锁定 —— 切换角色会重新开始本轮，确定吗？」
+- 取消 → 什么都不变，继续当前这轮
+- 确认 → 角色切换 + 本轮重置回起始页（特训页还会清空 `roundWords`）
+- 点当前角色 → 无反应（不弹确认）
+
+主游戏与特训页行为一致（`playing` 标记：开局置 true，结算/重置置 false）。
+
 ## 🧭 会话事件流（按 IP + session）
 
 看板最上方第一张表已改为 **`📍 来源 IP` 第一列、`角色` 第二列**（`GROUP BY ip, character_name, level`）。

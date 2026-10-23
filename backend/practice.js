@@ -192,6 +192,11 @@ module.exports = function createPractice(db) {
     );
     CREATE INDEX IF NOT EXISTS idx_events_player ON practice_events(player_id, created_at);
   `);
+  // 老库补 ip 列（幂等）
+  try {
+    const cols = db.prepare('PRAGMA table_info(practice_events)').all().map((c) => c.name);
+    if (!cols.includes('ip')) db.exec("ALTER TABLE practice_events ADD COLUMN ip TEXT DEFAULT ''");
+  } catch (e) {}
 
   /* ───────────── helpers ───────────── */
   const wordsInBank = (level) =>
@@ -469,7 +474,7 @@ module.exports = function createPractice(db) {
   }
 
   /* ───────────── 答题处理 + 图谱更新（闭环核心） ───────────── */
-  function answer({ player, card, response, response_ms = 0 }) {
+  function answer({ player, card, response, response_ms = 0, ip = '' }) {
     const p = player || 'guest';
     const ms = Math.max(0, parseInt(response_ms) || 0);
     const type = card.card_type;
@@ -541,9 +546,9 @@ module.exports = function createPractice(db) {
     }
 
     db.prepare(
-      `INSERT INTO practice_events (player_id, card_type, word, focus, is_correct, response_ms)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    ).run(p, type, card.word || card.audio_text || card.correct || '', card.focus || '', ok ? 1 : 0, ms);
+      `INSERT INTO practice_events (player_id, card_type, word, focus, is_correct, response_ms, ip)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).run(p, type, card.word || card.audio_text || card.correct || '', card.focus || '', ok ? 1 : 0, ms, String(ip || ''));
 
     // ── 即时反馈文案（面向 8-9 岁） ──
     let fb;

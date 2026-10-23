@@ -658,13 +658,15 @@ const server = http.createServer((req, res) => {
         ORDER BY totalScore DESC
       `).all();
       const recent = db.prepare(
-        'SELECT * FROM game_logs ORDER BY created_at DESC LIMIT 50'
+        'SELECT *, COALESCE(NULLIF(TRIM(ip),\'\'), \'—\') AS ipv FROM game_logs ORDER BY created_at DESC LIMIT 50'
       ).all();
       const daily = db.prepare(`
-        SELECT date(created_at) as day, character_name, COUNT(*) as games,
+        SELECT date(created_at) as day,
+               COALESCE(NULLIF(TRIM(ip), ''), '—') as ip,
+               character_name, COUNT(*) as games,
                SUM(score) as score, MAX(max_combo) as topCombo
         FROM game_logs
-        GROUP BY day, character_name
+        GROUP BY day, ip, character_name
         ORDER BY day DESC, character_name
         LIMIT 60
       `).all();
@@ -702,7 +704,7 @@ const server = http.createServer((req, res) => {
          LIMIT 30
       `).all();
       const pRecent = db.prepare(
-        'SELECT * FROM practice_events ORDER BY id DESC LIMIT 80'
+        'SELECT *, COALESCE(NULLIF(TRIM(ip),\'\'), \'—\') AS ipv FROM practice_events ORDER BY id DESC LIMIT 80'
       ).all();
       const pWeak = db.prepare(`
         SELECT player_id, phoneme, grapheme,
@@ -781,7 +783,7 @@ const server = http.createServer((req, res) => {
         const { player, card, response, response_ms } = JSON.parse(body);
         if (!card || card.correct === undefined)
           return json(res, { error: 'card required' }, 400);
-        const result = practice.answer({ player, card, response, response_ms });
+        const result = practice.answer({ player, card, response, response_ms, ip: clientIp(req) });
         json(res, result);
       } catch (e) { json(res, { error: e.message }, 400); }
     });

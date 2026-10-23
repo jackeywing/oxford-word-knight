@@ -609,6 +609,7 @@ const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma',floppy:'Floppy'}
 const N=8, TS=45;   // 8 题一轮，每题 45 秒（音节题要拍手数，给足时间）
 
 document.addEventListener('DOMContentLoaded',()=>track('visit',{page:'phonics'}));
+let playing=false;
 let ch='biff', i=0, sc=0, cb=0, mx=0, xp=0, ls=[], card=null, t0=0, timerId=null, answered=false, round=[], plan=[], roundWords=[];
 
 /* ── 音效 ── */
@@ -694,7 +695,15 @@ function demoVoice(){
 function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+c+' show';setTimeout(()=>e.className='toast '+c,2300)}
 function pt(x,y,e='✨',n=8){const c=document.getElementById('pcs');for(let j=0;j<n;j++){const p=document.createElement('div');p.className='p';p.textContent=e;p.style.left=(x+(Math.random()-.5)*90)+'px';p.style.top=(y+(Math.random()-.5)*40)+'px';p.style.animationDuration=(.5+Math.random()*.6)+'s';c.appendChild(p);setTimeout(()=>p.remove(),1300)}}
 
-function sel(n){const _prev=ch;ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
+function sel(n){
+  const _prev=ch;
+  if(n===_prev) return;
+  // 角色锁定：特训进行中不允许中途换人
+  if(playing){
+    if(!confirm('角色已锁定 —— 切换角色会重新开始本轮特训，确定吗？')) return;
+    resetRound();
+  }
+  ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
   document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');
   document.getElementById('csprite').textContent=F[n]; if(_prev!==n)track('character_switch',{from:_prev,to:n}); demoVoice();}
 
@@ -719,9 +728,19 @@ function hud(){
 /* ── 取题 ── */
 async function fetchCard(type){ return nextTask(ch, "G2", type, ch, roundWords.join(",")); }
 
+function resetRound(){
+  clearInterval(timerId);
+  answered=false; i=0; sc=0; cb=0; mx=0; xp=0; ls=[]; roundWords=[]; card=null; playing=false;
+  const go=document.getElementById('goBtn'); if(go) go.style.display='inline-block';
+  const rst=document.getElementById('rstBtn'); if(rst) rst.style.display='none';
+  const area=document.getElementById('chArea');
+  if(area) area.innerHTML='<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">选择你的角色<br>开始特训吧！</div>';
+  hud(); dn();
+}
+
 function start(){
   track('round_start',{count:N,level:'G2',character:ch});
-  roundWords=[];
+  roundWords=[]; playing=true;
   clearInterval(timerId);
   // 每轮固定覆盖 4 种题型各 2 次（打乱顺序），避免随机抽样漏掉某一类
   plan=['syllable','phoneme','phonics','sight','syllable','phoneme','phonics','sight']
@@ -943,6 +962,7 @@ function adv(){
 
 /* ── 结算 ── */
 async function finish(){
+  playing=false;
   track('round_finish',{score:sc,correct:ls.filter(x=>x.ok).length,total:N,character:ch});
   clearInterval(timerId);
   const ok=ls.filter(x=>x.ok).length;

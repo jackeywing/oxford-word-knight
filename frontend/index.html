@@ -210,6 +210,7 @@ const attempts={};   // 每个词的答错次数（用于记录"失败重试"）
 const N=8,TS=40;
 
 if(document.readyState!=='loading'){setTimeout(()=>track('visit',{level:'G2'}),60)}else{document.addEventListener('DOMContentLoaded',()=>track('visit',{level:lv}));}
+let playing=false;
 let lv='G2',ch='biff',qs=[],i=0,sc=0,cb=0,mc=0,xp=0,ti=null,tl=0,ls=[],aud=null;
 
 function beep(f,d,t='square'){try{if(!aud)aud=new(window.AudioContext||window.webkitAudioContext)();const o=aud.createOscillator(),g=aud.createGain();o.type=t;o.frequency.value=f;g.gain.value=0.06;g.gain.exponentialRampToValueAtTime(0.001,aud.currentTime+d);o.connect(g);g.connect(aud.destination);o.start();o.stop(aud.currentTime+d)}catch(e){}}
@@ -221,7 +222,15 @@ function wB(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18),i*14
 function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+c+' show';setTimeout(()=>e.className='toast '+c,2400)}
 function pt(x,y,e='✨',n=8){const c=document.getElementById('pcs');for(let j=0;j<n;j++){const p=document.createElement('div');p.className='p';p.textContent=e;p.style.left=(x+(Math.random()-0.5)*90)+'px';p.style.top=(y+(Math.random()-0.5)*40)+'px';p.style.animationDuration=(0.5+Math.random()*0.6)+'s';c.appendChild(p);setTimeout(()=>p.remove(),1300)}}
 
-function sel(n){const _prev=ch;ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');document.getElementById('csprite').textContent=F[n];if(_prev!==n)track('character_switch',{from:_prev,to:n});}
+function sel(n){
+  const _prev=ch;
+  if(n===_prev) return;
+  // 角色锁定：一轮闯关进行中不允许中途换人，必须重新开始
+  if(playing){
+    if(!confirm('角色已锁定 —— 切换角色会重新开始本轮闯关，确定吗？')) return;
+    rst();
+  }
+  ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');document.getElementById('csprite').textContent=F[n];if(_prev!==n)track('character_switch',{from:_prev,to:n});}
 
 function dn(){
   const c=document.getElementById('pnodes');let h='';
@@ -354,9 +363,9 @@ function victory(){
 
 async function load(){try{const r=await fetch(`${API}/challenges?level=${lv}&count=${N}&character=${ch}`),d=await r.json();if(d.error||!d.length){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">⚠️ 字库为空</div>`;return false}if(d.length<4){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>`;return false}qs=d;return true}catch(e){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接</div>`;return false}}
 
-async function go(){const ok=await load();if(!ok)return;track('round_start',{level:lv,character:ch,count:N});i=0;sc=0;cb=0;mc=0;xp=0;ls=[];tl=TS;clearInterval(ti);dn();mc_();hud();draw();document.getElementById('goBtn').style.display='none';document.getElementById('rstBtn').style.display='inline-block'}
+async function go(){const ok=await load();if(!ok)return;track('round_start',{level:lv,character:ch,count:N});i=0;sc=0;cb=0;mc=0;xp=0;ls=[];tl=TS;clearInterval(ti);dn();mc_();hud();draw();document.getElementById('goBtn').style.display='none';document.getElementById('rstBtn').style.display='inline-block';playing=true}
 
-function rst(){track('round_restart',{});clearInterval(ti);i=0;sc=0;cb=0;mc=0;xp=0;ls=[];qs=[];tl=TS;dn();mc_();hud();document.getElementById('chArea').innerHTML=`<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">准备好了吗？<br>点击"开始冒险"！</div>`;document.getElementById('goBtn').style.display='inline-block';document.getElementById('rstBtn').style.display='none'}
+function rst(){track('round_restart',{});clearInterval(ti);i=0;sc=0;cb=0;mc=0;xp=0;ls=[];qs=[];tl=TS;dn();mc_();hud();document.getElementById('chArea').innerHTML=`<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">准备好了吗？<br>点击"开始冒险"！</div>`;document.getElementById('goBtn').style.display='inline-block';document.getElementById('rstBtn').style.display='none';playing=false}
 
 dn();mc_();hud();window.addEventListener('resize',()=>{dn();mc_()});
 </script>

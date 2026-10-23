@@ -85,12 +85,12 @@ html { -webkit-text-size-adjust:100%; }
   <tbody id="sum"><tr><td colspan="11">—</td></tr></tbody></table></div>
 
 <h2>📅 每日统计</h2>
-<div class="panel"><table><thead><tr><th>日期</th><th>角色</th><th>游戏数</th><th>总分</th><th>最高连击</th></tr></thead>
-  <tbody id="day"><tr><td colspan="5">—</td></tr></tbody></table></div>
+<div class="panel"><table><thead><tr><th>日期</th><th>📍 来源 IP</th><th>角色</th><th>游戏数</th><th>总分</th><th>最高连击</th></tr></thead>
+  <tbody id="day"><tr><td colspan="6">—</td></tr></tbody></table></div>
 
 <h2>📜 最近闯关</h2>
-<div class="panel"><table><thead><tr><th>时间</th><th>角色</th><th>级别</th><th>得分</th><th>连击</th><th>✅</th><th>❌</th><th>⏰</th></tr></thead>
-  <tbody id="rec"><tr><td colspan="8">—</td></tr></tbody></table></div>
+<div class="panel"><table><thead><tr><th>时间</th><th>📍 来源 IP</th><th>角色</th><th>级别</th><th>得分</th><th>连击</th><th>✅</th><th>❌</th><th>⏰</th></tr></thead>
+  <tbody id="rec"><tr><td colspan="9">—</td></tr></tbody></table></div>
 
 <h2>🎧 Phonics 总览</h2>
 <div class="panel"><div class="tiles" id="pTotals"></div></div>
@@ -112,8 +112,8 @@ html { -webkit-text-size-adjust:100%; }
   <tbody id="pWords"><tr><td colspan="4">—</td></tr></tbody></table></div>
 
 <h2>📜 最近答题日志（80 条）</h2>
-<div class="panel"><table><thead><tr><th>时间</th><th>玩家</th><th>题型</th><th>题目</th><th>考点</th><th>结果</th><th>用时</th></tr></thead>
-  <tbody id="pRecent"><tr><td colspan="7">—</td></tr></tbody></table></div>
+<div class="panel"><table><thead><tr><th>时间</th><th>📍 来源 IP</th><th>玩家</th><th>题型</th><th>题目</th><th>考点</th><th>结果</th><th>用时</th></tr></thead>
+  <tbody id="pRecent"><tr><td colspan="8">—</td></tr></tbody></table></div>
 
 <h2>🌐 访问日志</h2>
 <div class="panel"><div class="tiles" id="aTotals"></div></div>
@@ -159,11 +159,11 @@ async function rf() {
     if(!d.summary||!d.summary.length){s.innerHTML='<tr><td colspan="11">暂无</td></tr>'}
     else s.innerHTML=d.summary.map(r=>`<tr><td class="gold">${escHtml(r.ip)}</td><td>${escHtml(r.character_name)}</td><td><span class="badge ${r.level.toLowerCase()}">${r.level}</span></td><td>${r.games}</td><td class="gold">${r.totalScore}</td><td>${r.avgScore}</td><td class="gold">${r.bestScore}</td><td>${r.bestCombo}</td><td class="green">${r.correctWords}</td><td class="red">${r.wrongWords}</td><td>${r.timeoutWords}</td></tr>`).join('');
     const da = document.getElementById('day');
-    if(!d.daily||!d.daily.length){da.innerHTML='<tr><td colspan="5">暂无</td></tr>'}
-    else da.innerHTML=d.daily.map(r=>`<tr><td>${r.day}</td><td>${r.character_name}</td><td>${r.games}</td><td class="gold">${r.score}</td><td>${r.topCombo}</td></tr>`).join('');
+    if(!d.daily||!d.daily.length){da.innerHTML='<tr><td colspan="6">暂无</td></tr>'}
+    else da.innerHTML=d.daily.map(r=>`<tr><td>${r.day}</td><td class="gold">${escHtml(r.ip||'—')}</td><td>${r.character_name}</td><td>${r.games}</td><td class="gold">${r.score}</td><td>${r.topCombo}</td></tr>`).join('');
     const re = document.getElementById('rec');
-    if(!d.recent||!d.recent.length){re.innerHTML='<tr><td colspan="8">暂无</td></tr>'}
-    else re.innerHTML=d.recent.map(r=>`<tr><td>${r.created_at}</td><td>${r.character_name}</td><td><span class="badge ${r.level.toLowerCase()}">${r.level}</span></td><td class="gold">${r.score}</td><td>${r.max_combo}</td><td class="green">${r.words_correct}</td><td class="red">${r.words_wrong}</td><td>${r.words_timeout}</td></tr>`).join('');
+    if(!d.recent||!d.recent.length){re.innerHTML='<tr><td colspan="9">暂无</td></tr>'}
+    else re.innerHTML=d.recent.map(r=>`<tr><td>${r.created_at}</td><td class="gold">${escHtml(r.ipv||'—')}</td><td>${r.character_name}</td><td><span class="badge ${r.level.toLowerCase()}">${r.level}</span></td><td class="gold">${r.score}</td><td>${r.max_combo}</td><td class="green">${r.words_correct}</td><td class="red">${r.words_wrong}</td><td>${r.words_timeout}</td></tr>`).join('');
     renderPractice(d.practice || {});
     rfAccess();
     rfSessions();
@@ -208,9 +208,9 @@ function renderPractice(p) {
   set('pWords', !p.troubleWords || !p.troubleWords.length ? empty(4) : p.troubleWords.map(r =>
     `<tr><td>${r.player_id}</td><td class="gold">${r.word}</td><td class="red">${r.errorCount}</td><td class="green">${r.correct || 0}</td></tr>`).join(''));
 
-  set('pRecent', !p.recent || !p.recent.length ? empty(7) : p.recent.map(r => {
+  set('pRecent', !p.recent || !p.recent.length ? empty(8) : p.recent.map(r => {
     const [lab, cls] = tLabel(r.card_type);
-    return `<tr><td>${r.created_at}</td><td>${r.player_id}</td><td><span class="badge ${cls}">${lab}</span></td>
+    return `<tr><td>${r.created_at}</td><td class="gold">${escHtml(r.ipv||'—')}</td><td>${r.player_id}</td><td><span class="badge ${cls}">${lab}</span></td>
       <td>${r.word || ''}</td><td>${r.focus || ''}</td>
       <td class="${r.is_correct ? 'green' : 'red'}">${r.is_correct ? '✅' : '❌'}</td><td>${sec(r.response_ms)}</td></tr>`;
   }).join(''));

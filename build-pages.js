@@ -578,3 +578,80 @@ console.log('word bank embedded:', BANK.length, 'words');
   fs.writeFileSync(path.join(OUT, 'lexicon.html'), lexTpl, 'utf8');
   console.log('wrote docs/lexicon.html', (lexTpl.length / 1024).toFixed(1) + ' KB', '|', LEX_STATS.rows, 'words');
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   静态版管理后台 docs/dashboard.html
+   Pages 没有后端，所以构建时临时拉起 backend（:3999）抓一份真实数据，
+   把 4 个接口的响应内嵌进页面 —— 保证与本地口径完全一致，只是「快照」。
+   ═══════════════════════════════════════════════════════════ */
+{
+  const { spawn, execSync } = require('child_process');
+  const PORT = 3999;
+  let snap = { dashboard: null, access: null, sessions: null, stats: null };
+
+  try {
+    const child = spawn('node', ['backend/server.js'], {
+      cwd: ROOT, env: { ...process.env, PORT: String(PORT) }, stdio: 'ignore', detached: false,
+    });
+    try {
+      let ready = false;
+      for (let i = 0; i < 60; i++) {
+        try { execSync(`curl -s -o /dev/null --max-time 2 http://localhost:${PORT}/api/stats`); ready = true; break; }
+        catch (e) { execSync('sleep 0.25'); }
+      }
+      if (!ready) throw new Error('临时后端未就绪');
+      const grab = (p) => JSON.parse(execSync(`curl -s --max-time 20 "http://localhost:${PORT}${p}"`, { maxBuffer: 1 << 28 }).toString() || 'null');
+      snap.dashboard = grab('/api/dashboard');
+      snap.access = grab('/api/access-log?limit=200');
+      snap.sessions = grab('/api/session-events?limit=200');
+      snap.stats = grab('/api/stats');
+      console.log('后台快照: 已抓取 4 个接口');
+    } finally {
+      try { child.kill('SIGKILL'); } catch (e) {}
+    }
+  } catch (e) {
+    console.warn('后台快照: 抓取失败，将嵌入空数据 —', e.message);
+  }
+
+  let tpl = fs.readFileSync(path.join(ROOT, 'frontend/admin.html'), 'utf8');
+
+  tpl = tpl
+    .replace(/<title>[^<]*<\/title>/, '<title>🛠️ Word-Knight 管理后台（线上快照）</title>')
+    // 顶部加"快照"说明
+    .replace('<h1>🛠️ Word-Knight 管理后台</h1>',
+      '<h1>🛠️ Word-Knight 管理后台</h1>\n'
+      + '<div style="border:3px solid #EF6C00;background:#3E2A10;padding:10px;margin-bottom:10px;font-size:0.38em;line-height:1.9;color:#FFE0B2;">'
+      + '📸 <b>这是上线时抓取的静态快照</b>：数据冻结在构建时刻，不能实时刷新，也不能上传/清空。'
+      + '实时后台请用本地 <code>http://localhost:3000/dashboard</code>。'
+      + (snap.dashboard ? '' : ' ⚠️ 本次构建未取到数据。')
+      + '</div>')
+    // 接口 → 内嵌数据
+    .replace("const r = await fetch(API+'/api/dashboard'), d = await r.json();", 'const d = DASHBOARD_SNAPSHOT;')
+    .replace("const d = await (await fetch(API + '/api/access-log?limit=200')).json();", 'const d = ACCESS_SNAPSHOT;')
+    .replace("const d = await (await fetch(API + '/api/session-events?limit=200')).json();", 'const d = SESSIONS_SNAPSHOT;')
+    .replace("try { const r = await fetch(API+'/api/stats'), d = await r.json();",
+             'try { const d = STATS_SNAPSHOT;')
+    .replace(/await fetch\(API\+'\/api\/dashboard\/clear'\);/, "/* 静态快照：不可清空 */")
+    // CSV 导入在静态版不可用：整段替换成提示
+    .replace("try { const res=await fetch(API+'/api/import',{method:'POST',body:r.result}), d=await res.json();\n        m.textContent=d.success?'✅ '+d.message:'❌ '+d.error; m.className='msg '+(d.success?'ok':'err'); if(d.success)st(); }\n      catch { m.textContent='❌ 失败'; m.className='msg err'; }",
+             "m.textContent='📸 静态快照不支持导入，请用本地后台'; m.className='msg err';");
+
+  // 注入数据
+  tpl = tpl.replace('<script>',
+    '<script>\n'
+    + `const DASHBOARD_SNAPSHOT = ${JSON.stringify(snap.dashboard)};\n`
+    + `const ACCESS_SNAPSHOT = ${JSON.stringify(snap.access)};\n`
+    + `const SESSIONS_SNAPSHOT = ${JSON.stringify(snap.sessions)};\n`
+    + `const STATS_SNAPSHOT = ${JSON.stringify(snap.stats)};\n`);
+
+  const snapScript = tpl.slice(tpl.indexOf('<script>') + 8, tpl.lastIndexOf('</script>'));
+  try { new Function(snapScript); } catch (e) { throw new Error('dashboard 快照脚本语法错误: ' + e.message); }
+  // 注意：内嵌数据里有 path:"/api/..." 这类字符串，不能拿 /api/ 判断；
+  // 只检查是否还有真正的 fetch(API + ...) 调用
+  const leftover = tpl.match(/fetch\(\s*API\s*\+/g) || [];
+  if (leftover.length) console.warn('⚠️ dashboard 快照仍有', leftover.length, '处 fetch(API…) 调用');
+
+  fs.writeFileSync(path.join(OUT, 'dashboard.html'), tpl, 'utf8');
+  console.log('wrote docs/dashboard.html', (tpl.length / 1024).toFixed(1) + ' KB');
+}
