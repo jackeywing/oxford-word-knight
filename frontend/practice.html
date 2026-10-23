@@ -231,7 +231,7 @@ const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma',floppy:'Floppy'}
 const N=8, TS=45;   // 8 题一轮，每题 45 秒（音节题要拍手数，给足时间）
 
 document.addEventListener('DOMContentLoaded',()=>track('visit',{page:'phonics'}));
-let ch='biff', i=0, sc=0, cb=0, mx=0, xp=0, ls=[], card=null, t0=0, timerId=null, answered=false, round=[], plan=[];
+let ch='biff', i=0, sc=0, cb=0, mx=0, xp=0, ls=[], card=null, t0=0, timerId=null, answered=false, round=[], plan=[], roundWords=[];
 
 /* ── 音效 ── */
 let aud=null;
@@ -340,7 +340,9 @@ function hud(){
 
 /* ── 取题 ── */
 async function fetchCard(type){
-  const q=(type?('&type='+type):'')+'&character='+ch;
+  // 把本轮已考过的词带给后端，避免同一个词换个题型又出现一次
+  const q=(type?('&type='+type):'')+'&character='+ch
+    +(roundWords.length?('&exclude='+encodeURIComponent(roundWords.join(','))):'');
   const r=await fetch(`${API}/practice/next?level=G2&player=${ch}${q}`);
   const d=await r.json();
   if(d.error){toast('⚠️ '+d.message,'bad');return null;}
@@ -349,6 +351,7 @@ async function fetchCard(type){
 
 function start(){
   track('round_start',{count:N,level:'G2',character:ch});
+  roundWords=[];
   clearInterval(timerId);
   // 每轮固定覆盖 4 种题型各 2 次（打乱顺序），避免随机抽样漏掉某一类
   plan=['syllable','phoneme','phonics','sight','syllable','phoneme','phonics','sight']
@@ -366,6 +369,8 @@ async function nextCard(){
   dn();mc_();hud();
   card=await fetchCard(plan[i]);
   if(!card){renderError();return;}
+  { const w=String(card.word||card.correct||card.audio_text||'').trim().toLowerCase();
+    if(w && roundWords.indexOf(w)<0) roundWords.push(w); }
   t0=Date.now();
   tl=TS; flashUsed=0;
   renderCard();

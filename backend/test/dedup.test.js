@@ -72,6 +72,41 @@ const get = async (u) => (await fetch(B + u)).json();
   }
   ok('特训题不含短语', phraseLeak === 0, `${phraseLeak} 次泄漏`);
 
+  console.log('\n=== 5) 特训一轮内不得跨题型重复 ===');
+  const PLAN = ['syllable', 'phoneme', 'phonics', 'sight', 'syllable', 'phoneme', 'phonics', 'sight'];
+  let dupRoundsP = 0, sampleDupP = null;
+  for (let r = 0; r < 25; r++) {
+    const used = [];
+    const cards = [];
+    for (const t of PLAN) {
+      const c = await get(`/api/practice/next?level=G2&type=${t}&player=dd_${r}&character=biff&exclude=${encodeURIComponent(used.join(','))}`);
+      if (c.error) break;
+      const w = String(c.word || c.correct || c.audio_text || '').toLowerCase();
+      cards.push(c.card_type + ':' + w);
+      if (w && used.indexOf(w) < 0) used.push(w);
+    }
+    const ws = cards.map((x) => x.split(':')[1]);
+    const seenW = new Set();
+    const dup = [];
+    for (const w of ws) { if (!w) continue; if (seenW.has(w)) dup.push(w); seenW.add(w); }
+    if (dup.length) { dupRoundsP++; if (!sampleDupP) sampleDupP = cards.join(' | '); }
+  }
+  ok('25 轮特训无跨题型重复词', dupRoundsP === 0,
+    dupRoundsP ? `${dupRoundsP} 轮重复，例: ${sampleDupP}` : '0 轮重复');
+
+  // 不带 exclude 时应能复现问题（守住 exclude 这条链路真的在起作用）
+  let rawDup = 0;
+  for (let r = 0; r < 12; r++) {
+    const ws = [];
+    for (const t of PLAN) {
+      const c = await get(`/api/practice/next?level=G2&type=${t}&player=raw_${r}&character=biff`);
+      if (!c.error) ws.push(String(c.word || c.correct || c.audio_text || '').toLowerCase());
+    }
+    const seenW = new Set();
+    for (const w of ws) { if (!w) continue; if (seenW.has(w)) { rawDup++; break; } seenW.add(w); }
+  }
+  console.log(`     （对照：不传 exclude 时 12 轮中有 ${rawDup} 轮重复 —— 说明去重确实靠 exclude）`);
+
   console.log(`\n=== 汇总 ===\n  passed ${pass} / failed ${fail}`);
   process.exit(fail ? 1 : 0);
 })();

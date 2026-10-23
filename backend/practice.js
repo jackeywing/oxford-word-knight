@@ -422,18 +422,42 @@ module.exports = function createPractice(db) {
   }
 
   /* ───────────── 出题入口 ───────────── */
-  function nextTask({ player, level = 'G1', type, character }) {
+  // 取一张卡"考的是哪个词"：音节/视觉词用 word，音素/拼读用 correct / audio_text
+  function cardWord(c) {
+    return String((c && (c.word || c.correct || c.audio_text)) || '').trim().toLowerCase();
+  }
+
+  function nextTask({ player, level = 'G1', type, character, exclude }) {
     const p = player || 'guest';
     const T = type && ['syllable', 'phoneme', 'phonics', 'sight'].includes(type)
       ? type
       : ['syllable', 'phoneme', 'phonics', 'sight'][Math.floor(Math.random() * 4)];
 
-    let card = null;
-    if (T === 'syllable') card = makeSyllableCard(p, level, character);
-    else if (T === 'phoneme') card = makePhonemeCard(p, level);
-    else if (T === 'phonics') card = makePhonicsCard(p, level, character);
-    else card = makeSightWordCard(p, level);
-    if (!card) card = makeSyllableCard(p, level, character) || makePhonemeCard(p, level);
+    // 本轮已经考过的词：前端传 exclude 进来，跨题型也要排除。
+    // 之前只按「题型|词」去重，同一个词换个题型就绕过去了，导致一轮里出现
+    // 同一个词的音素辨析 + 拼读填空。
+    const skip = new Set(
+      String(exclude || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean)
+    );
+
+    const gen = () => {
+      let c = null;
+      if (T === 'syllable') c = makeSyllableCard(p, level, character);
+      else if (T === 'phoneme') c = makePhonemeCard(p, level);
+      else if (T === 'phonics') c = makePhonicsCard(p, level, character);
+      else c = makeSightWordCard(p, level);
+      if (!c) c = makeSyllableCard(p, level, character) || makePhonemeCard(p, level);
+      return c;
+    };
+
+    let card = gen();
+    if (card && skip.size) {
+      for (let i = 0; i < 14 && skip.has(cardWord(card)); i++) {
+        const next = gen();
+        if (!next) break;
+        card = next;
+      }
+    }
     if (!card) return { error: 'NO_TASK', message: '字库为空，请先导入 CSV 字库' };
 
     return {

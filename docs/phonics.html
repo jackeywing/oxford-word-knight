@@ -504,23 +504,32 @@ function prioWeight(word) {
   return hit ? hit.weight : 0;
 }
 
-function nextTask(p, level, type, character) {
+function nextTask(p, level, type, character, exclude) {
+  const keyOf = (c) => String(c && (c.word || c.correct || c.audio_text) || '').trim().toLowerCase();
+  // 本轮已考过的词：跨题型也要排除（同词换个题型出现两次是 bug）
+  const skip = new Set(String(exclude || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean));
+
+  const pickFresh = () => {
+    let c = genTask(p, level, type, character);
+    for (let k = 0; k < 14 && c && skip.has(keyOf(c)); k++) c = genTask(p, level, type, character);
+    return c;
+  };
+
   const prio = priorityWords();
-  if (!prio.length) return genTask(p, level, type, character);
+  if (!prio.length) return pickFresh();
 
   const set = new Set(prio.map((x) => x.w));
-  const keyOf = (c) => String(c && (c.word || c.correct || c.audio_text) || '').trim().toLowerCase();
-  const first = genTask(p, level, type, character);
-  if (!first || set.has(keyOf(first))) return first;
+  let card = pickFresh();
+  if (!card || set.has(keyOf(card))) return card;
 
-  // 约 45% 的题目强制落到人工重点生词上（重试几次，抽不到就用原题）
+  // 约 45% 的题目强制落到人工重点生词上（且该词本轮没考过）
   if (Math.random() < 0.45) {
-    for (let k = 0; k < 12; k++) {
+    for (let k = 0; k < 14; k++) {
       const c = genTask(p, level, type, character);
-      if (c && set.has(keyOf(c))) return c;
+      if (c && set.has(keyOf(c)) && !skip.has(keyOf(c))) return c;
     }
   }
-  return first;
+  return card;
 }
 
 /* ---- 判定 + 学情写回 ---- */
@@ -600,7 +609,7 @@ const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma',floppy:'Floppy'}
 const N=8, TS=45;   // 8 题一轮，每题 45 秒（音节题要拍手数，给足时间）
 
 document.addEventListener('DOMContentLoaded',()=>track('visit',{page:'phonics'}));
-let ch='biff', i=0, sc=0, cb=0, mx=0, xp=0, ls=[], card=null, t0=0, timerId=null, answered=false, round=[], plan=[];
+let ch='biff', i=0, sc=0, cb=0, mx=0, xp=0, ls=[], card=null, t0=0, timerId=null, answered=false, round=[], plan=[], roundWords=[];
 
 /* ── 音效 ── */
 let aud=null;
@@ -708,10 +717,11 @@ function hud(){
 }
 
 /* ── 取题 ── */
-async function fetchCard(type){ return nextTask(ch, "G2", type, ch); }
+async function fetchCard(type){ return nextTask(ch, "G2", type, ch, roundWords.join(",")); }
 
 function start(){
   track('round_start',{count:N,level:'G2',character:ch});
+  roundWords=[];
   clearInterval(timerId);
   // 每轮固定覆盖 4 种题型各 2 次（打乱顺序），避免随机抽样漏掉某一类
   plan=['syllable','phoneme','phonics','sight','syllable','phoneme','phonics','sight']
@@ -729,6 +739,8 @@ async function nextCard(){
   dn();mc_();hud();
   card=await fetchCard(plan[i]);
   if(!card){renderError();return;}
+  { const w=String(card.word||card.correct||card.audio_text||'').trim().toLowerCase();
+    if(w && roundWords.indexOf(w)<0) roundWords.push(w); }
   t0=Date.now();
   tl=TS; flashUsed=0;
   renderCard();

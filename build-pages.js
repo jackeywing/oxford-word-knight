@@ -282,23 +282,32 @@ function prioWeight(word) {
   return hit ? hit.weight : 0;
 }
 
-function nextTask(p, level, type, character) {
+function nextTask(p, level, type, character, exclude) {
+  const keyOf = (c) => String(c && (c.word || c.correct || c.audio_text) || '').trim().toLowerCase();
+  // 本轮已考过的词：跨题型也要排除（同词换个题型出现两次是 bug）
+  const skip = new Set(String(exclude || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean));
+
+  const pickFresh = () => {
+    let c = genTask(p, level, type, character);
+    for (let k = 0; k < 14 && c && skip.has(keyOf(c)); k++) c = genTask(p, level, type, character);
+    return c;
+  };
+
   const prio = priorityWords();
-  if (!prio.length) return genTask(p, level, type, character);
+  if (!prio.length) return pickFresh();
 
   const set = new Set(prio.map((x) => x.w));
-  const keyOf = (c) => String(c && (c.word || c.correct || c.audio_text) || '').trim().toLowerCase();
-  const first = genTask(p, level, type, character);
-  if (!first || set.has(keyOf(first))) return first;
+  let card = pickFresh();
+  if (!card || set.has(keyOf(card))) return card;
 
-  // 约 45% 的题目强制落到人工重点生词上（重试几次，抽不到就用原题）
+  // 约 45% 的题目强制落到人工重点生词上（且该词本轮没考过）
   if (Math.random() < 0.45) {
-    for (let k = 0; k < 12; k++) {
+    for (let k = 0; k < 14; k++) {
       const c = genTask(p, level, type, character);
-      if (c && set.has(keyOf(c))) return c;
+      if (c && set.has(keyOf(c)) && !skip.has(keyOf(c))) return c;
     }
   }
-  return first;
+  return card;
 }
 
 /* ---- 判定 + 学情写回 ---- */
@@ -376,7 +385,7 @@ function recommendFor(p, level) {
 const uiScript = tpl.slice(scriptStart + '<script>'.length).replace(/<\/script>[\s\S]*$/i, '')
   .replace("const API='/api';", "const API='';").replace(
   /async function fetchCard\(type\)\{[\s\S]*?\n\}/,
-  'async function fetchCard(type){ return nextTask(ch, "G2", type, ch); }'
+  'async function fetchCard(type){ return nextTask(ch, "G2", type, ch, roundWords.join(",")); }'
 ).replace(
   /const res=await fetch\(`\$\{API\}\/practice\/answer`,[\s\S]*?\{error:'network'\}\)\);/,
   'const res = answerCard(ch, card, val, ms);'

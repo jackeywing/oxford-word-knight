@@ -765,6 +765,7 @@ const server = http.createServer((req, res) => {
         level: ['G1', 'G2'].includes(query.level) ? query.level : 'G1',
         type: query.type,
         character: query.character || '',
+        exclude: query.exclude || '',   // 本轮已考过的词（前端传）
       });
       json(res, card);
     } catch (e) { json(res, { error: e.message }, 500); }
