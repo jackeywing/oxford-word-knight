@@ -197,6 +197,7 @@ const F={biff:'👧🏻‍',chip:'🧒🏻',kipper:'👦🏻',wilma:'👧🏽',f
 const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma',floppy:'Floppy'};
 const N=8,TS=40;
 
+let playing=false;
 let lv='G2',ch='biff',qs=[],i=0,sc=0,cb=0,mc=0,xp=0,ti=null,tl=0,ls=[],aud=null;
 
 function beep(f,d,t='square'){try{if(!aud)aud=new(window.AudioContext||window.webkitAudioContext)();const o=aud.createOscillator(),g=aud.createGain();o.type=t;o.frequency.value=f;g.gain.value=0.06;g.gain.exponentialRampToValueAtTime(0.001,aud.currentTime+d);o.connect(g);g.connect(aud.destination);o.start();o.stop(aud.currentTime+d)}catch(e){}}
@@ -292,7 +293,14 @@ async function c_load() {
 function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+c+' show';setTimeout(()=>e.className='toast '+c,2400)}
 function pt(x,y,e='✨',n=8){const c=document.getElementById('pcs');for(let j=0;j<n;j++){const p=document.createElement('div');p.className='p';p.textContent=e;p.style.left=(x+(Math.random()-0.5)*90)+'px';p.style.top=(y+(Math.random()-0.5)*40)+'px';p.style.animationDuration=(0.5+Math.random()*0.6)+'s';c.appendChild(p);setTimeout(()=>p.remove(),1300)}}
 
-function sel(n){ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');document.getElementById('csprite').textContent=F[n]}
+function sel(n){
+  const _prev=ch;
+  if(n===_prev) return;
+  if(playing){
+    if(!confirm('角色已锁定 —— 切换角色会重新开始本轮闯关，确定吗？')) return;
+    rst();
+  }
+  ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');document.getElementById('csprite').textContent=F[n]}
 
 function dn(){
   const c=document.getElementById('pnodes');let h='';
@@ -406,6 +414,7 @@ function re(){
 initEggs();
 
 function victory(){
+  playing=false;   // 本轮已结束，解除角色锁定
   const egg=re();try{eggSnd(egg.icon)}catch(e){}const cn=ls.filter(l=>l.ok).length,fn=ls.filter(l=>!l.ok).length,stars=cn===N?'⭐⭐⭐':(cn>=N*0.7?'⭐⭐':'⭐');
   let fr='';ls.forEach((l,j)=>{if(!l.ok)fr+=`<tr><td>${j+1}</td><td class="fail">${l.word}</td><td class="fail">${l.to?'⏰ 超时':'❌ 错误'}</td></tr>`});
   document.getElementById('chArea').innerHTML=`
@@ -423,9 +432,9 @@ function victory(){
 
 async function load(){return await c_load()}
 
-async function go(){const ok=await load();if(!ok)return;i=0;sc=0;cb=0;mc=0;xp=0;ls=[];tl=TS;clearInterval(ti);dn();mc_();hud();draw();document.getElementById('goBtn').style.display='none';document.getElementById('rstBtn').style.display='inline-block'}
+async function go(){const ok=await load();if(!ok)return;i=0;sc=0;cb=0;mc=0;xp=0;ls=[];tl=TS;clearInterval(ti);dn();mc_();hud();draw();document.getElementById('goBtn').style.display='none';document.getElementById('rstBtn').style.display='inline-block';playing=true}
 
-function rst(){clearInterval(ti);i=0;sc=0;cb=0;mc=0;xp=0;ls=[];qs=[];tl=TS;dn();mc_();hud();document.getElementById('chArea').innerHTML=`<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">准备好了吗？<br>点击"开始冒险"！</div>`;document.getElementById('goBtn').style.display='inline-block';document.getElementById('rstBtn').style.display='none'}
+function rst(){clearInterval(ti);i=0;sc=0;cb=0;mc=0;xp=0;ls=[];qs=[];tl=TS;dn();mc_();hud();document.getElementById('chArea').innerHTML=`<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">准备好了吗？<br>点击"开始冒险"！</div>`;document.getElementById('goBtn').style.display='inline-block';document.getElementById('rstBtn').style.display='none';playing=false}
 
 dn();mc_();hud();window.addEventListener('resize',()=>{dn();mc_()});
 </script>
