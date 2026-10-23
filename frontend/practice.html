@@ -230,6 +230,7 @@ const F={biff:'👧🏻',chip:'🧒🏻',kipper:'👦🏻',wilma:'👧🏽',flop
 const NM={biff:'Biff',chip:'Chip',kipper:'Kipper',wilma:'Wilma',floppy:'Floppy'};
 const N=8, TS=45;   // 8 题一轮，每题 45 秒（音节题要拍手数，给足时间）
 
+document.addEventListener('DOMContentLoaded',()=>track('visit',{page:'phonics'}));
 let ch='biff', i=0, sc=0, cb=0, mx=0, xp=0, ls=[], card=null, t0=0, timerId=null, answered=false, round=[], plan=[];
 
 /* ── 音效 ── */
@@ -240,6 +241,15 @@ const noB=()=>beep(180,.3,'sawtooth');
 const cbB=()=>{beep(784,.07);setTimeout(()=>beep(988,.07),70);setTimeout(()=>beep(1175,.1),140)};
 
 /* ── 语音合成（真实发音，替代截图里的静态音波） ── */
+/* ── 会话埋点：同一个 IP 的一次 session 内的全部行为 ── */
+const SID=(()=>{try{let v=sessionStorage.getItem('owk_sid');if(!v){v=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()).replace(/-/g,'').slice(0,16);sessionStorage.setItem('owk_sid',v);}return v;}catch(e){return 'nosid';}})();
+function track(event,detail){
+  try{
+    fetch('/api/track',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({sid:SID,event,detail:detail||'',player:(typeof ch!=='undefined'?ch:''),path:location.pathname})}).catch(()=>{});
+  }catch(e){}
+}
+
 /* ── 角色音色：男生用男声，女生用女声，Floppy 用更高更轻的宠物音 ── */
 const VOICE_PROFILE={
   biff:  {gender:'female', pitch:1.15},
@@ -306,9 +316,9 @@ function demoVoice(){
 function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+c+' show';setTimeout(()=>e.className='toast '+c,2300)}
 function pt(x,y,e='✨',n=8){const c=document.getElementById('pcs');for(let j=0;j<n;j++){const p=document.createElement('div');p.className='p';p.textContent=e;p.style.left=(x+(Math.random()-.5)*90)+'px';p.style.top=(y+(Math.random()-.5)*40)+'px';p.style.animationDuration=(.5+Math.random()*.6)+'s';c.appendChild(p);setTimeout(()=>p.remove(),1300)}}
 
-function sel(n){ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
+function sel(n){const _prev=ch;ch=n;document.querySelectorAll('.char-card').forEach(c=>c.classList.remove('selected'));
   document.getElementById('char'+n.charAt(0).toUpperCase()+n.slice(1)).classList.add('selected');
-  document.getElementById('csprite').textContent=F[n]; demoVoice();}
+  document.getElementById('csprite').textContent=F[n]; if(_prev!==n)track('character_switch',{from:_prev,to:n}); demoVoice();}
 
 function dn(){const c=document.getElementById('pnodes');let h='';
   for(let j=0;j<N;j++){let cls='',ic='⬜';
@@ -338,6 +348,7 @@ async function fetchCard(type){
 }
 
 function start(){
+  track('round_start',{count:N,level:'G2',character:ch});
   clearInterval(timerId);
   // 每轮固定覆盖 4 种题型各 2 次（打乱顺序），避免随机抽样漏掉某一类
   plan=['syllable','phoneme','phonics','sight','syllable','phoneme','phonics','sight']
@@ -448,6 +459,7 @@ function hideFlash(){
 
 function flashAgain(){
   if(answered) return;
+  track('flash_replay',{word:card.word});
   const w=document.getElementById('flashW'); if(!w) return;
   flashUsed++;
   const b=document.getElementById('flashAgain'); if(b) b.style.display='none';
@@ -495,6 +507,7 @@ async function pick(val,btn,timeout=false){
   if(btn && !res.is_correct) btn.classList.add('wrong');
 
   const okk=res.is_correct;
+  track(okk?'answer_ok':'answer_wrong',{type:card.card_type,target:(card.word||card.correct||card.audio_text||''),ms,timeout});
   if(okk){
     cb++; mx=Math.max(mx,cb);
     let p=10;
@@ -558,6 +571,7 @@ function adv(){
 
 /* ── 结算 ── */
 async function finish(){
+  track('round_finish',{score:sc,correct:ls.filter(x=>x.ok).length,total:N,character:ch});
   clearInterval(timerId);
   const ok=ls.filter(x=>x.ok).length;
   const stars=ok===N?'⭐⭐⭐':(ok>=Math.ceil(N*.7)?'⭐⭐':'⭐');

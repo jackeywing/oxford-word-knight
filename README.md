@@ -165,6 +165,36 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 实测（CDP 模拟）：768 与 1024 两个宽度下均**无横向溢出**。
 
+## 🧭 会话事件流（按 IP + session）
+
+看板最上方第一张表已改为 **`📍 来源 IP` 第一列、`角色` 第二列**（`GROUP BY ip, character_name, level`）。
+
+`game_logs` 新增 `ip` / `sid` 两列，每次结算都会带上来源 IP 与 session id。
+
+### 记录的事件
+
+前端在 `sessionStorage` 生成一个 `owk_sid`，每个动作 `POST /api/track`，服务端按 `IP + sid` 归组：
+
+| 事件 | 触发点 | detail |
+|---|---|---|
+| `visit` | 进入页面 | level / page |
+| `character_switch` | 点角色头像 | `{from, to}` |
+| `round_start` | 点开始 | count / character |
+| `answer_wrong` | 答错（**不推进，清空输入可重试**） | `{word, attempt, typed}` |
+| `answer_ok` | 答对 | `{word, retries, left}` |
+| `flash_replay` | 视觉词回看 | word |
+| `round_finish` | 一轮结束 | score / correct / total |
+| `round_restart` | 重玩 | — |
+
+看板新增「🧭 会话事件流」区：事件总数 / 会话数 / 独立 IP / 事件类型，每个 session 一行
+（IP、session 前缀、**角色切换链 `Biff → Chip → Wilma`**、事件数、起止时间、做过哪些事），
+另有来源 IP 汇总与事件类型统计。
+
+接口：`POST /api/track`、`GET /api/session-events?limit=200`（含 `sessions` / `timelines` / `byKind` / `byIp`）。
+
+> 说明：主游戏的「答错」不推进题目，输入框清空后可重试——所以 `answer_wrong` 会带 `attempt: 1,2,3…`，
+> 这正好就是"失败重试"的记录。旧的 `game_logs` 记录没有 IP，会显示为 `—`。
+
 ## 🌐 访问日志
 
 `/dashboard` 新增「访问日志」区块，记录每次访问与来源 IP。

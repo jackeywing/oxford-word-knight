@@ -83,6 +83,39 @@ try {
   `);
 } catch (e) { /* 表已存在 */ }
 
+// ── 会话事件流（同一个 IP 的一次 session 内发生的一切）──
+db.exec(`
+  CREATE TABLE IF NOT EXISTS session_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts TEXT DEFAULT (datetime('now','localtime')),
+    ip TEXT NOT NULL DEFAULT '',
+    sid TEXT NOT NULL DEFAULT '',
+    player TEXT NOT NULL DEFAULT '',
+    event TEXT NOT NULL DEFAULT '',
+    detail TEXT NOT NULL DEFAULT '',
+    path TEXT NOT NULL DEFAULT '',
+    ua TEXT NOT NULL DEFAULT ''
+  );
+  CREATE INDEX IF NOT EXISTS idx_se_ip_sid ON session_events(ip, sid, ts);
+  CREATE INDEX IF NOT EXISTS idx_se_ts ON session_events(ts);
+`);
+try { db.prepare("DELETE FROM session_events WHERE ts < datetime('now','localtime','-90 day')").run(); } catch (e) {}
+
+// game_logs 补 ip / sid（老库没有这两列，幂等添加）
+{
+  const cols = db.prepare('PRAGMA table_info(game_logs)').all().map((c) => c.name);
+  if (!cols.includes('ip')) db.exec("ALTER TABLE game_logs ADD COLUMN ip TEXT DEFAULT ''");
+  if (!cols.includes('sid')) db.exec("ALTER TABLE game_logs ADD COLUMN sid TEXT DEFAULT ''");
+}
+
+// 统一解析客户端 IP（代理场景优先 X-Forwarded-For）
+function clientIp(req) {
+  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  const raw = fwd || (req.socket && req.socket.remoteAddress) || '';
+  return String(raw).replace(/^::ffff:/, '').replace(/^::1$/, '127.0.0.1');
+}
+
+
 // ── 音素 / 音节特训引擎 ──
 const practice = createPractice(db);
 
@@ -355,6 +388,81 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── POST /api/track ── 客户端行为埋点（角色切换 / 答错 / 重玩 …）
+  if (req.method === 'POST' && pathname === '/api/track') {
+    let body = '';
+    req.on('data', (c) => { body += c; if (body.length > 2e5) req.destroy(); });
+    req.on('end', () => {
+      try {
+        const b = JSON.parse(body || '{}');
+        const ev = String(b.event || '').trim();
+        if (!ev) return json(res, { error: 'event required' }, 400);
+        db.prepare(`
+          INSERT INTO session_events (ip, sid, player, event, detail, path, ua)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(
+          clientIp(req),
+          String(b.sid || '').slice(0, 40),
+          String(b.player || '').slice(0, 20),
+          ev.slice(0, 40),
+          String(typeof b.detail === 'object' ? JSON.stringify(b.detail) : (b.detail || '')).slice(0, 500),
+          String(b.path || '').slice(0, 200),
+          String(req.headers['user-agent'] || '').slice(0, 300)
+        );
+        json(res, { success: true });
+      } catch (e) { json(res, { error: e.message }, 400); }
+    });
+    return;
+  }
+
+  // ── GET /api/session-events ── 按 IP+session 聚合的行为流
+  if (req.method === 'GET' && pathname === '/api/session-events') {
+    try {
+      const limit = Math.min(Math.max(parseInt(query.limit) || 300, 1), 2000);
+      const recent = db.prepare(`
+        SELECT id, ts, ip, sid, player, event, detail, path
+          FROM session_events ORDER BY id DESC LIMIT ?
+      `).all(limit);
+
+      // 一次 session = 同一个 IP + 同一个 sid（前端 sessionStorage 生成）
+      const sessions = db.prepare(`
+        SELECT ip, sid,
+               MIN(ts) started, MAX(ts) ended,
+               COUNT(*) n,
+               COUNT(DISTINCT player) playerN,
+               GROUP_CONCAT(DISTINCT player) players,
+               GROUP_CONCAT(DISTINCT event) kinds
+          FROM session_events
+         WHERE sid <> ''
+         GROUP BY ip, sid
+         ORDER BY MAX(id) DESC
+         LIMIT 80
+      `).all().map((r) => ({ ...r, kinds: String(r.kinds || '').split(',').filter(Boolean) }));
+
+      const timelines = {};
+      for (const sm of sessions.slice(0, 20)) {
+        timelines[sm.ip + '|' + sm.sid] = db.prepare(`
+          SELECT ts, player, event, detail, path FROM session_events
+           WHERE ip = ? AND sid = ? ORDER BY id ASC LIMIT 300
+        `).all(sm.ip, sm.sid);
+      }
+
+      const byKind = db.prepare(
+        'SELECT event, COUNT(*) n FROM session_events GROUP BY event ORDER BY n DESC LIMIT 20'
+      ).all();
+      const byIp = db.prepare(`
+        SELECT ip, COUNT(*) n, COUNT(DISTINCT sid) sessions, MAX(ts) last_at
+          FROM session_events GROUP BY ip ORDER BY n DESC LIMIT 30
+      `).all();
+
+      json(res, {
+        total: (db.prepare('SELECT COUNT(*) n FROM session_events').get() || {}).n || 0,
+        recent, sessions, timelines, byKind, byIp,
+      });
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
   // ── GET /api/access-log ── 访问日志（含来源 IP 汇总）
   if (req.method === 'GET' && pathname === '/api/access-log') {
     try {
@@ -510,18 +618,19 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const log = JSON.parse(body);
-        const { character, level, score, maxCombo, wordsTotal, wordsCorrect, wordsTimeout, wordsWrong, details } = log;
+        const { character, level, score, maxCombo, wordsTotal, wordsCorrect, wordsTimeout, wordsWrong, details, sid } = log;
         if (!character || !level) return json(res, { error: 'character and level required' }, 400);
         const stmt = db.prepare(
-          `INSERT INTO game_logs (character_name, level, score, max_combo, words_total, words_correct, words_timeout, words_wrong, details)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          `INSERT INTO game_logs (character_name, level, score, max_combo, words_total, words_correct, words_timeout, words_wrong, details, ip, sid)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         );
         stmt.run(
           character, level,
           score || 0, maxCombo || 0,
           wordsTotal || 0, wordsCorrect || 0,
           wordsTimeout || 0, wordsWrong || 0,
-          JSON.stringify(details || [])
+          JSON.stringify(details || []),
+          clientIp(req), String(sid || '').slice(0, 40)
         );
         json(res, { success: true });
       } catch (e) { json(res, { error: e.message }, 400); }
@@ -534,6 +643,7 @@ const server = http.createServer((req, res) => {
     try {
       const summary = db.prepare(`
         SELECT 
+          COALESCE(NULLIF(TRIM(ip), ''), '—') as ip,
           character_name, level,
           COUNT(*) as games,
           SUM(score) as totalScore,
@@ -544,7 +654,7 @@ const server = http.createServer((req, res) => {
           SUM(words_wrong) as wrongWords,
           SUM(words_timeout) as timeoutWords
         FROM game_logs
-        GROUP BY character_name, level
+        GROUP BY ip, character_name, level
         ORDER BY totalScore DESC
       `).all();
       const recent = db.prepare(
