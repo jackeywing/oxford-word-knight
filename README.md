@@ -148,6 +148,36 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 `practice` 块字段：`total / correct / accuracy / avgMs / players / byType / byPlayer / daily / recent / weakPhonemes / troubleWords`。
 
+## 📱 平板 / 响应式
+
+针对 **iPad Chrome（iPadOS 走 WebKit）** 做了断点适配：
+
+| 视口 | root 字号 | 容器宽度 |
+|---|---|---|
+| 手机 <768px | 16px（默认） | 全宽，沿用原紧凑规则 |
+| **iPad 竖屏 768×1024** | **17px** | 940px（卡片 760px） |
+| **iPad 横屏 1024×768** | **18px** | 1060px（卡片 840px） |
+
+所有尺寸原本就是 `em` 相对单位，所以只放大 `html` 的 font-size 即可整体等比缩放。
+另加 `-webkit-text-size-adjust:100%`（防 iOS 自动缩放）、`touch-action:manipulation`（去 300ms 点击延迟）。
+横屏纵向吃紧时（`max-height:840px`）自动压缩间距。
+词库/看板等宽表格在窄屏改为面板内横向滚动，不挤压列。
+
+实测（CDP 模拟）：768 与 1024 两个宽度下均**无横向溢出**。
+
+## 🌐 访问日志
+
+`/dashboard` 新增「访问日志」区块，记录每次访问与来源 IP。
+
+- 数据表 `access_log`：`ts / ip / method / path / status / ua / referer / ms`
+- IP 取值顺序：`X-Forwarded-For` 第一段 → socket 远端地址（`::ffff:`、`::1` 已归一化）
+- 静态资源（css/js/图片/字体）不记录，避免噪音
+- 自动保留最近 **90 天**，启动时清理过期记录
+- 展示：总访问 / 独立 IP / 今日访问 / 记录天数，来源 IP 汇总、每日访问、热门路径、最近 200 条明细
+- 接口：`GET /api/access-log?limit=200`、`GET /api/access-log/clear`
+
+> 本机访问的 IP 永远是 `127.0.0.1`——要有真实访客 IP，必须把后端部署到公网（或走隧道）。
+
 ## 🗂️ 词库浏览（`/lexicon`）
 
 浏览器打开 **http://localhost:3000/lexicon**，用于核对题库真实内容：

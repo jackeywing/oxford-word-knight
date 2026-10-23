@@ -50,6 +50,18 @@ input:focus,select:focus{ outline:none; border-color:var(--gold); }
 .lnk a{ color:#42A5F5; margin:0 8px; }
 .dup{ color:var(--red); font-weight:bold; }
 code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
+
+/* ── iPad / 平板适配 ── */
+html { -webkit-text-size-adjust:100%; }
+@media (min-width:768px) {
+  html { font-size:17px; }
+  .wrap { max-width:1240px; }
+}
+@media (max-width:900px) {          /* 窄屏时表格横向滚动，不挤压列 */
+  .panel { overflow-x:auto; }
+  table { min-width:640px; }
+}
+
 </style>
 </head>
 <body>

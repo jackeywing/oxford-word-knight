@@ -120,6 +120,25 @@
   .nav-tabs{display:flex;gap:6px;padding:8px;}
   .nav-tabs .tab{flex:1;text-align:center;text-decoration:none;font-size:.46em;padding:11px 10px;background:#E0C9A6;color:#5D4037;border:2px solid #8D6E63;box-shadow:0 3px 0 #6D4C2E;}
   .nav-tabs .tab.active{background:#FFD54F;color:#3E2723;border-color:#F9A825;box-shadow:0 3px 0 #C17900;}
+
+    /* ── iPad / 平板适配（Chrome on iPadOS 走 WebKit）── */
+    html { -webkit-text-size-adjust:100%; }
+    body { touch-action:manipulation; }
+    @media (min-width:768px) {          /* iPad 竖屏 768 起 */
+      html { font-size:17px; }
+      .app { max-width:940px; padding:14px; gap:10px; }
+      .ch-card { max-width:760px; padding:24px; }
+    }
+    @media (min-width:1024px) {         /* iPad 横屏 / 大屏 */
+      html { font-size:18px; }
+      .app { max-width:1060px; }
+      .ch-card { max-width:840px; }
+    }
+    @media (min-width:768px) and (max-height:840px) {   /* 横屏纵向吃紧，压缩留白 */
+      .app { gap:6px; padding:8px 14px; }
+      .ch-card { padding:18px; }
+    }
+
 </style>
 </head>
 <body>

@@ -42,6 +42,18 @@ input[type="file"] { padding:4px; border:2px dashed #8D6E63; cursor:pointer; fon
 .t-syl{background:#7CB342;color:#fff} .t-pho{background:#8E24AA;color:#fff}
 .t-rule{background:#FB8C00;color:#fff} .t-sight{background:#00ACC1;color:#fff}
 .lnk a { color:#1565C0; }
+
+/* ── iPad / 平板适配 ── */
+html { -webkit-text-size-adjust:100%; }
+@media (min-width:768px) {
+  html { font-size:17px; }
+  .wrap { max-width:1240px; }
+}
+@media (max-width:900px) {          /* 窄屏时表格横向滚动，不挤压列 */
+  .panel { overflow-x:auto; }
+  table { min-width:640px; }
+}
+
 </style>
 </head>
 <body>
@@ -103,6 +115,25 @@ input[type="file"] { padding:4px; border:2px dashed #8D6E63; cursor:pointer; fon
 <div class="panel"><table><thead><tr><th>时间</th><th>玩家</th><th>题型</th><th>题目</th><th>考点</th><th>结果</th><th>用时</th></tr></thead>
   <tbody id="pRecent"><tr><td colspan="7">—</td></tr></tbody></table></div>
 
+<h2>🌐 访问日志</h2>
+<div class="panel"><div class="tiles" id="aTotals"></div></div>
+
+<h2>📍 来源 IP</h2>
+<div class="panel"><table><thead><tr><th>IP</th><th>访问次数</th><th>活跃天数</th><th>最后访问</th></tr></thead>
+  <tbody id="aIp"><tr><td colspan="4">—</td></tr></tbody></table></div>
+
+<h2>📅 每日访问</h2>
+<div class="panel"><table><thead><tr><th>日期</th><th>访问数</th><th>独立 IP</th></tr></thead>
+  <tbody id="aDay"><tr><td colspan="3">—</td></tr></tbody></table></div>
+
+<h2>🔗 热门路径</h2>
+<div class="panel"><table><thead><tr><th>路径</th><th>次数</th></tr></thead>
+  <tbody id="aPath"><tr><td colspan="2">—</td></tr></tbody></table></div>
+
+<h2>📜 最近访问（200 条）</h2>
+<div class="panel"><table><thead><tr><th>时间</th><th>IP</th><th>方法</th><th>路径</th><th>状态</th><th>耗时</th><th>UA</th></tr></thead>
+  <tbody id="aRec"><tr><td colspan="7">—</td></tr></tbody></table></div>
+
 <div class="lnk"><a href="/">🎮 返回游戏</a> ｜ <a href="/lexicon">🗂️ 词库浏览</a></div>
 </div>
 
@@ -122,6 +153,7 @@ async function rf() {
     if(!d.recent||!d.recent.length){re.innerHTML='<tr><td colspan="8">暂无</td></tr>'}
     else re.innerHTML=d.recent.map(r=>`<tr><td>${r.created_at}</td><td>${r.character_name}</td><td><span class="badge ${r.level.toLowerCase()}">${r.level}</span></td><td class="gold">${r.score}</td><td>${r.max_combo}</td><td class="green">${r.words_correct}</td><td class="red">${r.words_wrong}</td><td>${r.words_timeout}</td></tr>`).join('');
     renderPractice(d.practice || {});
+    rfAccess();
   } catch(e) { console.error(e); }
 }
 const TYPE_LABEL = {
@@ -169,6 +201,45 @@ function renderPractice(p) {
       <td>${r.word || ''}</td><td>${r.focus || ''}</td>
       <td class="${r.is_correct ? 'green' : 'red'}">${r.is_correct ? '✅' : '❌'}</td><td>${sec(r.response_ms)}</td></tr>`;
   }).join(''));
+}
+
+const escHtml = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shortUa = u => {
+  const s = String(u || '');
+  const os = /iPad/.test(s) ? 'iPad' : /iPhone/.test(s) ? 'iPhone' : /Macintosh|Mac OS X/.test(s) ? 'Mac' : /Windows/.test(s) ? 'Windows' : /Android/.test(s) ? 'Android' : '—';
+  const br = /Edg\//.test(s) ? 'Edge' : /Chrome\//.test(s) ? 'Chrome' : /Safari\//.test(s) ? 'Safari' : /Firefox\//.test(s) ? 'Firefox' : '—';
+  return os + ' / ' + br;
+};
+
+async function rfAccess() {
+  try {
+    const d = await (await fetch(API + '/api/access-log?limit=200')).json();
+    if (d.error) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const todayN = (d.byDay || []).filter(r => String(r.day) === today).reduce((a, r) => a + r.n, 0);
+    const set = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
+    set('aTotals', [
+      ['总访问数', d.total || 0, ''],
+      ['独立 IP', (d.byIp || []).length, ''],
+      ['今日访问', todayN, ''],
+      ['记录天数', (d.byDay || []).length, ''],
+    ].map(([k, v, c]) => `<div class="tile"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`).join(''));
+
+    set('aIp', !(d.byIp || []).length ? '<tr><td colspan="4">暂无</td></tr>' : d.byIp.map(r =>
+      `<tr><td class="gold">${escHtml(r.ip)}</td><td>${r.n}</td><td>${r.days}</td><td>${escHtml(r.last_at)}</td></tr>`).join(''));
+
+    set('aDay', !(d.byDay || []).length ? '<tr><td colspan="3">暂无</td></tr>' : d.byDay.map(r =>
+      `<tr><td>${escHtml(r.day)}</td><td>${r.n}</td><td>${r.ips}</td></tr>`).join(''));
+
+    set('aPath', !(d.byPath || []).length ? '<tr><td colspan="2">暂无</td></tr>' : d.byPath.map(r =>
+      `<tr><td class="gold" style="text-align:left">${escHtml(r.path)}</td><td>${r.n}</td></tr>`).join(''));
+
+    set('aRec', !(d.recent || []).length ? '<tr><td colspan="7">暂无</td></tr>' : d.recent.map(r =>
+      `<tr><td>${escHtml(r.ts)}</td><td class="gold">${escHtml(r.ip)}</td><td>${escHtml(r.method)}</td>
+       <td style="text-align:left">${escHtml(String(r.path).slice(0, 60))}</td>
+       <td class="${r.status >= 400 ? 'red' : 'green'}">${r.status}</td>
+       <td>${r.ms}ms</td><td class="dim">${escHtml(shortUa(r.ua))}</td></tr>`).join(''));
+  } catch (e) { console.error(e); }
 }
 
 async function clr() { if(!confirm('确认清空？'))return; await fetch(API+'/api/dashboard/clear'); rf(); }

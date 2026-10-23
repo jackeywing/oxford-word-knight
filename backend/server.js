@@ -39,6 +39,50 @@ db.exec(`
   )
 `);
 
+// ── 访问日志（记录每次访问与来源 IP）──
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS access_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ts TEXT DEFAULT (datetime('now','localtime')),
+      ip TEXT NOT NULL DEFAULT '',
+      method TEXT NOT NULL DEFAULT '',
+      path TEXT NOT NULL DEFAULT '',
+      status INTEGER DEFAULT 0,
+      ua TEXT NOT NULL DEFAULT '',
+      referer TEXT NOT NULL DEFAULT '',
+      ms INTEGER DEFAULT 0
+    );
+    CREATE INDEX IF NOT EXISTS idx_access_ts ON access_log(ts);
+    CREATE INDEX IF NOT EXISTS idx_access_ip ON access_log(ip);
+  `);
+  // 只保留最近 90 天，避免无限膨胀
+  db.prepare("DELETE FROM access_log WHERE ts < datetime('now','localtime','-90 day')").run();
+} catch (e) { /* 表已存在 */ }
+
+// ── 人工高权重生词表（家长/老师手动录入，权重越高越优先出题）──
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS user_words (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      word TEXT NOT NULL,
+      hint TEXT DEFAULT '',
+      sentence TEXT DEFAULT '',
+      weight REAL NOT NULL DEFAULT 3,
+      note TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now','localtime'))
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_user_words_unique ON user_words(LOWER(word));
+  `);
+  // 人工生词必须保证在主词库里，否则重建词库后抽不到
+  db.exec(`
+    INSERT INTO words (oxford_level, word, hint, sentence, stage, pos)
+    SELECT 'G2', u.word, u.hint, u.sentence, NULL, ''
+      FROM user_words u
+     WHERE LOWER(u.word) NOT IN (SELECT LOWER(word) FROM words)
+  `);
+} catch (e) { /* 表已存在 */ }
+
 // ── 音素 / 音节特训引擎 ──
 const practice = createPractice(db);
 
@@ -111,6 +155,34 @@ function sentenceWithCloze(sentence, word, cloze) {
 const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') { setCORS(res); res.writeHead(204); res.end(); return; }
   const { pathname, query } = url.parse(req.url, true);
+
+  // ── 访问日志埋点（静态资源不记，避免噪音）──
+  {
+    const t0 = Date.now();
+    const isAsset = /\.(css|js|png|jpe?g|gif|svg|ico|woff2?|map)$/i.test(pathname);
+    if (!isAsset) {
+      const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+      const rawIp = fwd || (req.socket && req.socket.remoteAddress) || '';
+      const ip = rawIp.replace(/^::ffff:/, '').replace(/^::1$/, '127.0.0.1');
+      res.on('finish', () => {
+        try {
+          db.prepare(`
+            INSERT INTO access_log (ip, method, path, status, ua, referer, ms)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `).run(
+            ip,
+            req.method || '',
+            String(req.url || '').slice(0, 300),
+            res.statusCode || 0,
+            String(req.headers['user-agent'] || '').slice(0, 300),
+            String(req.headers['referer'] || '').slice(0, 300),
+            Date.now() - t0
+          );
+        } catch (e) { /* 日志失败不影响主流程 */ }
+      });
+    }
+  }
+
 
   // ── Static files ──
   if (req.method === 'GET' && (pathname === '/' || pathname === '/index.html'))
@@ -210,28 +282,6 @@ const server = http.createServer((req, res) => {
   }
 
   // ── POST /api/import ──
-  // ── 人工高权重生词表（家长/老师手动录入，权重越高越优先出题）──
-  try {
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS user_words (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        word TEXT NOT NULL,
-        hint TEXT DEFAULT '',
-        sentence TEXT DEFAULT '',
-        weight REAL NOT NULL DEFAULT 3,
-        note TEXT DEFAULT '',
-        created_at TEXT DEFAULT (datetime('now','localtime'))
-      );
-      CREATE UNIQUE INDEX IF NOT EXISTS idx_user_words_unique ON user_words(LOWER(word));
-    `);
-    // 人工生词必须保证在主词库里，否则重建词库后抽不到
-    db.exec(`
-      INSERT INTO words (oxford_level, word, hint, sentence, stage, pos)
-      SELECT 'G2', u.word, u.hint, u.sentence, NULL, ''
-        FROM user_words u
-       WHERE LOWER(u.word) NOT IN (SELECT LOWER(word) FROM words)
-    `);
-  } catch (e) { /* 表已存在 */ }
 
   // ── GET /api/user-words ── 人工高权重生词
   if (req.method === 'GET' && pathname === '/api/user-words') {
@@ -302,6 +352,37 @@ const server = http.createServer((req, res) => {
         json(res, { success: true });
       } catch (e) { json(res, { error: e.message }, 500); }
     });
+    return;
+  }
+
+  // ── GET /api/access-log ── 访问日志（含来源 IP 汇总）
+  if (req.method === 'GET' && pathname === '/api/access-log') {
+    try {
+      const limit = Math.min(Math.max(parseInt(query.limit) || 200, 1), 1000);
+      const recent = db.prepare(
+        'SELECT id, ts, ip, method, path, status, ua, referer, ms FROM access_log ORDER BY id DESC LIMIT ?'
+      ).all(limit);
+      const totals = db.prepare('SELECT COUNT(*) n FROM access_log').get();
+      const byIp = db.prepare(`
+        SELECT ip, COUNT(*) n, MAX(ts) last_at, COUNT(DISTINCT date(ts)) days
+          FROM access_log GROUP BY ip ORDER BY n DESC LIMIT 50
+      `).all();
+      const byDay = db.prepare(`
+        SELECT date(ts) day, COUNT(*) n, COUNT(DISTINCT ip) ips
+          FROM access_log GROUP BY day ORDER BY day DESC LIMIT 30
+      `).all();
+      const byPath = db.prepare(`
+        SELECT path, COUNT(*) n FROM access_log GROUP BY path ORDER BY n DESC LIMIT 25
+      `).all();
+      json(res, { total: totals.n || 0, recent, byIp, byDay, byPath });
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // ── GET /api/access-log/clear ──
+  if (req.method === 'GET' && pathname === '/api/access-log/clear') {
+    try { db.exec('DELETE FROM access_log'); json(res, { success: true }); }
+    catch (e) { json(res, { error: e.message }, 500); }
     return;
   }
 
