@@ -42,10 +42,34 @@ function readCsv(file) {
   }
   return rows;
 }
-// 优先用 build-lexicon.js 产出的合并词库（含 stage、已去重、已补例句）
-const _rawBank = fs.existsSync(path.join(ROOT, 'words-merged.csv'))
+/*
+ * 词库以**数据库为准**。之前读 words-merged.csv，导致：
+ *   - 通过 /lexicon 手动加的高权重生词（lantern / telescope）只进库，永远不上线
+ *   - 新导入的词（fright）同样进不了静态版
+ * 数据库不存在时才回落到 CSV（CI 无库场景）。
+ */
+function loadBankFromDb() {
+  const Database = require('better-sqlite3');
+  const p = path.join(ROOT, 'backend', 'db.sqlite3');
+  if (!fs.existsSync(p)) return null;
+  try {
+    const db = new Database(p, { readonly: true });
+    const rows = db.prepare('SELECT word, hint, sentence, oxford_level, stage, pos FROM words ORDER BY id').all();
+    db.close();
+    if (!rows.length) return null;
+    return rows.map((r) => ({
+      ...r,
+      sentence: r.sentence || '',
+      oxford_level: /^G[12]$/.test(r.oxford_level || '') ? r.oxford_level : 'G2',
+    }));
+  } catch (e) { console.warn('⚠️ 读库失败，回落 CSV:', e.message); return null; }
+}
+
+const _dbBank = loadBankFromDb();
+const _rawBank = _dbBank || (fs.existsSync(path.join(ROOT, 'words-merged.csv'))
   ? readCsv('words-merged.csv')
-  : readCsv('g2-words.csv').concat(readCsv('sample-words.csv'));
+  : readCsv('g2-words.csv').concat(readCsv('sample-words.csv')));
+if (_dbBank) console.log('词库来源: 数据库 (' + _dbBank.length + ' 词)');
 // 两个 CSV 有 6 个词重叠（red/blue/come/make/put/old）——不去重会导致同一轮抽到两次
 const BANK = (() => {
   const seen = new Map();
@@ -655,3 +679,59 @@ console.log('word bank embedded:', BANK.length, 'words');
   fs.writeFileSync(path.join(OUT, 'dashboard.html'), tpl, 'utf8');
   console.log('wrote docs/dashboard.html', (tpl.length / 1024).toFixed(1) + ' KB');
 }
+
+/* ═══════════════════════════════════════════════════════════
+   同步 docs/index.html 的内嵌词库（它是手工维护的静态副本）
+   —— 人工加的高权重生词只进数据库，不自动同步就会永远不上线。
+   ═══════════════════════════════════════════════════════════ */
+function syncStaticGameWords() {
+  const p = path.join(__dirname, 'docs', 'index.html');
+  if (!fs.existsSync(p)) return;
+  const src = fs.readFileSync(p, 'utf8');
+
+  // 用括号配对定位数组边界（正则的非贪婪匹配会在内层 `];` 处提前截断）
+  const marker = src.indexOf('const WORDS');
+  if (marker < 0) return console.warn('⚠️ docs/index.html 未找到 WORDS');
+  const open = src.indexOf('[', marker);
+  let depth = 0, close = -1;
+  for (let i = open; i < src.length; i++) {
+    if (src[i] === '[') depth++;
+    else if (src[i] === ']') { depth--; if (depth === 0) { close = i; break; } }
+  }
+  if (close < 0) return console.warn('⚠️ WORDS 数组未闭合');
+
+  let arr;
+  try { arr = JSON.parse(src.slice(open, close + 1)); }
+  catch (e) { return console.warn('⚠️ WORDS 解析失败，跳过同步:', e.message); }
+
+  let dbWords = [];
+  try {
+    const Database = require('better-sqlite3');
+    const db = new Database(path.join(__dirname, 'backend', 'db.sqlite3'), { readonly: true });
+    dbWords = db.prepare('SELECT word, hint, sentence, oxford_level FROM words ORDER BY id').all();
+    db.close();
+  } catch (e) { return console.warn('⚠️ 读库失败，跳过静态词库同步'); }
+
+  // 以数据库为准；保留静态数组里数据库没有的词（防止手工补充被冲掉）
+  const seen = new Set();
+  const merged = [];
+  for (const r of dbWords) {
+    const k = String(r.word || '').toLowerCase();
+    if (!k || seen.has(k)) continue;
+    seen.add(k);
+    merged.push({ word: r.word, hint: r.hint || '', sentence: r.sentence || '', oxford_level: r.oxford_level || 'G1' });
+  }
+  for (const r of arr) {
+    const k = String(r.word || '').toLowerCase();
+    if (!k || seen.has(k)) continue;
+    seen.add(k);
+    merged.push(r);
+  }
+
+  if (merged.length === arr.length && merged.every((m, i) => m.word === arr[i].word)) {
+    return console.log('静态主页词库: 已同步 (' + arr.length + ' 词)');
+  }
+  fs.writeFileSync(p, src.slice(0, open) + JSON.stringify(merged) + src.slice(close + 1));
+  console.log(`静态主页词库: ${arr.length} → ${merged.length} 词`);
+}
+syncStaticGameWords();
