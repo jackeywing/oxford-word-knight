@@ -180,6 +180,87 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 > 主游戏（`/api/challenges`）在服务端按词去重，不需要 exclude。
 
+## 🧠 Agent A / C：语境脚手架 + HITL 证据溯源
+
+### Spec A — 语境脚手架生成（Context-Aware Scaffolding）
+
+`POST /api/agent/scaffold`
+
+```json
+{"player_id":"Tom","target_word":"fright","oxford_stage":3,
+ "identified_phoneme_weakness":"/r/","error_context":"fright -> flight","character":"floppy"}
+```
+
+流程：**图谱事实 → 语料检索 → 受控提示 → 结构化输出**
+
+```json
+{"status":"success","scaffolding_type":"ort_context_hint","target_word":"fright",
+ "grounded_sentence":"Floppy had a fright in the dark.",
+ "grounded_from":{"character":"floppy","stage":2,"source":"seed","score":17.35},
+ "pedagogical_hint":"floppy 在故事里遇到过这个词；这次是 fright，拆开字母是 f · r · igh · t；重点听 /r/ 这个音；刚才 fright -> flight 差了一个音。",
+ "graph_facts":{"phonemes":["/f/","/r/","/aɪ/","/t/"],"graphemes":["f","r","igh","t"]},
+ "retrieval":{"guard":"strict_vocab(913 words)"}}
+```
+
+**与原始 Spec 的两处偏离（必须知道）**
+
+| Spec 假设 | 实际实现 |
+|---|---|
+| ChromaDB 稠密向量检索 | **确定性打分检索**：同词 8 分 / 共享拼读组合 ×2.5 / 同角色 +2 / 同首字母 +1 / stage 距离惩罚。零依赖、可复现。换向量库只需替换 `retrieve()` |
+| 真实 ORT 绘本语料 | 语料由既有词库的 507 条句子种子化，**多数是工程生成的示范句，不是 ORT 原文**。`source` 字段如实标注 `seed` / `agent` / `imported` |
+
+**严格词表守卫**：目标词不在词库（913 词）→ `rejected_by_guard`；检索只收 `oxford_stage <= 请求 stage`；
+句子里的非人物名生词不进语料。人物名（Biff/Chip/Kipper/Wilma/Floppy/Mum/Dad/Gran…）视为专有名词放行。
+
+**语料与角色绑定**：`corpus.character` 由句子中出现的人物自动标注，检索时同角色 +2 分。
+当前分布：旁白 450 / Biff 15 / Kipper 14 / Chip 11 / Wilma 6 / Floppy 5 / Mum 3 / Dad 2 / Gran 1。
+
+### Spec C — HITL 证据溯源与动态边生成
+
+`GET /api/agent/discover?windowDays=30&threshold=0.85&create=1`
+
+从 `session_events` 里真实答错的 (`target`, `typed`) 提取音素差异对，统计闸门：
+
+```
+confidence = 0.6 × min(1, freq/6) + 0.4 × min(1, users/4)
+硬下限：freq ≥ 6 且 users ≥ 3
+```
+
+> 为什么不是"命中率"：我们没有"每次遇到该词都错"的分母，只有错误事件本身，
+> 算命中率等于伪造分母。只用可观测的频次与受众广度，并让小样本自然被压低。
+
+达门槛 → 生成 `PROP_YYYY_MMDD_NN` 提案（**不写生产图谱**），附最近 5 条真实错误片段。
+
+```json
+{"proposal_id":"PROP_2026_1023_01","edge_type":"CONFUSED_WITH",
+ "source":"Phoneme_r","target":"Phoneme_l","confidence":0.74,"status":"pending_review",
+ "grounding_evidence":[{"player":"demo_kid_1","target_word":"right","user_input":"light"}],
+ "action_endpoints":{"approve":"/api/proposals/approve?id=...","reject":"/api/proposals/reject?id=..."}}
+```
+
+### HITL 审阅台
+
+**http://localhost:3000/portal**（需要后端，不能上静态 Pages）
+
+- 待审提案卡片：边/语料、置信度、证据链、通过/拒绝
+- 「运行发现」：可调时间窗与门槛，实时看候选与闸门结果
+- 「新增语料」：提交即进待审队列，**通过后才会进语料库**
+- 已生效混淆边表
+
+审批语义：
+- `graph_edge` 通过 → 写入 `phoneme_edge`（带 `proposal_id` 溯源）
+- `corpus_sentence` 通过 → 再过一次词表守卫 → 写入 `corpus`
+- 拒绝 → 只改状态，无副作用
+- 重复审批 → 拒绝（`该提案已是 approved`）
+
+### 数据表
+
+| 表 | 用途 |
+|---|---|
+| `corpus` | 语料库（sentence/word/stage/character/source/status） |
+| `proposals` | HITL 待审提案（kind/payload/confidence/evidence/status） |
+| `phoneme_edge` | 审议通过的混淆边（source/target/confidence/proposal_id） |
+
 ## 🛠️ 线上后台（静态快照）
 
 **https://jackeywing.github.io/oxford-word-knight/dashboard.html**

@@ -118,6 +118,12 @@ function clientIp(req) {
 
 // ── 音素 / 音节特训引擎 ──
 const practice = createPractice(db);
+const createAgent = require('./agent.js');
+const agent = createAgent(db, practice);
+try {
+  const seeded = agent.seedCorpus();
+  if (seeded.added) console.log(`📚 语料库种子化: +${seeded.added} 条（共 ${seeded.total}）`);
+} catch (e) { console.warn('语料库种子化失败:', e.message); }
 
 // ── Helpers ──
 function setCORS(res) {
@@ -462,6 +468,96 @@ const server = http.createServer((req, res) => {
     } catch (e) { json(res, { error: e.message }, 500); }
     return;
   }
+
+  /* ═══════════ Agent A：语境脚手架 ═══════════ */
+
+  // POST /api/agent/scaffold  {player_id, target_word, oxford_stage, identified_phoneme_weakness, error_context, character}
+  if (req.method === 'POST' && pathname === '/api/agent/scaffold') {
+    let body = '';
+    req.on('data', (c) => { body += c; if (body.length > 2e5) req.destroy(); });
+    req.on('end', () => {
+      try {
+        const b = JSON.parse(body || '{}');
+        const out = agent.scaffold({
+          player_id: b.player_id, target_word: b.target_word,
+          oxford_stage: b.oxford_stage, identified_phoneme_weakness: b.identified_phoneme_weakness,
+          error_context: b.error_context, character: b.character || b.player_id,
+        });
+        json(res, out);
+      } catch (e) { json(res, { status: 'error', error: e.message }, 400); }
+    });
+    return;
+  }
+
+  // GET /api/corpus?stage=3&character=biff&q=fright
+  if (req.method === 'GET' && pathname === '/api/corpus') {
+    try {
+      json(res, agent.listCorpus({
+        stage: query.stage, character: query.character, q: query.q, limit: query.limit,
+      }));
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  /* ═══════════ Agent C：HITL 证据溯源 ═══════════ */
+
+  // GET /api/agent/discover?windowDays=30&threshold=0.85&create=1
+  if (req.method === 'GET' && pathname === '/api/agent/discover') {
+    try {
+      const found = agent.discoverConfusions({
+        windowDays: query.windowDays, threshold: Number(query.threshold) || 0.85,
+      });
+      if (found.error) return json(res, found, 500);
+      const created = String(query.create || '') === '1' ? agent.proposeEdges(found.passing) : [];
+      json(res, { ...found, proposalsCreated: created.map((p) => p.id) });
+    } catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // GET /api/proposals?status=pending
+  if (req.method === 'GET' && pathname === '/api/proposals') {
+    try { json(res, { proposals: agent.listProposals(query.status || ''), stats: agent.stats() }); }
+    catch (e) { json(res, { error: e.message }, 500); }
+    return;
+  }
+
+  // POST /api/corpus/propose  {sentence, word, oxford_stage, character}  —— 新增语料必须走审阅
+  if (req.method === 'POST' && pathname === '/api/corpus/propose') {
+    let body = '';
+    req.on('data', (c) => { body += c; if (body.length > 2e5) req.destroy(); });
+    req.on('end', () => {
+      try {
+        const b = JSON.parse(body || '{}');
+        const p = agent.proposeCorpus({
+          sentence: b.sentence, word: b.word,
+          oxfordStage: b.oxford_stage, character: b.character,
+        });
+        if (p.error) return json(res, p, 400);
+        json(res, { success: true, proposal: { id: p.id, status: p.status } });
+      } catch (e) { json(res, { error: e.message }, 400); }
+    });
+    return;
+  }
+
+  // POST /api/proposals/approve?id=  |  /api/proposals/reject?id=
+  if (req.method === 'POST' && (pathname === '/api/proposals/approve' || pathname === '/api/proposals/reject')) {
+    const action = pathname.endsWith('approve') ? 'approve' : 'reject';
+    let body = '';
+    req.on('data', (c) => { body += c; if (body.length > 1e5) req.destroy(); });
+    req.on('end', () => {
+      try {
+        let id = query.id || '';
+        if (!id && body) { try { id = JSON.parse(body).id || ''; } catch (e) {} }
+        if (!id) return json(res, { error: 'id 必填' }, 400);
+        json(res, agent.reviewProposal(id, action));
+      } catch (e) { json(res, { error: e.message }, 400); }
+    });
+    return;
+  }
+
+  // 页面：HITL 审阅台
+  if (req.method === 'GET' && (pathname === '/portal' || pathname === '/portal.html' || pathname === '/hitl'))
+    return serveFile(res, 'frontend/portal.html', 'text/html; charset=utf-8');
 
   // ── GET /api/access-log ── 访问日志（含来源 IP 汇总）
   if (req.method === 'GET' && pathname === '/api/access-log') {

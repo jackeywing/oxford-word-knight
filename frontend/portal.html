@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧑‍⚖️ Word-Knight · HITL 审阅台</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+:root{ --bg:#2D1F0E; --panel:#3E2723; --gold:#FFD54F; --green:#66BB6A; --red:#EF5350; --text:#FFE0B2; }
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{ font-family:'Press Start 2P',monospace; background:var(--bg); color:var(--text); min-height:100vh; padding:14px; }
+.wrap{ max-width:1180px; margin:0 auto; }
+h1{ color:var(--gold); font-size:0.78em; text-align:center; margin:12px 0; text-shadow:2px 2px 0 #1A0E00; }
+h2{ color:var(--gold); font-size:0.52em; margin:16px 0 8px; }
+.panel{ background:var(--panel); border:3px solid #5D4037; padding:12px; margin-bottom:10px; }
+.tiles{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; }
+.tile{ background:#4A3020; border:2px solid #5D4037; padding:10px; text-align:center; }
+.tile .k{ font-size:0.30em; color:#BCAAA4; margin-bottom:6px; }
+.tile .v{ font-size:0.68em; color:var(--gold); }
+.green{ color:var(--green); } .red{ color:var(--red); } .gold{ color:var(--gold); } .dim{ color:#8D6E63; }
+.note{ font-size:0.34em; line-height:1.9; color:#BCAAA4; }
+.ctl{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+input,select,textarea{ font-family:inherit; font-size:0.4em; padding:8px 9px; background:#4A3020; color:var(--text); border:2px solid #8D6E63; }
+input:focus,textarea:focus{ outline:none; border-color:var(--gold); }
+.btn{ padding:8px 14px; font-family:inherit; font-size:0.4em; cursor:pointer; border:2px solid; box-shadow:0 3px 0 rgba(0,0,0,.3); }
+.btn:active{ transform:translateY(2px); box-shadow:none; }
+.btn-g{ background:#2E7D32; color:#FFE0B2; border-color:#1B5E20; }
+.btn-r{ background:#C62828; color:#FFE0B2; border-color:#B71C1C; }
+.btn-b{ background:#1565C0; color:#FFE0B2; border-color:#0D47A1; }
+.card{ background:#4A3020; border:3px solid #6D4C41; padding:12px; margin-bottom:10px; }
+.card.pend{ border-color:#F9A825; }
+.card .id{ font-size:0.36em; color:#BCAAA4; }
+.card .kind{ display:inline-block; font-size:0.3em; padding:3px 6px; border-radius:2px; margin-left:6px; }
+.k-edge{ background:#C62828; color:#fff; } .k-corpus{ background:#1565C0; color:#fff; }
+.card .body{ font-size:0.4em; line-height:1.9; margin:8px 0; }
+.card .ev{ font-size:0.32em; color:#BCAAA4; line-height:1.9; margin:6px 0; }
+.actions{ display:flex; gap:8px; margin-top:8px; }
+table{ width:100%; border-collapse:collapse; font-size:0.34em; }
+th,td{ padding:5px 7px; border:2px solid #5D4037; text-align:left; }
+th{ background:#4A3020; color:var(--gold); }
+.lnk{ font-size:0.38em; color:#888; text-align:center; margin:16px 0; }
+.lnk a{ color:#42A5F5; margin:0 8px; }
+code{ background:#4A3020; padding:1px 4px; color:var(--gold); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🧑‍⚖️ HITL 审阅台</h1>
+
+<div class="panel"><div class="note">
+  这里有两条流水线：<b>Agent A</b>（语境脚手架）读取已审阅语料；
+  <b>Agent C</b>（证据溯源）从真实错题里发现混淆边，<b>不直接写生产图谱</b>——
+  一律先成为待审提案，你点「通过」才会真正落库。
+</div></div>
+
+<h2>📊 总览</h2>
+<div class="panel"><div class="tiles" id="tiles"></div></div>
+
+<h2>🔍 触发一次证据发现</h2>
+<div class="panel">
+  <div class="ctl">
+    <label class="note">时间窗</label>
+    <select id="win"><option value="7">7 天</option><option value="14">14 天</option><option value="30" selected>30 天</option><option value="90">90 天</option></select>
+    <label class="note">置信度门槛</label>
+    <select id="thr"><option value="0.85" selected>0.85</option><option value="0.6">0.60</option><option value="0.4">0.40</option></select>
+    <button class="btn btn-b" onclick="runDiscover()">▶ 运行发现</button>
+    <span class="note" id="dMsg"></span>
+  </div>
+  <div class="note" id="dOut"></div>
+</div>
+
+<h2>📝 新增语料（同样必须审阅）</h2>
+<div class="panel">
+  <div class="ctl">
+    <input id="cWord" placeholder="目标词 *" style="width:120px;">
+    <input id="cSent" placeholder="例句 *（词表外的词会被守卫拒绝）" style="flex:1;min-width:260px;">
+    <select id="cStage"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+    <select id="cChar"><option value="">旁白</option><option>biff</option><option>chip</option><option>kipper</option><option>wilma</option><option>floppy</option></select>
+    <button class="btn btn-b" onclick="proposeCorpus()">＋ 提交审阅</button>
+  </div>
+  <div class="note" id="cMsg"></div>
+</div>
+
+<h2>⏳ 待审提案 <span class="dim" id="pendCnt"></span></h2>
+<div id="list"></div>
+
+<h2>✅ 已生效的混淆边</h2>
+<div class="panel"><table><thead><tr><th>source</th><th>target</th><th>命中次数</th><th>置信度</th><th>提案</th></tr></thead>
+  <tbody id="edges"><tr><td colspan="5">—</td></tr></tbody></table></div>
+
+<div class="lnk">
+  <a href="/">🎮 游戏</a><a href="/practice">🎧 特训</a><a href="/dashboard">🛠️ 看板</a><a href="/lexicon">🗂️ 词库</a>
+</div>
+</div>
+
+<script>
+const API = '';
+const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function load() {
+  const d = await (await fetch('/api/proposals?status=')).json();
+  if (d.error) { document.getElementById('list').innerHTML = '<div class="panel red">' + esc(d.error) + '</div>'; return; }
+  const s = d.stats || {};
+  document.getElementById('tiles').innerHTML = [
+    ['已审阅语料', s.corpus || 0, 'green'],
+    ['待审提案', s.pending || 0, s.pending ? 'red' : ''],
+    ['已通过', s.approved || 0, 'green'],
+    ['已拒绝', s.rejected || 0, ''],
+    ['生效混淆边', s.edges || 0, 'gold'],
+  ].map(([k,v,c]) => `<div class="tile"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`).join('');
+
+  const pend = (d.proposals || []).filter(p => p.status === 'pending');
+  document.getElementById('pendCnt').textContent = '（' + pend.length + '）';
+  const box = document.getElementById('list');
+  if (!pend.length) { box.innerHTML = '<div class="panel dim">暂无待审提案。可以先点上面的「运行发现」，或提交一条新语料。</div>'; }
+  else {
+    box.innerHTML = pend.map(p => {
+      const pl = p.payload || {};
+      const isEdge = p.kind === 'graph_edge';
+      const title = isEdge
+        ? `${esc(pl.source)} ↔ ${esc(pl.target)}`
+        : `${esc(pl.word)} · <span class="dim">${esc(pl.sentence)}</span>`;
+      const ev = (p.evidence || []).map(e => `• ${esc(e.player)} 把 <b>${esc(e.target_word)}</b> 写成 <b>${esc(e.user_input)}</b> <span class="dim">${esc(e.timestamp||'')}</span>`).join('<br>');
+      return `<div class="card pend">
+        <div class="id">${esc(p.id)}<span class="kind ${isEdge?'k-edge':'k-corpus'}">${isEdge?'图谱边':'语料'}</span>
+          <span class="dim"> 置信度 ${Number(p.confidence||0).toFixed(2)}</span></div>
+        <div class="body">${title}</div>
+        ${ev ? '<div class="ev">证据链：<br>' + ev + '</div>' : '<div class="ev dim">无证据链（人工提交）</div>'}
+        ${p.reason ? '<div class="ev dim">理由：' + esc(p.reason) + '</div>' : ''}
+        <div class="actions">
+          <button class="btn btn-g" onclick="review('${esc(p.id)}','approve')">✓ 通过并落库</button>
+          <button class="btn btn-r" onclick="review('${esc(p.id)}','reject')">✕ 拒绝</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const e = await (await fetch('/api/proposals?status=approved')).json();
+  const edges = (e.proposals || []).filter(p => p.kind === 'graph_edge');
+  document.getElementById('edges').innerHTML = !edges.length ? '<tr><td colspan="5">暂无</td></tr>' :
+    edges.map(p => `<tr><td class="gold">${esc((p.payload||{}).source)}</td><td class="gold">${esc((p.payload||{}).target)}</td>
+      <td>${(p.payload||{}).freq ?? '—'}</td><td>${Number(p.confidence||0).toFixed(2)}</td><td class="dim">${esc(p.id)}</td></tr>`).join('');
+}
+
+async function review(id, action) {
+  const r = await fetch('/api/proposals/' + action + '?id=' + encodeURIComponent(id), { method: 'POST' });
+  const d = await r.json();
+  if (d.error) alert('操作失败：' + d.error);
+  else if (d.applied) alert('已通过并落库：' + JSON.stringify(d.applied));
+  load();
+}
+
+async function runDiscover() {
+  const win = document.getElementById('win').value, thr = document.getElementById('thr').value;
+  document.getElementById('dMsg').textContent = '运行中…';
+  const d = await (await fetch(`/api/agent/discover?windowDays=${win}&threshold=${thr}&create=1`)).json();
+  if (d.error) { document.getElementById('dMsg').textContent = '失败：' + d.error; return; }
+  document.getElementById('dMsg').textContent = '完成';
+  document.getElementById('dOut').innerHTML =
+    `错题事件 ${d.totalErrors} 条 · 独立用户 ${d.distinctUsers} · ` +
+    `候选混淆对 ${d.candidates.length} 个 · 达门槛 ${d.passing.length} 个 · ` +
+    `新建提案 ${d.proposalsCreated.length} 个` +
+    (d.candidates.length ? '<br>Top 候选：' + d.candidates.slice(0,6).map(c =>
+      `<code>${esc(c.source)}→${esc(c.target)}</code> freq=${c.freq} users=${c.users} conf=${c.confidence}`).join('　') : '');
+  load();
+}
+
+async function proposeCorpus() {
+  const word = document.getElementById('cWord').value.trim();
+  const sentence = document.getElementById('cSent').value.trim();
+  const lvl = document.getElementById('cStage').value, ch = document.getElementById('cChar').value;
+  const m = document.getElementById('cMsg');
+  if (!word || !sentence) { m.textContent = '⚠️ 目标词与例句都要填'; m.className = 'note red'; return; }
+  const d = await (await fetch('/api/corpus/propose', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ word, sentence, oxford_stage: Number(lvl), character: ch }) })).json();
+  if (d.error) { m.textContent = '⚠️ ' + d.error + (d.missing ? ' → ' + JSON.stringify(d.missing) : ''); m.className = 'note red'; }
+  else { m.textContent = '✅ 已提交审阅：' + d.proposal.id + '（通过后才会进语料库）'; m.className = 'note green';
+         document.getElementById('cWord').value=''; document.getElementById('cSent').value=''; load(); }
+}
+
+load();
+</script>
+</body>
+</html>

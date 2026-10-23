@@ -274,10 +274,11 @@ function ans(){
     ansLock=true;clearInterval(ti);
     cb++;if(cb>mc)mc=cb;let pt_=10;if(cb>=10){pt_=50;cbB();toast('💎 '+cb+'连击！','great')}else if(cb>=5){pt_=30;cbB();toast('⭐ '+cb+'连击！','ok')}else if(cb>=3){pt_=20;cbB()}else okB();sc+=Math.round(pt_*(1+tl/TS));xp=Math.min(100,xp+pt_);inp.classList.add('ok');inp.disabled=true;document.getElementById('sbm').disabled=true;document.getElementById('sbm').classList.add('down');const r=inp.getBoundingClientRect();pt(r.left+r.width/2,r.top);ls.push({word:q.word,ok:true,to:false});track('answer_ok',{word:q.word,retries:attempts[q.word]||0,left:tl});setTimeout(()=>{ansLock=false;adv()},700)
   }else{
+    const _typed=String(inp.value||'').trim().toLowerCase();   // 清空前先留证据
     ansLock=true;noB();inp.classList.add('ng');inp.value='';
     setTimeout(()=>{inp.classList.remove('ng');inp.focus();ansLock=false},500);
     attempts[q.word]=(attempts[q.word]||0)+1;
-    track('answer_wrong',{word:q.word,attempt:attempts[q.word],typed:inp.value});
+    track('answer_wrong',{word:q.word,attempt:attempts[q.word],typed:_typed});
   }
   hud();
 }

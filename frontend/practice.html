@@ -531,7 +531,7 @@ async function pick(val,btn,timeout=false){
   if(btn && !res.is_correct) btn.classList.add('wrong');
 
   const okk=res.is_correct;
-  track(okk?'answer_ok':'answer_wrong',{type:card.card_type,target:(card.word||card.correct||card.audio_text||''),ms,timeout});
+  track(okk?'answer_ok':'answer_wrong',{type:card.card_type,target:(card.word||card.correct||card.audio_text||''),response:(val==null?'(timeout)':String(val)),ms,timeout});
   if(okk){
     cb++; mx=Math.max(mx,cb);
     let p=10;
