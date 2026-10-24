@@ -14,6 +14,9 @@ const path = require('path');
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'docs');
 const practiceSrc = fs.readFileSync(path.join(ROOT, 'backend/practice.js'), 'utf8');
+// 引擎唯一实现：与后端共用 shared/engine.js（shebang 不能进 <script>）
+const ENGINE_SRC = fs.readFileSync(path.join(ROOT, 'shared', 'engine.js'), 'utf8')
+  .replace(/^#![^\n]*\n/, '');
 const practice = require('./backend/practice.js');
 
 /* ── 1. 词库：以 CSV 为准（docs 旧版 JSON 有逗号截断问题）── */
@@ -120,298 +123,20 @@ const markup = tpl.slice(bodyStart, scriptStart).replace(
 );
 
 /* ── 4. 客户端引擎 ── */
-const ENGINE = `
-/* ================= 静态版引擎（localStorage 代替 SQLite） ================= */
-${syllablesBlock}
-${charactersFnBlock}
-const PHONEME_PATTERNS = ${JSON.stringify(DATA.PHONEME_PATTERNS)};
-const MINIMAL_PAIRS     = ${JSON.stringify(DATA.MINIMAL_PAIRS)};
-const SIGHT_WORDS       = ${JSON.stringify(DATA.SIGHT_WORDS)};
-const BANK              = ${JSON.stringify(BANK)};
+const ENGINE = [
+"/* ================= 静态版引擎 =================\n   算法本体与 backend/practice.js 共用 shared/engine.js；\n   这里只保留「用 localStorage 代替 SQLite」的数据适配层。\n   以前这里有一份手工抄写的引擎副本，改一边另一边不生效。 */",
+  ENGINE_SRC,
+"const PHONEME_PATTERNS = OWK.PHONEME_PATTERNS;\nconst MINIMAL_PAIRS = OWK.MINIMAL_PAIRS;\nconst SIGHT_WORDS = OWK.SIGHT_WORDS;\nconst CHARACTERS = OWK.CHARACTERS;\nconst norm = OWK.norm;\nconst phonemesOf = OWK.phonemesOf;\nconst syllabify = OWK.syllabify;\nconst syllableCount = OWK.syllableCount;\nconst charactersIn = OWK.charactersIn;\nconst weightedPick = OWK.weightedPick;",
+  'const BANK = ' + JSON.stringify(BANK) + ';',
+"\nconst STORE_KEY = 'owk_phonics_v1';\nlet DB = (() => { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; } })();\nconst persist = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); } catch (e) {} };\nconst me = (p) => { DB[p] = DB[p] || { ph: {}, words: {}, n: 0, ok: 0 }; return DB[p]; };",
+"\nfunction bankFor(level) { return level ? BANK.filter(r => r.oxford_level === level) : BANK.slice(); }",
+"function weakPh(p, min) {\n  const s = me(p).ph;\n  return Object.keys(s).map(k => Object.assign({ phoneme: k }, s[k]))\n    .filter(x => x.error_weight >= (min === undefined ? 0.6 : min))\n    .sort((a, b) => b.error_weight - a.error_weight);\n}",
+"function bump(p, ph, gr, delta, okk) {\n  const s = me(p).ph;\n  const e = s[ph] = s[ph] || { phoneme: ph, grapheme: gr || '', error_weight: 0, correct: 0, wrong: 0 };\n  e.error_weight = Math.max(0, +(e.error_weight + delta).toFixed(2));\n  if (gr && !e.grapheme) e.grapheme = gr;\n  okk ? e.correct++ : e.wrong++;\n  persist();\n}",
+"\n/* 线上版的人工重点生词：存在 localStorage（与 lexicon.html 同源共享） */\nconst PRIO_KEY = 'owk_user_words';\nfunction priorityWords() {\n  try {\n    return (JSON.parse(localStorage.getItem(PRIO_KEY) || '[]') || [])\n      .map((u) => ({ w: String(u.word || '').trim().toLowerCase(), weight: Number(u.weight) || 3 }))\n      .filter((x) => x.w);\n  } catch (e) { return []; }\n}\n\nfunction prioWeight(word) {\n  const k = String(word || '').trim().toLowerCase();\n  if (!k) return 0;\n  const hit = priorityWords().find((x) => x.w === k);\n  return hit ? hit.weight : 0;\n}",
+"const __ENGINE = OWK.createEngine({\n  wordsInBank: (level) => bankFor(level),\n  weakPhonemes: (p) => weakPh(p, 0.6),\n  wordErrors: (p) => { const w = (me(p).words) || {}; const o = {}; for (const k in w) o[k] = { e: (w[k] && w[k].e) || 0 }; return o; },\n  priorityWeight: (word) => prioWeight(String(word || '').toLowerCase()),\n});\nfunction nextTask(p, level, type, character, exclude) { return __ENGINE.nextTask({ player: p, level, type, character, exclude }); }",
+"\n/* ---- 判定 + 学情写回 ---- */\nfunction answerCard(p, card, response, ms) {\n  const okk = card.card_type === 'SYLLABLE_COUNTING' ? Number(response) === Number(card.correct) : String(response) === String(card.correct);\n  const hesitant = ms > 5000;\n  const st = me(p);\n  const bumpWord = (w, e) => { const r = st.words[w] = st.words[w] || { e: 0, c: 0 }; e ? r.e++ : r.c++; };\n\n  if (card.card_type === 'SYLLABLE_COUNTING') {\n    bumpWord(card.word, !okk);\n    (card.meta.graphemes || []).forEach(g => { const ph = PHONEME_PATTERNS.find(x => x.grapheme === g); if (ph && !okk) bump(p, ph.phoneme, ph.grapheme, 0.3, false); });\n  } else if (card.card_type === 'PHONEME_DISCRIMINATION') {\n    const pair = card.reveal.phonemes;\n    const idx = card.correct === card.reveal.pair[0] ? 0 : 1;\n    bump(p, pair[idx], (card.meta.graphemes || [])[0] || '', okk ? -0.5 : 1.6, okk);\n    if (!okk) {\n      const oSym = pair[1 - idx];\n      const oG = (PHONEME_PATTERNS.find(x => x.phoneme === oSym) || {}).grapheme || '';\n      bump(p, oSym, oG, 0.6, false);\n    }\n    bumpWord(card.correct, !okk);\n  } else if (card.card_type === 'PHONICS_CONTEXT_MATCH') {\n    const ph = PHONEME_PATTERNS.find(x => x.grapheme === card.reveal.grapheme);\n    if (ph) bump(p, ph.phoneme, ph.grapheme, okk ? (hesitant ? -0.3 : -0.7) : 1.2, okk);\n    bumpWord(card.correct, !okk);\n  } else {\n    bumpWord(card.word, !okk);\n  }\n  st.n++; if (okk) st.ok++; persist();\n\n  let fb;\n  if (okk && ms < 2000) fb = { message: '太棒了！秒答！', type: 'encouragement' };\n  else if (okk) fb = { message: '答对了！做得好！', type: 'encouragement' };\n  else if (card.card_type === 'SYLLABLE_COUNTING') fb = { message: '这个词要这样切：' + card.reveal.display, hint: '拍着手跟着读：' + card.reveal.display };\n  else if (card.card_type === 'PHONEME_DISCRIMINATION') fb = { message: '注意听：' + card.reveal.phonemes[0] + ' 和 ' + card.reveal.phonemes[1] + ' 是不同的音', hint: card.reveal.tip + '！再听一遍' };\n  else if (card.card_type === 'PHONICS_CONTEXT_MATCH') fb = { message: card.reveal.grapheme + ' 通常发 ' + card.reveal.phoneme, hint: '同家族的词还有：' + card.reveal.family.join('、') };\n  else fb = { message: '再记一次：' + card.reveal.word + ' = ' + card.reveal.zh, hint: card.reveal.tip };\n\n  return { is_correct: okk, correct_answer: card.correct, feedback: fb, reveal: card.reveal, hesitant };\n}\n\nfunction profileOf(p) {\n  const st = me(p);\n  const weak = weakPh(p, 0).filter(w => w.error_weight > 0).slice(0, 10);\n  const words = Object.keys(st.words).map(w => ({ word: w, error_count: st.words[w].e, correct: st.words[w].c }))\n    .filter(x => x.error_count > 0).sort((a, b) => b.error_count - a.error_count).slice(0, 12);\n  return { player: p, total: st.n, correct: st.ok, accuracy: st.n ? Math.round(st.ok / st.n * 100) : 0, weak_phonemes: weak, trouble_words: words };\n}\n\nfunction recommendFor(p, level) {\n  const st = me(p);\n  const weak = Object.keys(st.ph).map(k => Object.assign({ phoneme: k }, st.ph[k]))\n    .filter(x => x.error_weight > 0 && x.grapheme).sort((a, b) => b.error_weight - a.error_weight).slice(0, 3);\n  const bank = bankFor(level);\n  const trouble = Object.keys(st.words).filter(w => st.words[w].e > 0)\n    .map(w => ({ word: w, hint: (BANK.find(r => norm(r.word) === norm(w)) || {}).hint || '', grapheme: '', phoneme: '' }));\n  if (!weak.length) return trouble.length\n    ? { reason: '这些词你错过，先回去读一遍', focus: [], words: trouble.slice(0, 8) }\n    : { reason: '还没有明显薄弱点，继续按进度练习就好', focus: [], words: [] };\n  const picked = [], reasons = [];\n  weak.forEach(w => {\n    const hits = bank.filter(r => w.grapheme && norm(r.word).includes(w.grapheme));\n    if (hits.length) {\n      reasons.push('「' + w.grapheme + '」' + w.phoneme + ' 错误权重 ' + w.error_weight);\n      hits.slice(0, 6).forEach(r => { if (!picked.some(x => x.word === r.word)) picked.push({ word: r.word, hint: r.hint, grapheme: w.grapheme, phoneme: w.phoneme }); });\n    }\n  });\n  if (!picked.length && trouble.length) return { reason: '这些词你错过，先回去读一遍', focus: [], words: trouble.slice(0, 8) };\n  return { reason: reasons.length ? '优先补这些音：' + reasons.join('；') : '继续巩固', focus: weak, words: picked.slice(0, 12) };\n}",
+].join('\n');
 
-const STORE_KEY = 'owk_phonics_v1';
-let DB = (() => { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; } })();
-const persist = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); } catch (e) {} };
-const me = (p) => { DB[p] = DB[p] || { ph: {}, words: {}, n: 0, ok: 0 }; return DB[p]; };
-const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
-
-function bankFor(level) { return level ? BANK.filter(r => r.oxford_level === level) : BANK.slice(); }
-function phonemesOf(word) {
-  const w = norm(word);
-  return PHONEME_PATTERNS.filter(p => w.includes(p.grapheme));
-}
-function weakPh(p, min) {
-  const s = me(p).ph;
-  return Object.keys(s).map(k => Object.assign({ phoneme: k }, s[k]))
-    .filter(x => x.error_weight >= (min === undefined ? 0.6 : min))
-    .sort((a, b) => b.error_weight - a.error_weight);
-}
-function bump(p, ph, gr, delta, okk) {
-  const s = me(p).ph;
-  const e = s[ph] = s[ph] || { phoneme: ph, grapheme: gr || '', error_weight: 0, correct: 0, wrong: 0 };
-  e.error_weight = Math.max(0, +(e.error_weight + delta).toFixed(2));
-  if (gr && !e.grapheme) e.grapheme = gr;
-  okk ? e.correct++ : e.wrong++;
-  persist();
-}
-
-/* ---- 1. 音节计数 ---- */
-function genSyllable(p, level, character) {
-  const bank = bankFor(level).filter(r => /^[a-z]{3,}$/i.test(String(r.word).trim()));
-  if (!bank.length) return null;
-  const weak = weakPh(p), weakSet = new Set(weak.map(w => w.grapheme).filter(Boolean));
-  const scored = bank.map(r => {
-    const ph = phonemesOf(r.word);
-    const hit = ph.filter(x => weakSet.has(x.grapheme)).length;
-    const syl = syllableCount(r.word);
-    return { row: r, syl, ph, score: 1 + syl * 0.8 + hit * 1.5 + prioWeight(r.word) * 3 + Math.random() * 0.8 };
-  }).sort((a, b) => b.score - a.score);
-  // 优先级：若榜首就是人工重点生词，60% 直接取它（否则仍从前 5 随机，保留多样性）
-  const pick = weightedPick(scored, (x) => x.score + prioWeight(x.row.word) * 3);
-  const n = pick.syl, opts = [];
-  if (n > 1) opts.push(n - 1);
-  opts.push(n + 1);
-  if (n > 2 && Math.random() < 0.5) opts.push(n - 2);
-  const options = Array.from(new Set(opts.concat([n]))).sort((a, b) => a - b);
-  const parts = syllabify(pick.row.word);
-  return {
-    card_type: 'SYLLABLE_COUNTING', word: pick.row.word, hint: pick.row.hint,
-    speaker: CHARACTERS[character] || null,
-    prompt: (characterLabel(character) ? characterLabel(character) + ' 想考考你：' : '') + '这个词有几个音节？拍着手读一读',
-    options, correct: n, focus: 'syllable',
-    reveal: { syllables: parts, display: parts.join(' · '), tip: n >= 3 ? '长单词可以分段读，先读第一部分再读第二部分。' : '每个元音组通常就是一个音节。' },
-    meta: { graphemes: pick.ph.map(x => x.grapheme) },
-  };
-}
-
-/* ---- 2. 音素辨析 ---- */
-function genPhoneme(p, level, character) {
-  const weak = weakPh(p), wm = new Map(weak.map(w => [w.phoneme, w.error_weight]));
-  const bank = new Set(bankFor(level).map(r => norm(r.word)));
-  const scored = MINIMAL_PAIRS.map(pair => {
-    const w = Math.max(wm.get(pair.pa) || 0, wm.get(pair.pb) || 0);
-    const inBank = (bank.has(norm(pair.a)) ? 1 : 0) + (bank.has(norm(pair.b)) ? 1 : 0);
-    return { pair, score: 1 + w * 2 + inBank * 0.6 + Math.random() * 0.7 };
-  }).sort((a, b) => b.score - a.score);
-  const pr = weightedPick(scored, (x) => x.score).pair;
-  const isA = Math.random() < 0.5, target = isA ? pr.a : pr.b;
-  return {
-    card_type: 'PHONEME_DISCRIMINATION', audio_text: target, speaker: CHARACTERS[character] || null,
-    prompt: '听一听，选出你听到的词',
-    options: [pr.a, pr.b], correct: target, focus: isA ? pr.pa : pr.pb,
-    reveal: { pair: [pr.a, pr.b], phonemes: [pr.pa, pr.pb], meanings: [pr.zh_a, pr.zh_b], tip: pr.tip, target },
-    meta: { graphemes: PHONEME_PATTERNS.filter(x => x.phoneme === (isA ? pr.pa : pr.pb)).map(x => x.grapheme) },
-  };
-}
-
-/* ---- 3. 拼读规则 ---- */
-function genPhonics(p, level, character) {
-  const all = bankFor(level).filter(r => r.sentence);
-  if (!all.length) return genSyllable(p, level, character);
-  let bank = character
-    ? all.filter(r => { const cs = charactersIn(r.sentence); return cs.length === 0 || cs.indexOf(character) >= 0; })
-    : all;
-  if (bank.length < 4) bank = all;
-  const isOwn = (r) => !!character && charactersIn(r.sentence).indexOf(character) >= 0;
-  const weak = weakPh(p), wm = new Map(weak.map(w => [w.phoneme, w.error_weight]));
-  const cands = [];
-  PHONEME_PATTERNS.forEach(pt => {
-    if (pt.grapheme.length < 2) return;
-    const hits = bank.filter(r => norm(r.word).includes(pt.grapheme));
-    if (hits.length >= 2) cands.push({ pt, hits });
-  });
-  if (!cands.length) return genSyllable(p, level, character);
-  const scored = cands.map(c => ({
-    ...c,
-    score: 1 + (wm.get(c.pt.phoneme) || 0) * 2 + Math.min(c.hits.length, 6) * 0.3
-           + c.hits.filter(isOwn).length * 3.0 + Math.random() * 0.8,
-  })).sort((a, b) => b.score - a.score);
-  const chosen = weightedPick(scored, (x) => x.score);   // 之前永远是 scored[0]
-  const ownHits = chosen.hits.filter(isOwn);
-  const preferred = ownHits.length ? ownHits : chosen.hits;
-  const single = /^[a-z]+$/i;
-  const hitsSingle = preferred.filter(r => single.test(String(r.word).trim()));
-  const poolSingle = bank.filter(r => single.test(String(r.word).trim()));
-  const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);
-  // 优先词在该规则内命中时，优先当目标词
-  const _prioHits = usePool.filter((r) => prioWeight(r.word) > 0);
-  const targetRow = (_prioHits.length && Math.random() < 0.6)
-    ? _prioHits[Math.floor(Math.random() * _prioHits.length)]
-    : usePool[Math.floor(Math.random() * usePool.length)];
-  const target = targetRow.word;
-  const sameRule = usePool.filter(r => norm(r.word) !== norm(target)).slice(0, 2);
-  const decoys = poolSingle.filter(r => !norm(r.word).includes(chosen.pt.grapheme)).slice(0, 1);
-  let options = [target].concat(sameRule.map(r => r.word), decoys.map(r => r.word));
-  options = Array.from(new Set(options));
-  let guard = 0;
-  while (options.length < 3 && guard++ < 40) {
-    const extra = bank[Math.floor(Math.random() * bank.length)].word;
-    if (options.indexOf(extra) < 0) options.push(extra);
-  }
-  options.sort(() => Math.random() - 0.5);
-  let blanked = String(targetRow.sentence).replace(new RegExp(target.replace(/[.*+?^\${}()|[\\]\\\\]/g, '\\\\$&'), 'i'), '_____');
-  if (blanked.indexOf('_____') < 0) blanked = blanked + ' ( _____ )';
-  const own = isOwn(targetRow);
-  return {
-    card_type: 'PHONICS_CONTEXT_MATCH',
-    speaker: CHARACTERS[character] || null, speaker_is_own_line: own,
-    prompt: (characterLabel(character) && own) ? characterLabel(character) + ' 说的这句话缺了一个词' : '这句话里的空格应该填哪个词？',
-    sentence: blanked, hint: targetRow.hint, options, correct: target, focus: chosen.pt.grapheme,
-    reveal: { grapheme: chosen.pt.grapheme, phoneme: chosen.pt.phoneme, articulation: chosen.pt.articulation, family: usePool.map(r => r.word).slice(0, 6), tip: '字母组合 ' + chosen.pt.grapheme + ' 通常发 ' + chosen.pt.phoneme },
-    meta: { rule: chosen.pt.grapheme },
-  };
-}
-
-/* ---- 4. 视觉词闪现 ---- */
-function genSight(p, level, character) {
-  const ws = me(p).words || {};
-  const pool = SIGHT_WORDS.map(([w, r, zh]) => ({ word: w, rank: r, zh, err: (ws[w] && ws[w].e) || 0 }));
-  const target = weightedPick(pool, (x) => 1 + x.err * 6 + 6 / Math.max(1, x.rank));
-  const others = SIGHT_WORDS.filter(([w]) => w !== target.word).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x[2]);
-  return {
-    card_type: 'SIGHT_WORD_FLASH', word: target.word, speaker: CHARACTERS[character] || null,
-    prompt: '闪现！快选它的意思', flash_ms: 800,
-    options: [target.zh].concat(others).sort(() => Math.random() - 0.5),
-    correct: target.zh, focus: 'sight:' + target.word,
-    reveal: { word: target.word, zh: target.zh, rank: target.rank, tip: '高频词靠"整体认读"，不用逐字母拼。' },
-    meta: { frequency_rank: target.rank },
-  };
-}
-
-function genTask(p, level, type, character) {
-  const T = ['syllable', 'phoneme', 'phonics', 'sight'].indexOf(type) >= 0 ? type
-    : ['syllable', 'phoneme', 'phonics', 'sight'][Math.floor(Math.random() * 4)];
-  const f = { syllable: genSyllable, phoneme: genPhoneme, phonics: genPhonics, sight: genSight }[T];
-  return f(p, level, character) || genSyllable(p, level, character);
-}
-
-/* 线上版的人工重点生词：存在 localStorage（与 lexicon.html 同源共享） */
-const PRIO_KEY = 'owk_user_words';
-function priorityWords() {
-  try {
-    return (JSON.parse(localStorage.getItem(PRIO_KEY) || '[]') || [])
-      .map((u) => ({ w: String(u.word || '').trim().toLowerCase(), weight: Number(u.weight) || 3 }))
-      .filter((x) => x.w);
-  } catch (e) { return []; }
-}
-
-function prioWeight(word) {
-  const k = String(word || '').trim().toLowerCase();
-  if (!k) return 0;
-  const hit = priorityWords().find((x) => x.w === k);
-  return hit ? hit.weight : 0;
-}
-
-/* 全池加权抽样：与 backend/practice.js 的 weightedPick 同义。
-   内嵌引擎是手工副本，改 practice.js 时必须同步这里，否则静态版不生效。 */
-function weightedPick(arr, weightOf) {
-  if (!arr || !arr.length) return null;
-  const ws = arr.map(x => Math.max(1e-6, Number(weightOf(x)) || 0));
-  const total = ws.reduce((a, b) => a + b, 0);
-  if (!(total > 0)) return arr[Math.floor(Math.random() * arr.length)];
-  let r = Math.random() * total;
-  for (let i = 0; i < arr.length; i++) { r -= ws[i]; if (r <= 0) return arr[i]; }
-  return arr[arr.length - 1];
-}
-
-function nextTask(p, level, type, character, exclude) {
-  const keyOf = (c) => String(c && (c.word || c.correct || c.audio_text) || '').trim().toLowerCase();
-  // 本轮已考过的词：跨题型也要排除（同词换个题型出现两次是 bug）
-  const skip = new Set(String(exclude || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean));
-
-  const pickFresh = () => {
-    let c = genTask(p, level, type, character);
-    for (let k = 0; k < 14 && c && skip.has(keyOf(c)); k++) c = genTask(p, level, type, character);
-    return c;
-  };
-
-  const prio = priorityWords();
-  if (!prio.length) return pickFresh();
-
-  const set = new Set(prio.map((x) => x.w));
-  let card = pickFresh();
-  if (!card || set.has(keyOf(card))) return card;
-
-  // 约 45% 的题目强制落到人工重点生词上（且该词本轮没考过）
-  if (Math.random() < 0.45) {
-    for (let k = 0; k < 14; k++) {
-      const c = genTask(p, level, type, character);
-      if (c && set.has(keyOf(c)) && !skip.has(keyOf(c))) return c;
-    }
-  }
-  return card;
-}
-
-/* ---- 判定 + 学情写回 ---- */
-function answerCard(p, card, response, ms) {
-  const okk = card.card_type === 'SYLLABLE_COUNTING' ? Number(response) === Number(card.correct) : String(response) === String(card.correct);
-  const hesitant = ms > 5000;
-  const st = me(p);
-  const bumpWord = (w, e) => { const r = st.words[w] = st.words[w] || { e: 0, c: 0 }; e ? r.e++ : r.c++; };
-
-  if (card.card_type === 'SYLLABLE_COUNTING') {
-    bumpWord(card.word, !okk);
-    (card.meta.graphemes || []).forEach(g => { const ph = PHONEME_PATTERNS.find(x => x.grapheme === g); if (ph && !okk) bump(p, ph.phoneme, ph.grapheme, 0.3, false); });
-  } else if (card.card_type === 'PHONEME_DISCRIMINATION') {
-    const pair = card.reveal.phonemes;
-    const idx = card.correct === card.reveal.pair[0] ? 0 : 1;
-    bump(p, pair[idx], (card.meta.graphemes || [])[0] || '', okk ? -0.5 : 1.6, okk);
-    if (!okk) {
-      const oSym = pair[1 - idx];
-      const oG = (PHONEME_PATTERNS.find(x => x.phoneme === oSym) || {}).grapheme || '';
-      bump(p, oSym, oG, 0.6, false);
-    }
-    bumpWord(card.correct, !okk);
-  } else if (card.card_type === 'PHONICS_CONTEXT_MATCH') {
-    const ph = PHONEME_PATTERNS.find(x => x.grapheme === card.reveal.grapheme);
-    if (ph) bump(p, ph.phoneme, ph.grapheme, okk ? (hesitant ? -0.3 : -0.7) : 1.2, okk);
-    bumpWord(card.correct, !okk);
-  } else {
-    bumpWord(card.word, !okk);
-  }
-  st.n++; if (okk) st.ok++; persist();
-
-  let fb;
-  if (okk && ms < 2000) fb = { message: '太棒了！秒答！', type: 'encouragement' };
-  else if (okk) fb = { message: '答对了！做得好！', type: 'encouragement' };
-  else if (card.card_type === 'SYLLABLE_COUNTING') fb = { message: '这个词要这样切：' + card.reveal.display, hint: '拍着手跟着读：' + card.reveal.display };
-  else if (card.card_type === 'PHONEME_DISCRIMINATION') fb = { message: '注意听：' + card.reveal.phonemes[0] + ' 和 ' + card.reveal.phonemes[1] + ' 是不同的音', hint: card.reveal.tip + '！再听一遍' };
-  else if (card.card_type === 'PHONICS_CONTEXT_MATCH') fb = { message: card.reveal.grapheme + ' 通常发 ' + card.reveal.phoneme, hint: '同家族的词还有：' + card.reveal.family.join('、') };
-  else fb = { message: '再记一次：' + card.reveal.word + ' = ' + card.reveal.zh, hint: card.reveal.tip };
-
-  return { is_correct: okk, correct_answer: card.correct, feedback: fb, reveal: card.reveal, hesitant };
-}
-
-function profileOf(p) {
-  const st = me(p);
-  const weak = weakPh(p, 0).filter(w => w.error_weight > 0).slice(0, 10);
-  const words = Object.keys(st.words).map(w => ({ word: w, error_count: st.words[w].e, correct: st.words[w].c }))
-    .filter(x => x.error_count > 0).sort((a, b) => b.error_count - a.error_count).slice(0, 12);
-  return { player: p, total: st.n, correct: st.ok, accuracy: st.n ? Math.round(st.ok / st.n * 100) : 0, weak_phonemes: weak, trouble_words: words };
-}
-
-function recommendFor(p, level) {
-  const st = me(p);
-  const weak = Object.keys(st.ph).map(k => Object.assign({ phoneme: k }, st.ph[k]))
-    .filter(x => x.error_weight > 0 && x.grapheme).sort((a, b) => b.error_weight - a.error_weight).slice(0, 3);
-  const bank = bankFor(level);
-  const trouble = Object.keys(st.words).filter(w => st.words[w].e > 0)
-    .map(w => ({ word: w, hint: (BANK.find(r => norm(r.word) === norm(w)) || {}).hint || '', grapheme: '', phoneme: '' }));
-  if (!weak.length) return trouble.length
-    ? { reason: '这些词你错过，先回去读一遍', focus: [], words: trouble.slice(0, 8) }
-    : { reason: '还没有明显薄弱点，继续按进度练习就好', focus: [], words: [] };
-  const picked = [], reasons = [];
-  weak.forEach(w => {
-    const hits = bank.filter(r => w.grapheme && norm(r.word).includes(w.grapheme));
-    if (hits.length) {
-      reasons.push('「' + w.grapheme + '」' + w.phoneme + ' 错误权重 ' + w.error_weight);
-      hits.slice(0, 6).forEach(r => { if (!picked.some(x => x.word === r.word)) picked.push({ word: r.word, hint: r.hint, grapheme: w.grapheme, phoneme: w.phoneme }); });
-    }
-  });
-  if (!picked.length && trouble.length) return { reason: '这些词你错过，先回去读一遍', focus: [], words: trouble.slice(0, 8) };
-  return { reason: reasons.length ? '优先补这些音：' + reasons.join('；') : '继续巩固', focus: weak, words: picked.slice(0, 12) };
-}
-`;
 
 /* ── 5. 组装 ── */
 const uiScript = tpl.slice(scriptStart + '<script>'.length).replace(/<\/script>[\s\S]*$/i, '')
@@ -458,6 +183,16 @@ console.log('syntax check: OK');
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, 'phonics.html'), html, 'utf8');
 console.log('wrote docs/phonics.html', (html.length / 1024).toFixed(1) + ' KB');
+
+// 防回归：静态页必须用共享引擎，不能再出现手工抄写的生成器
+{
+  const out = fs.readFileSync(path.join(OUT, 'phonics.html'), 'utf8');
+  for (const k of ['OWK.createEngine', 'shared/engine.js'])
+    if (!out.includes(k)) throw new Error('静态构建缺少共享引擎标记: ' + k);
+  for (const k of ['function genSyllable', 'const chosen = scored[0]', 'Math.min(5, scored.length)'])
+    if (out.includes(k)) throw new Error('静态构建仍含手工引擎副本: ' + k);
+  console.log('静态引擎: 共享 shared/engine.js ✓（无手工副本）');
+}
 console.log('word bank embedded:', BANK.length, 'words');
 
 /* ═══════════════════════════════════════════════════════════

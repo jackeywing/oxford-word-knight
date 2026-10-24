@@ -165,6 +165,36 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 实测（CDP 模拟）：768 与 1024 两个宽度下均**无横向溢出**。
 
+## 🧩 单一引擎：`shared/engine.js`
+
+**问题**：`backend/practice.js` 与 `build-pages.js` 各有一份特训引擎代码。
+改后端不生效于静态页——"本地改了、线上没变"就是这么来的（top-K 截断那个 bug
+在静态版多活了一轮）。
+
+**现在**：引擎只有一份 `shared/engine.js`（UMD，Node 与浏览器通用）：
+
+| 使用方 | 取用方式 | 数据源 |
+|---|---|---|
+| `backend/practice.js` | `require('../shared/engine.js')` | SQLite |
+| `docs/phonics.html` | 构建时原样内联 → `window.OWK` | `localStorage` |
+
+数据通过 `createEngine(env)` 注入，引擎本体不碰数据库、不碰 localStorage：
+
+```js
+createEngine({
+  wordsInBank(level),      // -> [{word, hint, sentence, oxford_level}]
+  weakPhonemes(player),    // -> [{phoneme, grapheme, error_weight}]
+  wordErrors(player),      // -> { word: { e } }
+  priorityWeight(word),    // -> ★1–5，0 = 无
+})
+```
+
+- `backend/practice.js` 697 → **324 行**（只剩 schema / 答题闭环 / 学情 / 推荐）
+- `build-pages.js` ~800 → **471 行**（手工引擎副本已删除）
+- 构建时**断言**：静态页必须含 `OWK.createEngine`，且不得出现
+  `function genSyllable` / `const chosen = scored[0]` / `Math.min(5, scored.length)`
+  —— 再出现手工副本会直接构建失败
+
 ## 🎲 出题权重：冷启动随机 → 错题加权
 
 **实测问题**：同一角色连续闯关，相邻两轮平均重合 **4.86/8（61%）**。
