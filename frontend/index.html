@@ -272,12 +272,13 @@ function ans(){
   const inp=document.getElementById('inp'),a=(inp.value||'').trim().toLowerCase().replace(/\s+/g,''),q=qs[i],ok_=a===q.hidden||a===q.word.replace(/\s+/g,'');
   if(ok_){
     ansLock=true;clearInterval(ti);
-    cb++;if(cb>mc)mc=cb;let pt_=10;if(cb>=10){pt_=50;cbB();toast('💎 '+cb+'连击！','great')}else if(cb>=5){pt_=30;cbB();toast('⭐ '+cb+'连击！','ok')}else if(cb>=3){pt_=20;cbB()}else okB();sc+=Math.round(pt_*(1+tl/TS));xp=Math.min(100,xp+pt_);inp.classList.add('ok');inp.disabled=true;document.getElementById('sbm').disabled=true;document.getElementById('sbm').classList.add('down');const r=inp.getBoundingClientRect();pt(r.left+r.width/2,r.top);ls.push({word:q.word,ok:true,to:false});track('answer_ok',{word:q.word,retries:attempts[q.word]||0,left:tl});setTimeout(()=>{ansLock=false;adv()},700)
+    cb++;if(cb>mc)mc=cb;let pt_=10;if(cb>=10){pt_=50;cbB();toast('💎 '+cb+'连击！','great')}else if(cb>=5){pt_=30;cbB();toast('⭐ '+cb+'连击！','ok')}else if(cb>=3){pt_=20;cbB()}else okB();sc+=Math.round(pt_*(1+tl/TS));xp=Math.min(100,xp+pt_);inp.classList.add('ok');inp.disabled=true;document.getElementById('sbm').disabled=true;document.getElementById('sbm').classList.add('down');const r=inp.getBoundingClientRect();pt(r.left+r.width/2,r.top);ls.push({word:q.word,ok:true,to:false});try{const _k=String(q.word).toLowerCase(),_m=(JSON.parse(localStorage.getItem('owk_miss')||'[]')).filter(x=>x!==_k);localStorage.setItem('owk_miss',JSON.stringify(_m));}catch(e){};track('answer_ok',{word:q.word,retries:attempts[q.word]||0,left:tl});setTimeout(()=>{ansLock=false;adv()},700)
   }else{
     const _typed=String(inp.value||'').trim().toLowerCase();   // 清空前先留证据
     ansLock=true;noB();inp.classList.add('ng');inp.value='';
     setTimeout(()=>{inp.classList.remove('ng');inp.focus();ansLock=false},500);
     attempts[q.word]=(attempts[q.word]||0)+1;
+    owkPushMiss(q.word);
     track('answer_wrong',{word:q.word,attempt:attempts[q.word],typed:_typed});
   }
   hud();
@@ -363,7 +364,23 @@ function victory(){
   document.getElementById('rstBtn').style.display='inline-block';
 }
 
-async function load(){try{const r=await fetch(`${API}/challenges?level=${lv}&count=${N}&character=${ch}`),d=await r.json();if(d.error||!d.length){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">⚠️ 字库为空</div>`;return false}if(d.length<4){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>`;return false}qs=d;return true}catch(e){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接</div>`;return false}}
+/* ── 跨轮记忆：最近 3 轮出现过的词 / 最近答错的词（localStorage，跨刷新保留）── */
+function owkLS(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}}
+function owkSeen(){return owkLS('owk_seen',[])}
+function owkMiss(){return owkLS('owk_miss',[])}
+function owkPushSeen(words){
+  const keep=owkSeen().concat(words.map(w=>String(w).toLowerCase()));
+  localStorage.setItem('owk_seen',JSON.stringify(keep.slice(-N*3)));
+}
+function owkPushMiss(word){
+  const k=String(word||'').toLowerCase(); if(!k) return;
+  const cur=owkMiss(); if(cur[cur.length-1]===k) return;
+  localStorage.setItem('owk_miss',JSON.stringify(cur.concat([k]).slice(-30)));
+}
+function owkClearHistory(){localStorage.removeItem('owk_seen');localStorage.removeItem('owk_miss')}
+
+async function load(){try{const _seen=owkSeen().join(','),_miss=owkMiss().join(',');
+  const r=await fetch(`${API}/challenges?level=${lv}&count=${N}&character=${ch}&seen=${encodeURIComponent(_seen)}&miss=${encodeURIComponent(_miss)}`),d=await r.json();if(d.error||!d.length){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">⚠️ 字库为空</div>`;return false}if(d.length<4){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#E65100;">⚠️ 字库不足</div>`;return false}qs=d;owkPushSeen(d.map(x=>x.word));return true}catch(e){document.getElementById('chArea').innerHTML=`<div style="text-align:center;padding:30px;color:#C62828;">❌ 无法连接</div>`;return false}}
 
 async function go(){const ok=await load();if(!ok)return;track('round_start',{level:lv,character:ch,count:N});i=0;sc=0;cb=0;mc=0;xp=0;ls=[];tl=TS;clearInterval(ti);dn();mc_();hud();draw();document.getElementById('goBtn').style.display='none';document.getElementById('rstBtn').style.display='inline-block';playing=true}
 

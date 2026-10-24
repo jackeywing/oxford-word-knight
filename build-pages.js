@@ -723,7 +723,8 @@ function syncStaticGameWords() {
   }
   for (const r of arr) {
     const k = String(r.word || '').toLowerCase();
-    if (!k || seen.has(k)) continue;
+    // 只保留纯字母词：否则数据库里删掉的短语会被静态数组"复活"
+    if (!k || !/^[a-z]+$/.test(k) || seen.has(k)) continue;
     seen.add(k);
     merged.push(r);
   }

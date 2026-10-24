@@ -67,7 +67,11 @@ function dedupe(rows) {
 
 function main() {
   const src = loadFile('g2-words.csv').concat(loadFile('sample-words.csv'));
-  const { kept, dropped } = dedupe(src);
+  const { kept: keptAll, dropped } = dedupe(src);
+  // 项目约定：题库只取纯字母单词。之前只统计短语却没剔除，导致
+  // "more than / seem to / too … to" 这类短语进了库，还被抽成考题。
+  const kept = keptAll.filter((r) => /^[A-Za-z]+$/.test(String(r.word).trim()));
+  const excludedPhrases = keptAll.filter((r) => !/^[A-Za-z]+$/.test(String(r.word).trim()));
 
   const byLevel = kept.reduce((a, r) => (a[r.oxford_level] = (a[r.oxford_level] || 0) + 1, a), {});
   const phrases = kept.filter((r) => /\s/.test(r.word));
@@ -78,7 +82,7 @@ function main() {
   console.log(`  被合并的重复词 : ${dropped.length}` +
     (dropped.length ? ' → ' + dropped.map((d) => d.word).join(', ') : ''));
   console.log(`  级别分布       : ${Object.entries(byLevel).map(([k, v]) => k + ':' + v).join('  ')}`);
-  console.log(`  含空格的短语   : ${phrases.length}${phrases.length ? ' → ' + phrases.map((p) => p.word).join(', ') : ''}`);
+  console.log(`  剔除的非单词   : ${excludedPhrases.length}${excludedPhrases.length ? ' → ' + excludedPhrases.map((p) => p.word).join(', ') : ''}`);
 
   if (DRY) { console.log('\n(--dry 模式，未写入数据库)'); return; }
 

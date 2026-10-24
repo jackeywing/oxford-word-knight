@@ -5,6 +5,7 @@ const fs = require('fs');
 const Database = require('better-sqlite3');
 const { parse } = require('csv-parse/sync');
 const createPractice = require('./practice');
+const pick = require('./pick');
 const { buildWeightLookup } = require('./lexicon-weight.js');
 
 const PORT = process.env.PORT || 3000;
@@ -238,45 +239,32 @@ const server = http.createServer((req, res) => {
     const limit = Math.min(Math.max(parseInt(count) || 8, 1), 30);
     try {
       const ch = query.character;
-      let words = db.prepare(
-        'SELECT id, word, hint, sentence FROM words WHERE oxford_level = ? ORDER BY RANDOM()'
+      // 选词统一走 pick.pickRound（服务端与静态版同一套规则）
+      const pool = db.prepare(
+        'SELECT id, word, hint, sentence FROM words WHERE oxford_level = ?'
       ).all(level);
-      if (ch) {
-        // 只保留「本角色出场」或「中立叙述」的句子，角色台词排前面
-        const mine = words.filter(w => practice.charactersIn(w.sentence).includes(ch));
-        const neutral = words.filter(w => practice.charactersIn(w.sentence).length === 0);
-        const filtered = mine.concat(neutral);
-        if (filtered.length >= limit) words = filtered;
-      }
-      // 防御：即使库里混入重复词，同一轮也不允许出现两次
-      const seenWord = new Set();
-      words = words.filter((w) => {
-        const k = String(w.word).trim().toLowerCase();
-        if (seenWord.has(k)) return false;
-        seenWord.add(k);
-        return true;
-      });
-      // 人工高权重生词优先占位：最多占本轮 40%，权重高的排前面。
-      // 注意：手动加权的词**不受当前 level 限制**——否则给 G1 的词加了权重，
-      // 玩 G2 时永远抽不到（之前 rabbit 就是这样消失的）。
+
+      // 人工权重：跨级别 JOIN，给 G1 的词加权后在 G2 也能出现
+      const prio = {};
       try {
-        const pri = db.prepare(`
-          SELECT w.id, w.word, w.hint, w.sentence, u.weight
-            FROM user_words u
+        for (const r of db.prepare(`
+          SELECT u.word, u.weight FROM user_words u
             JOIN words w ON LOWER(w.word) = LOWER(u.word)
-           ORDER BY u.weight DESC, RANDOM()
-        `).all();
-        if (pri.length) {
-          const quota = Math.max(1, Math.ceil(limit * 0.4));
-          const picked = pri.slice(0, quota);
-          const priIds = new Set(picked.map((p) => p.id));
-          words = picked.concat(words.filter((w) => !priIds.has(w.id)));
-        }
+        `).all()) prio[String(r.word).toLowerCase()] = Number(r.weight) || 0;
       } catch (e) { /* user_words 表可能尚未建立 */ }
 
-      words = words.slice(0, limit);
+      const words = pick.pickRound({
+        pool,
+        count: limit,
+        character: ch || '',
+        seen: query.seen || '',
+        miss: query.miss || '',
+        priority: prio,
+      });
+
       if (!words.length)
         return json(res, { error: 'No words found for ' + level, words: [] });
+
       const challenges = words.map(w => {
         const cloze = makeCloze(w.word);
         const clue = w.sentence
