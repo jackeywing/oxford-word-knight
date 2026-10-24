@@ -256,7 +256,7 @@ module.exports = function createPractice(db) {
       return { row: r, score: 1 + syl * 0.8 + hit * 1.5 + Math.random() * 0.8, syl, ph };
     }).sort((a, b) => b.score - a.score);
 
-    const pick = scored[Math.floor(Math.random() * Math.min(5, scored.length))];
+    const pick = weightedPick(scored, (x) => x.score);
     const n = pick.syl;
     const opts = [];
     if (n > 1) opts.push(n - 1);
@@ -296,7 +296,7 @@ module.exports = function createPractice(db) {
       return { p, score: 1 + weight * 2 + inBank * 0.6 + Math.random() * 0.7 };
     }).sort((a, b) => b.score - a.score);
 
-    const { p } = scored[Math.floor(Math.random() * Math.min(4, scored.length))];
+    const { p } = weightedPick(scored, (x) => x.score);
     const targetIsA = Math.random() < 0.5;
     const target = targetIsA ? p.a : p.b;
     return {
@@ -349,7 +349,7 @@ module.exports = function createPractice(db) {
              + ownCount(c.hits) * 3.0 + Math.random() * 0.8,
     })).sort((a, b) => b.score - a.score);
 
-    const chosen = scored[0];
+    const chosen = weightedPick(scored, (x) => x.score);   // 之前永远是 scored[0]，规则退化成固定 1 条
     // 角色亲口说过的句子优先（3 倍权重），中立句子兜底
     const ownHits = chosen.hits.filter(isOwnLine);
     const preferred = ownHits.length ? ownHits : chosen.hits;
@@ -403,11 +403,9 @@ module.exports = function createPractice(db) {
       `SELECT word, error_count FROM word_state WHERE player_id = ?`
     ).all(player);
     const seenMap = new Map(seen.map((s) => [s.word, s.error_count]));
-    const pool = SIGHT_WORDS
-      .map(([word, rank, zh]) => ({ word, rank, zh, err: seenMap.get(word) || 0 }))
-      .sort((a, b) => (b.err * 10 - a.err * 10) + (a.rank - b.rank) + (Math.random() - 0.5) * 6)
-      .slice(0, 12);
-    const target = pool[Math.floor(Math.random() * Math.min(5, pool.length))];
+    // 全池加权：错过的词权重高，高频词（rank 小）略高，其余均匀
+    const pool = SIGHT_WORDS.map(([word, rank, zh]) => ({ word, rank, zh, err: seenMap.get(word) || 0 }));
+    const target = weightedPick(pool, (x) => 1 + x.err * 6 + 6 / Math.max(1, x.rank));
 
     const others = SIGHT_WORDS.filter(([w]) => w !== target.word)
       .sort(() => Math.random() - 0.5).slice(0, 3).map(([, , zh]) => zh);
@@ -430,6 +428,22 @@ module.exports = function createPractice(db) {
   // 取一张卡"考的是哪个词"：音节/视觉词用 word，音素/拼读用 correct / audio_text
   function cardWord(c) {
     return String((c && (c.word || c.correct || c.audio_text)) || '').trim().toLowerCase();
+  }
+
+  /**
+   * 全池加权抽样。
+   * 之前三处都是 `scored[rand * Math.min(5, len)]` —— 先排序再只在前 4~5 个里抽，
+   * 903 词的库实际只有 5 个候选，导致相邻两轮平均重复 2.22/8（28%）。
+   * 这里按权重在整个池子里抽，权重仍然体现"薄弱音素优先"，但不再把池子砍成 5 个。
+   */
+  function weightedPick(arr, weightOf) {
+    if (!arr || !arr.length) return null;
+    const ws = arr.map((x) => Math.max(1e-6, Number(weightOf(x)) || 0));
+    const total = ws.reduce((a, b) => a + b, 0);
+    if (!(total > 0)) return arr[Math.floor(Math.random() * arr.length)];
+    let r = Math.random() * total;
+    for (let i = 0; i < arr.length; i++) { r -= ws[i]; if (r <= 0) return arr[i]; }
+    return arr[arr.length - 1];
   }
 
   function nextTask({ player, level = 'G1', type, character, exclude }) {

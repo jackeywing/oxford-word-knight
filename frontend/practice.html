@@ -348,13 +348,23 @@ function hud(){
 }
 
 /* ── 取题 ── */
+/* 跨轮记忆：最近 3 轮的词，避免连续两轮刷到同样的题（与主游戏 owk_seen 同一思路） */
+function pSeen(){try{return JSON.parse(localStorage.getItem('owk_seen_practice')||'[]')}catch(e){return []}}
+function pPushSeen(word){
+  const k=String(word||'').toLowerCase(); if(!k) return;
+  const cur=pSeen(); if(cur[cur.length-1]===k) return;
+  localStorage.setItem('owk_seen_practice',JSON.stringify(cur.concat([k]).slice(-24)));
+}
+
 async function fetchCard(type){
   // 把本轮已考过的词带给后端，避免同一个词换个题型又出现一次
+  const _ex=roundWords.concat(pSeen()).filter((v,i,a)=>a.indexOf(v)===i);
   const q=(type?('&type='+type):'')+'&character='+ch
-    +(roundWords.length?('&exclude='+encodeURIComponent(roundWords.join(','))):'');
+    +(_ex.length?('&exclude='+encodeURIComponent(_ex.join(','))):'');
   const r=await fetch(`${API}/practice/next?level=G2&player=${ch}${q}`);
   const d=await r.json();
   if(d.error){toast('⚠️ '+d.message,'bad');return null;}
+  pPushSeen(d.word||d.correct||d.audio_text||'');
   return d;
 }
 

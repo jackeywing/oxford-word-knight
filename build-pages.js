@@ -167,9 +167,7 @@ function genSyllable(p, level, character) {
     return { row: r, syl, ph, score: 1 + syl * 0.8 + hit * 1.5 + prioWeight(r.word) * 3 + Math.random() * 0.8 };
   }).sort((a, b) => b.score - a.score);
   // 优先级：若榜首就是人工重点生词，60% 直接取它（否则仍从前 5 随机，保留多样性）
-  const pick = (prioWeight(scored[0].row.word) > 0 && Math.random() < 0.6)
-    ? scored[0]
-    : scored[Math.floor(Math.random() * Math.min(5, scored.length))];
+  const pick = weightedPick(scored, (x) => x.score + prioWeight(x.row.word) * 3);
   const n = pick.syl, opts = [];
   if (n > 1) opts.push(n - 1);
   opts.push(n + 1);
@@ -195,7 +193,7 @@ function genPhoneme(p, level, character) {
     const inBank = (bank.has(norm(pair.a)) ? 1 : 0) + (bank.has(norm(pair.b)) ? 1 : 0);
     return { pair, score: 1 + w * 2 + inBank * 0.6 + Math.random() * 0.7 };
   }).sort((a, b) => b.score - a.score);
-  const pr = scored[Math.floor(Math.random() * Math.min(4, scored.length))].pair;
+  const pr = weightedPick(scored, (x) => x.score).pair;
   const isA = Math.random() < 0.5, target = isA ? pr.a : pr.b;
   return {
     card_type: 'PHONEME_DISCRIMINATION', audio_text: target, speaker: CHARACTERS[character] || null,
@@ -228,7 +226,7 @@ function genPhonics(p, level, character) {
     score: 1 + (wm.get(c.pt.phoneme) || 0) * 2 + Math.min(c.hits.length, 6) * 0.3
            + c.hits.filter(isOwn).length * 3.0 + Math.random() * 0.8,
   })).sort((a, b) => b.score - a.score);
-  const chosen = scored[0];
+  const chosen = weightedPick(scored, (x) => x.score);   // 之前永远是 scored[0]
   const ownHits = chosen.hits.filter(isOwn);
   const preferred = ownHits.length ? ownHits : chosen.hits;
   const single = /^[a-z]+$/i;
@@ -267,10 +265,8 @@ function genPhonics(p, level, character) {
 /* ---- 4. 视觉词闪现 ---- */
 function genSight(p, level, character) {
   const ws = me(p).words || {};
-  const pool = SIGHT_WORDS.map(([w, r, zh]) => ({ word: w, rank: r, zh, err: (ws[w] && ws[w].e) || 0 }))
-    .sort((a, b) => (b.err * 10 - a.err * 10) + (a.rank - b.rank) + (Math.random() - 0.5) * 6)
-    .slice(0, 12);
-  const target = pool[Math.floor(Math.random() * Math.min(5, pool.length))];
+  const pool = SIGHT_WORDS.map(([w, r, zh]) => ({ word: w, rank: r, zh, err: (ws[w] && ws[w].e) || 0 }));
+  const target = weightedPick(pool, (x) => 1 + x.err * 6 + 6 / Math.max(1, x.rank));
   const others = SIGHT_WORDS.filter(([w]) => w !== target.word).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x[2]);
   return {
     card_type: 'SIGHT_WORD_FLASH', word: target.word, speaker: CHARACTERS[character] || null,
@@ -304,6 +300,18 @@ function prioWeight(word) {
   if (!k) return 0;
   const hit = priorityWords().find((x) => x.w === k);
   return hit ? hit.weight : 0;
+}
+
+/* 全池加权抽样：与 backend/practice.js 的 weightedPick 同义。
+   内嵌引擎是手工副本，改 practice.js 时必须同步这里，否则静态版不生效。 */
+function weightedPick(arr, weightOf) {
+  if (!arr || !arr.length) return null;
+  const ws = arr.map(x => Math.max(1e-6, Number(weightOf(x)) || 0));
+  const total = ws.reduce((a, b) => a + b, 0);
+  if (!(total > 0)) return arr[Math.floor(Math.random() * arr.length)];
+  let r = Math.random() * total;
+  for (let i = 0; i < arr.length; i++) { r -= ws[i]; if (r <= 0) return arr[i]; }
+  return arr[arr.length - 1];
 }
 
 function nextTask(p, level, type, character, exclude) {
@@ -409,7 +417,7 @@ function recommendFor(p, level) {
 const uiScript = tpl.slice(scriptStart + '<script>'.length).replace(/<\/script>[\s\S]*$/i, '')
   .replace("const API='/api';", "const API='';").replace(
   /async function fetchCard\(type\)\{[\s\S]*?\n\}/,
-  'async function fetchCard(type){ return nextTask(ch, "G2", type, ch, roundWords.join(",")); }'
+  'async function fetchCard(type){ const _ex=roundWords.concat(pSeen()).filter((v,i,a)=>a.indexOf(v)===i); const _c=nextTask(ch, "G2", type, ch, _ex.join(",")); if(_c && !_c.error) pPushSeen(_c.word||_c.correct||_c.audio_text||""); return _c; }'
 ).replace(
   /const res=await fetch\(`\$\{API\}\/practice\/answer`,[\s\S]*?\{error:'network'\}\)\);/,
   'const res = answerCard(ch, card, val, ms);'
