@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>音色试听 · Word Knight</title>
+<style>
+body{font-family:system-ui,-apple-system,"PingFang SC",sans-serif;background:#1d1309;color:#FFE0B2;padding:20px;max-width:900px;margin:0 auto}
+h1{color:#FFD54F;font-size:20px}h2{color:#FFD54F;font-size:15px;margin:22px 0 10px}
+.grid{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:150px 1fr 92px;gap:10px;align-items:center;background:#3E2723;border:2px solid #5D4037;padding:9px 12px;border-radius:6px}
+.nm{font-weight:700;font-size:13px}.meta{font-size:12px;color:#BCAAA4}
+button{font:inherit;font-size:13px;padding:7px 12px;background:#2E7D32;color:#fff;border:none;border-radius:4px;cursor:pointer}
+button:active{transform:translateY(1px)}
+.note{font-size:13px;color:#BCAAA4;line-height:1.8;background:#3E2723;border-left:3px solid #FFD54F;padding:10px 14px;margin:14px 0}
+</style></head><body>
+<h1>🎧 角色音色试听</h1>
+<div class="note">Azure 英文只有 2 个儿童音色（Maisie / Ana，都是女孩），没有男孩儿童音色。
+男孩只能靠成年男声 + 音高模拟。请挑出你觉得最像 6–9 岁孩子的组合，告诉我 ID（如 <b>Alfie_p15</b>）。
+<br>同一角色会用在「自我介绍 + 台词朗读」上，所以请按"像不像这个角色"来选，而不是"好不好听"。</div>
+
+  <h2>男孩候选（Chip / Kipper）</h2>
+  <div class="grid">
+    
+      <div class="row">
+        <span class="nm">Ryan</span>
+        <span class="meta">en-GB-RyanNeural · pitch 0%</span>
+        <button onclick="play('audition/Ryan.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Ryan_p15</span>
+        <span class="meta">en-GB-RyanNeural · pitch +15%</span>
+        <button onclick="play('audition/Ryan_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Alfie</span>
+        <span class="meta">en-GB-AlfieNeural · pitch 0%</span>
+        <button onclick="play('audition/Alfie.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Alfie_p15</span>
+        <span class="meta">en-GB-AlfieNeural · pitch +15%</span>
+        <button onclick="play('audition/Alfie_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Elliot</span>
+        <span class="meta">en-GB-ElliotNeural · pitch 0%</span>
+        <button onclick="play('audition/Elliot.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Elliot_p15</span>
+        <span class="meta">en-GB-ElliotNeural · pitch +15%</span>
+        <button onclick="play('audition/Elliot_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Ethan</span>
+        <span class="meta">en-GB-EthanNeural · pitch 0%</span>
+        <button onclick="play('audition/Ethan.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Ethan_p15</span>
+        <span class="meta">en-GB-EthanNeural · pitch +15%</span>
+        <button onclick="play('audition/Ethan_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Noah</span>
+        <span class="meta">en-GB-NoahNeural · pitch 0%</span>
+        <button onclick="play('audition/Noah.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Noah_p15</span>
+        <span class="meta">en-GB-NoahNeural · pitch +15%</span>
+        <button onclick="play('audition/Noah_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Thomas</span>
+        <span class="meta">en-GB-ThomasNeural · pitch 0%</span>
+        <button onclick="play('audition/Thomas.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Thomas_p15</span>
+        <span class="meta">en-GB-ThomasNeural · pitch +15%</span>
+        <button onclick="play('audition/Thomas_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Oliver</span>
+        <span class="meta">en-GB-OliverNeural · pitch 0%</span>
+        <button onclick="play('audition/Oliver.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Oliver_p15</span>
+        <span class="meta">en-GB-OliverNeural · pitch +15%</span>
+        <button onclick="play('audition/Oliver_p15.mp3', this)">▶ 试听</button>
+      </div>
+  </div>
+  <h2>女孩候选（Biff / Wilma）</h2>
+  <div class="grid">
+    
+      <div class="row">
+        <span class="nm">Maisie</span>
+        <span class="meta">en-GB-MaisieNeural · pitch 0%</span>
+        <button onclick="play('audition/Maisie.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Maisie_p15</span>
+        <span class="meta">en-GB-MaisieNeural · pitch +15%</span>
+        <button onclick="play('audition/Maisie_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Hollie</span>
+        <span class="meta">en-GB-HollieNeural · pitch 0%</span>
+        <button onclick="play('audition/Hollie.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Hollie_p15</span>
+        <span class="meta">en-GB-HollieNeural · pitch +15%</span>
+        <button onclick="play('audition/Hollie_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Bella</span>
+        <span class="meta">en-GB-BellaNeural · pitch 0%</span>
+        <button onclick="play('audition/Bella.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Bella_p15</span>
+        <span class="meta">en-GB-BellaNeural · pitch +15%</span>
+        <button onclick="play('audition/Bella_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Abbi</span>
+        <span class="meta">en-GB-AbbiNeural · pitch 0%</span>
+        <button onclick="play('audition/Abbi.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">Abbi_p15</span>
+        <span class="meta">en-GB-AbbiNeural · pitch +15%</span>
+        <button onclick="play('audition/Abbi_p15.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">en-US-Ana</span>
+        <span class="meta">en-US-AnaNeural · pitch 0%</span>
+        <button onclick="play('audition/en-US-Ana.mp3', this)">▶ 试听</button>
+      </div>
+      <div class="row">
+        <span class="nm">en-US-Ana_p15</span>
+        <span class="meta">en-US-AnaNeural · pitch +15%</span>
+        <button onclick="play('audition/en-US-Ana_p15.mp3', this)">▶ 试听</button>
+      </div>
+  </div>
+<script>
+let cur=null;
+function play(f,btn){
+  if(cur){cur.pause();cur=null;}
+  cur=new Audio(f);
+  cur.play().catch(e=>alert('播放失败: '+e.name));
+  document.querySelectorAll('button').forEach(b=>b.textContent='▶ 试听');
+  btn.textContent='⏸ 播放中';
+  cur.onended=()=>btn.textContent='▶ 试听';
+}
+</script></body></html>

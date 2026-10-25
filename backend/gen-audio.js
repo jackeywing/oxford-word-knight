@@ -28,6 +28,7 @@ const ROOT = path.join(__dirname, '..');
 const OUT_DIR = path.join(ROOT, 'docs', 'audio');
 const WORD_DIR = path.join(OUT_DIR, 'words');
 const SENT_DIR = path.join(OUT_DIR, 'sentences');
+const PHRASE_DIR = path.join(OUT_DIR, 'phrases');
 const MANIFEST = path.join(OUT_DIR, 'manifest.json');
 
 /* ─────────── 参数 ─────────── */
@@ -81,7 +82,25 @@ const VOICE = {
   nadim:      'en-GB-RyanNeural',
   anneena:    'en-GB-MaisieNeural',
 };
-const PITCH = { kipper: '+8%', floppy: '+22%', gran: '-6%' };
+/*
+ * 音高/语速微调（Azure 没有宠物音色，靠 pitch/rate 做区分）：
+ *   chip    -5%  → 音高略低，比 Kipper 沉稳
+ *   kipper +15%  → 明显更小的男孩
+ *   floppy +35%  → 卡通化的宠物
+ * 同一句朗读时这些差异要足够大，否则「切换角色听不出变化」。
+ */
+const PITCH = { chip: '-5%', kipper: '+15%', floppy: '+35%', gran: '-6%' };
+const RATE_CHAR = { chip: '', kipper: '-8%', floppy: '-8%' };
+
+/* 角色自我介绍：文本必须与 frontend/practice.html 的 GREET 完全一致，
+   否则前端按文本查不到音频，会掉回系统语音（之前就是这个问题）。 */
+const PHRASES = [
+  { key: 'hello-biff',   speaker: 'biff',   text: 'Hello, I am Biff.' },
+  { key: 'hello-chip',   speaker: 'chip',   text: 'Hello, I am Chip.' },
+  { key: 'hello-kipper', speaker: 'kipper', text: 'Hello, I am Kipper.' },
+  { key: 'hello-wilma',  speaker: 'wilma',  text: 'Hello, I am Wilma.' },
+  { key: 'hello-floppy', speaker: 'floppy', text: 'Woof! I am Floppy.' },
+];
 const RATE = { vocab: '-10%' };   // 单词读慢一点，方便孩子跟读
 
 function voiceFor(speaker, kind) {
@@ -221,6 +240,30 @@ async function pool(items, worker, concurrency) {
   manifest.sentences = manifest.sentences || {};
   manifest.voices = VOICE;
 
+  /* ── 0. 角色开场白（5 条，很快） ── */
+  if (!ONLY || ONLY === 'phrases') {
+    fs.mkdirSync(PHRASE_DIR, { recursive: true });
+    manifest.phrases = manifest.phrases || {};
+    const todo = PHRASES.filter((ph) => {
+      if (FORCE) return true;
+      return !fs.existsSync(path.join(PHRASE_DIR, ph.key + '.mp3'));
+    });
+    console.log(`\n【开场白】共 ${PHRASES.length}，待生成 ${todo.length}`);
+    const errs = await pool(
+      todo.map((ph) => ({ ...ph, label: 'phrase:' + ph.key })),
+      async (ph) => {
+        const voice = voiceFor(ph.speaker, 'sentence');
+        const raw = await synth(ph.text, voice, { pitch: PITCH[ph.speaker], rate: RATE_CHAR[ph.speaker] });
+        const buf = trimSilence(raw);
+        const file = 'phrases/' + ph.key + '.mp3';
+        fs.writeFileSync(path.join(OUT_DIR, file), buf);
+        manifest.phrases[ph.text] = { file, bytes: buf.length, voice, speaker: ph.speaker };
+      },
+      CONC
+    );
+    console.log(`  完成，失败 ${errs.length}`);
+  }
+
   /* ── 1. 单词 ── */
   if (!ONLY || ONLY === 'words') {
     let list = rows.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
@@ -267,7 +310,7 @@ async function pool(items, worker, concurrency) {
       async (it) => {
         const who = charsOf(it.sentence)[0] || '';
         const voice = voiceFor(who, 'sentence');
-        const raw = await synth(it.sentence, voice, { pitch: PITCH[who], rate: '' });
+        const raw = await synth(it.sentence, voice, { pitch: PITCH[who], rate: RATE_CHAR[who] || '' });
         const buf = trimSilence(raw);
         const file = 'sentences/' + sentKey(it.sentence) + '.mp3';
         fs.writeFileSync(path.join(OUT_DIR, file), buf);
@@ -282,6 +325,7 @@ async function pool(items, worker, concurrency) {
   manifest.counts = {
     words: Object.keys(manifest.words).length,
     sentences: Object.keys(manifest.sentences).length,
+    phrases: Object.keys(manifest.phrases || {}).length,
   };
   fs.writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2));
 

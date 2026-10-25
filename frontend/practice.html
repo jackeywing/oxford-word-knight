@@ -311,6 +311,15 @@ function audioForWord(w){
   const k=String(w||'').trim().toLowerCase();
   return AUDIO_MANIFEST && AUDIO_MANIFEST.words && AUDIO_MANIFEST.words[k];
 }
+/* 整句/短语：先精确匹配 phrases（角色开场白），再匹配例句库。
+   之前只查 words，所以 "Hello, I am Biff." 永远查不到 → 掉回系统语音，
+   切换角色听起来毫无变化。 */
+function audioForText(text){
+  const t=String(text||'').trim();
+  if(!t) return null;
+  const M=AUDIO_MANIFEST||{};
+  return (M.phrases && M.phrases[t]) || (M.sentences && M.sentences[t]) || null;
+}
 
 /* 系统语音兜底（原实现，保持不变） */
 function speakSynth(text,rate=0.85){
@@ -340,7 +349,8 @@ function speakSynth(text,rate=0.85){
  * <audio> 比 speechSynthesis 严格——没有用户手势时 play() 会被 NotAllowedError 拒绝，
  * 这里必须回退，否则会出现"点了没声音"。 */
 function speak(text,rate=0.85){
-  const hit=audioForWord(text);
+  const raw=String(text||'').trim();
+  const hit=audioForWord(raw) || audioForText(raw);
   if(hit){
     playFile(hit.file).then((ok)=>{ if(!ok) speakSynth(text,rate); });
     return true;
@@ -349,10 +359,16 @@ function speak(text,rate=0.85){
 }
 
 /* 切换角色后立刻用新音色报一次名字，家长能马上听出差别 */
+/* 文本必须与 backend/gen-audio.js 的 PHRASES 逐字一致，否则查不到音频 */
+const GREET={
+  biff:'Hello, I am Biff.', chip:'Hello, I am Chip.',
+  kipper:'Hello, I am Kipper.', wilma:'Hello, I am Wilma.',
+  floppy:'Woof! I am Floppy.',
+};
 function demoVoice(){
-  const nm=(typeof NM!=='undefined'&&NM[ch])||'';
-  if(!nm) return;
-  setTimeout(()=>speak('Hello, I am '+nm+'.',0.9),80);
+  const t=GREET[ch];
+  if(!t) return;
+  setTimeout(()=>speak(t,0.9),80);
 }
 
 function toast(m,c='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+c+' show';setTimeout(()=>e.className='toast '+c,2300)}

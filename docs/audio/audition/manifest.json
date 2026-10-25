@@ -1,0 +1,218 @@
+[
+  {
+    "voice": "en-GB-RyanNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Ryan",
+    "file": "Ryan.mp3",
+    "bytes": 14544
+  },
+  {
+    "voice": "en-GB-RyanNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Ryan_p15",
+    "file": "Ryan_p15.mp3",
+    "bytes": 14544
+  },
+  {
+    "voice": "en-GB-AlfieNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Alfie",
+    "file": "Alfie.mp3",
+    "bytes": 13104
+  },
+  {
+    "voice": "en-GB-AlfieNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Alfie_p15",
+    "file": "Alfie_p15.mp3",
+    "bytes": 13104
+  },
+  {
+    "voice": "en-GB-ElliotNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Elliot",
+    "file": "Elliot.mp3",
+    "bytes": 13392
+  },
+  {
+    "voice": "en-GB-ElliotNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Elliot_p15",
+    "file": "Elliot_p15.mp3",
+    "bytes": 13392
+  },
+  {
+    "voice": "en-GB-EthanNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Ethan",
+    "file": "Ethan.mp3",
+    "bytes": 13392
+  },
+  {
+    "voice": "en-GB-EthanNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Ethan_p15",
+    "file": "Ethan_p15.mp3",
+    "bytes": 13392
+  },
+  {
+    "voice": "en-GB-NoahNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Noah",
+    "file": "Noah.mp3",
+    "bytes": 12816
+  },
+  {
+    "voice": "en-GB-NoahNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Noah_p15",
+    "file": "Noah_p15.mp3",
+    "bytes": 12816
+  },
+  {
+    "voice": "en-GB-ThomasNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Thomas",
+    "file": "Thomas.mp3",
+    "bytes": 13248
+  },
+  {
+    "voice": "en-GB-ThomasNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Thomas_p15",
+    "file": "Thomas_p15.mp3",
+    "bytes": 13248
+  },
+  {
+    "voice": "en-GB-OliverNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Oliver",
+    "file": "Oliver.mp3",
+    "bytes": 13248
+  },
+  {
+    "voice": "en-GB-OliverNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Chip.",
+    "group": "男孩候选（Chip / Kipper）",
+    "id": "Oliver_p15",
+    "file": "Oliver_p15.mp3",
+    "bytes": 13248
+  },
+  {
+    "voice": "en-GB-MaisieNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Maisie",
+    "file": "Maisie.mp3",
+    "bytes": 14256
+  },
+  {
+    "voice": "en-GB-MaisieNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Maisie_p15",
+    "file": "Maisie_p15.mp3",
+    "bytes": 14256
+  },
+  {
+    "voice": "en-GB-HollieNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Hollie",
+    "file": "Hollie.mp3",
+    "bytes": 14112
+  },
+  {
+    "voice": "en-GB-HollieNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Hollie_p15",
+    "file": "Hollie_p15.mp3",
+    "bytes": 14112
+  },
+  {
+    "voice": "en-GB-BellaNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Bella",
+    "file": "Bella.mp3",
+    "bytes": 13824
+  },
+  {
+    "voice": "en-GB-BellaNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Bella_p15",
+    "file": "Bella_p15.mp3",
+    "bytes": 13824
+  },
+  {
+    "voice": "en-GB-AbbiNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Abbi",
+    "file": "Abbi.mp3",
+    "bytes": 14832
+  },
+  {
+    "voice": "en-GB-AbbiNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "Abbi_p15",
+    "file": "Abbi_p15.mp3",
+    "bytes": 14832
+  },
+  {
+    "voice": "en-US-AnaNeural",
+    "pitch": "0%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "en-US-Ana",
+    "file": "en-US-Ana.mp3",
+    "bytes": 15264
+  },
+  {
+    "voice": "en-US-AnaNeural",
+    "pitch": "+15%",
+    "text": "Hello, I am Biff.",
+    "group": "女孩候选（Biff / Wilma）",
+    "id": "en-US-Ana_p15",
+    "file": "en-US-Ana_p15.mp3",
+    "bytes": 15264
+  }
+]
