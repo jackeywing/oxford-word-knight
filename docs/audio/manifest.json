@@ -1,0 +1,7512 @@
+{
+  "words": {
+    "for": {
+      "file": "words/for.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "about": {
+      "file": "words/about.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "of": {
+      "file": "words/of.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "from": {
+      "file": "words/from.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "with": {
+      "file": "words/with.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "up": {
+      "file": "words/up.mp3",
+      "bytes": 2828,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "out": {
+      "file": "words/out.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "along": {
+      "file": "words/along.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "across": {
+      "file": "words/across.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "alone": {
+      "file": "words/alone.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "watch": {
+      "file": "words/watch.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hear": {
+      "file": "words/hear.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "found": {
+      "file": "words/found.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "knew": {
+      "file": "words/knew.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "laugh": {
+      "file": "words/laugh.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "went": {
+      "file": "words/went.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "come": {
+      "file": "words/come.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "thought": {
+      "file": "words/thought.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cross": {
+      "file": "words/cross.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sit": {
+      "file": "words/sit.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stand": {
+      "file": "words/stand.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "skip": {
+      "file": "words/skip.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "put": {
+      "file": "words/put.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "give": {
+      "file": "words/give.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "drop": {
+      "file": "words/drop.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "take": {
+      "file": "words/take.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "had": {
+      "file": "words/had.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "has": {
+      "file": "words/has.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hope": {
+      "file": "words/hope.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "need": {
+      "file": "words/need.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "get": {
+      "file": "words/get.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wish": {
+      "file": "words/wish.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "make": {
+      "file": "words/make.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wrong": {
+      "file": "words/wrong.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "real": {
+      "file": "words/real.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "old": {
+      "file": "words/old.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "excited": {
+      "file": "words/excited.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "asleep": {
+      "file": "words/asleep.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "quite": {
+      "file": "words/quite.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "almost": {
+      "file": "words/almost.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "quiet": {
+      "file": "words/quiet.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sister": {
+      "file": "words/sister.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "brother": {
+      "file": "words/brother.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pencil": {
+      "file": "words/pencil.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "everyone": {
+      "file": "words/everyone.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "chinese": {
+      "file": "words/chinese.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bag": {
+      "file": "words/bag.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ruler": {
+      "file": "words/ruler.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "box": {
+      "file": "words/box.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "doll": {
+      "file": "words/doll.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bed": {
+      "file": "words/bed.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ball": {
+      "file": "words/ball.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "chair": {
+      "file": "words/chair.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cheese": {
+      "file": "words/cheese.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "table": {
+      "file": "words/table.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "chicken": {
+      "file": "words/chicken.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "anywhere": {
+      "file": "words/anywhere.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "everything": {
+      "file": "words/everything.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nothing": {
+      "file": "words/nothing.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lift": {
+      "file": "words/lift.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "never": {
+      "file": "words/never.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "coat": {
+      "file": "words/coat.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mistake": {
+      "file": "words/mistake.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "forget": {
+      "file": "words/forget.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "brake": {
+      "file": "words/brake.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "red": {
+      "file": "words/red.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "yellow": {
+      "file": "words/yellow.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "really": {
+      "file": "words/really.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "blue": {
+      "file": "words/blue.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "green": {
+      "file": "words/green.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "white": {
+      "file": "words/white.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "black": {
+      "file": "words/black.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hero": {
+      "file": "words/hero.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pink": {
+      "file": "words/pink.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "brown": {
+      "file": "words/brown.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "orange": {
+      "file": "words/orange.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "purple": {
+      "file": "words/purple.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "great": {
+      "file": "words/great.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "little": {
+      "file": "words/little.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "night": {
+      "file": "words/night.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "some": {
+      "file": "words/some.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "evening": {
+      "file": "words/evening.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "such": {
+      "file": "words/such.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "does": {
+      "file": "words/does.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "what": {
+      "file": "words/what.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "when": {
+      "file": "words/when.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "where": {
+      "file": "words/where.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "why": {
+      "file": "words/why.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wonder": {
+      "file": "words/wonder.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "who": {
+      "file": "words/who.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "post": {
+      "file": "words/post.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "back": {
+      "file": "words/back.mp3",
+      "bytes": 3260,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stay": {
+      "file": "words/stay.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "look": {
+      "file": "words/look.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dad": {
+      "file": "words/dad.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mum": {
+      "file": "words/mum.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "trick": {
+      "file": "words/trick.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tree": {
+      "file": "words/tree.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cat": {
+      "file": "words/cat.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dog": {
+      "file": "words/dog.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "run": {
+      "file": "words/run.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "house": {
+      "file": "words/house.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "big": {
+      "file": "words/big.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "go": {
+      "file": "words/go.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "see": {
+      "file": "words/see.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "good": {
+      "file": "words/good.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "help": {
+      "file": "words/help.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "play": {
+      "file": "words/play.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rain": {
+      "file": "words/rain.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "home": {
+      "file": "words/home.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "book": {
+      "file": "words/book.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "door": {
+      "file": "words/door.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "school": {
+      "file": "words/school.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "water": {
+      "file": "words/water.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "day": {
+      "file": "words/day.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "find": {
+      "file": "words/find.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "want": {
+      "file": "words/want.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "new": {
+      "file": "words/new.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "magic": {
+      "file": "words/magic.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "adventure": {
+      "file": "words/adventure.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "castle": {
+      "file": "words/castle.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "secret": {
+      "file": "words/secret.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "village": {
+      "file": "words/village.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pirate": {
+      "file": "words/pirate.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "palace": {
+      "file": "words/palace.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dragon": {
+      "file": "words/dragon.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rescue": {
+      "file": "words/rescue.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "forest": {
+      "file": "words/forest.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "treasure": {
+      "file": "words/treasure.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mountain": {
+      "file": "words/mountain.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "island": {
+      "file": "words/island.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "thunder": {
+      "file": "words/thunder.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bridge": {
+      "file": "words/bridge.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "giant": {
+      "file": "words/giant.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "journey": {
+      "file": "words/journey.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "crown": {
+      "file": "words/crown.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "storm": {
+      "file": "words/storm.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "explore": {
+      "file": "words/explore.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "travel": {
+      "file": "words/travel.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hide": {
+      "file": "words/hide.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "frighten": {
+      "file": "words/frighten.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lightning": {
+      "file": "words/lightning.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "discover": {
+      "file": "words/discover.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "disappear": {
+      "file": "words/disappear.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "strange": {
+      "file": "words/strange.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "whisper": {
+      "file": "words/whisper.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "guard": {
+      "file": "words/guard.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "the": {
+      "file": "words/the.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "and": {
+      "file": "words/and.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "to": {
+      "file": "words/to.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ancient": {
+      "file": "words/ancient.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "in": {
+      "file": "words/in.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "a": {
+      "file": "words/a.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "you": {
+      "file": "words/you.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "is": {
+      "file": "words/is.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "that": {
+      "file": "words/that.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "it": {
+      "file": "words/it.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "he": {
+      "file": "words/he.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "was": {
+      "file": "words/was.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "on": {
+      "file": "words/on.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "are": {
+      "file": "words/are.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "as": {
+      "file": "words/as.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "his": {
+      "file": "words/his.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "they": {
+      "file": "words/they.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "at": {
+      "file": "words/at.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "be": {
+      "file": "words/be.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "have": {
+      "file": "words/have.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "this": {
+      "file": "words/this.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "or": {
+      "file": "words/or.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "one": {
+      "file": "words/one.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "by": {
+      "file": "words/by.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "but": {
+      "file": "words/but.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "all": {
+      "file": "words/all.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "not": {
+      "file": "words/not.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "were": {
+      "file": "words/were.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "we": {
+      "file": "words/we.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "word": {
+      "file": "words/word.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "your": {
+      "file": "words/your.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "can": {
+      "file": "words/can.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "said": {
+      "file": "words/said.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "there": {
+      "file": "words/there.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "an": {
+      "file": "words/an.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "use": {
+      "file": "words/use.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "she": {
+      "file": "words/she.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "do": {
+      "file": "words/do.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "how": {
+      "file": "words/how.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "which": {
+      "file": "words/which.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "each": {
+      "file": "words/each.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "if": {
+      "file": "words/if.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "will": {
+      "file": "words/will.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "their": {
+      "file": "words/their.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "then": {
+      "file": "words/then.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "them": {
+      "file": "words/them.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "many": {
+      "file": "words/many.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "other": {
+      "file": "words/other.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "so": {
+      "file": "words/so.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "her": {
+      "file": "words/her.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "like": {
+      "file": "words/like.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "him": {
+      "file": "words/him.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "these": {
+      "file": "words/these.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "into": {
+      "file": "words/into.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "would": {
+      "file": "words/would.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "two": {
+      "file": "words/two.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "more": {
+      "file": "words/more.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "write": {
+      "file": "words/write.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "number": {
+      "file": "words/number.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "no": {
+      "file": "words/no.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "time": {
+      "file": "words/time.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "my": {
+      "file": "words/my.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "way": {
+      "file": "words/way.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "could": {
+      "file": "words/could.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "people": {
+      "file": "words/people.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "been": {
+      "file": "words/been.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "first": {
+      "file": "words/first.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "oil": {
+      "file": "words/oil.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "than": {
+      "file": "words/than.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "call": {
+      "file": "words/call.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "now": {
+      "file": "words/now.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "its": {
+      "file": "words/its.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "long": {
+      "file": "words/long.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "down": {
+      "file": "words/down.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "did": {
+      "file": "words/did.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "made": {
+      "file": "words/made.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "part": {
+      "file": "words/part.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "may": {
+      "file": "words/may.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sound": {
+      "file": "words/sound.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "over": {
+      "file": "words/over.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "know": {
+      "file": "words/know.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "place": {
+      "file": "words/place.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "work": {
+      "file": "words/work.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "only": {
+      "file": "words/only.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "year": {
+      "file": "words/year.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "live": {
+      "file": "words/live.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "me": {
+      "file": "words/me.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "thing": {
+      "file": "words/thing.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "very": {
+      "file": "words/very.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "most": {
+      "file": "words/most.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "after": {
+      "file": "words/after.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "just": {
+      "file": "words/just.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "name": {
+      "file": "words/name.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "our": {
+      "file": "words/our.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "man": {
+      "file": "words/man.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sentence": {
+      "file": "words/sentence.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "think": {
+      "file": "words/think.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "say": {
+      "file": "words/say.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "much": {
+      "file": "words/much.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "right": {
+      "file": "words/right.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "through": {
+      "file": "words/through.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "line": {
+      "file": "words/line.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "before": {
+      "file": "words/before.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "too": {
+      "file": "words/too.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tell": {
+      "file": "words/tell.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "any": {
+      "file": "words/any.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "same": {
+      "file": "words/same.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mean": {
+      "file": "words/mean.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "boy": {
+      "file": "words/boy.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "came": {
+      "file": "words/came.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "show": {
+      "file": "words/show.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "follow": {
+      "file": "words/follow.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "also": {
+      "file": "words/also.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "three": {
+      "file": "words/three.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "around": {
+      "file": "words/around.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "set": {
+      "file": "words/set.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "form": {
+      "file": "words/form.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "small": {
+      "file": "words/small.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "end": {
+      "file": "words/end.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "well": {
+      "file": "words/well.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "must": {
+      "file": "words/must.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "another": {
+      "file": "words/another.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "large": {
+      "file": "words/large.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "turn": {
+      "file": "words/turn.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "even": {
+      "file": "words/even.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "here": {
+      "file": "words/here.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "men": {
+      "file": "words/men.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "because": {
+      "file": "words/because.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "read": {
+      "file": "words/read.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ask": {
+      "file": "words/ask.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "land": {
+      "file": "words/land.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "us": {
+      "file": "words/us.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "different": {
+      "file": "words/different.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "try": {
+      "file": "words/try.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "move": {
+      "file": "words/move.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hand": {
+      "file": "words/hand.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "kind": {
+      "file": "words/kind.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "off": {
+      "file": "words/off.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "picture": {
+      "file": "words/picture.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "again": {
+      "file": "words/again.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "air": {
+      "file": "words/air.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "change": {
+      "file": "words/change.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "spell": {
+      "file": "words/spell.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "point": {
+      "file": "words/point.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "away": {
+      "file": "words/away.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "animal": {
+      "file": "words/animal.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "page": {
+      "file": "words/page.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mother": {
+      "file": "words/mother.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "letter": {
+      "file": "words/letter.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "study": {
+      "file": "words/study.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "answer": {
+      "file": "words/answer.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "still": {
+      "file": "words/still.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "learn": {
+      "file": "words/learn.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "should": {
+      "file": "words/should.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "high": {
+      "file": "words/high.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "near": {
+      "file": "words/near.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "world": {
+      "file": "words/world.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "every": {
+      "file": "words/every.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "food": {
+      "file": "words/food.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "add": {
+      "file": "words/add.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "own": {
+      "file": "words/own.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "between": {
+      "file": "words/between.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "below": {
+      "file": "words/below.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "country": {
+      "file": "words/country.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "plant": {
+      "file": "words/plant.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "keep": {
+      "file": "words/keep.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "last": {
+      "file": "words/last.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "father": {
+      "file": "words/father.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "start": {
+      "file": "words/start.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "earth": {
+      "file": "words/earth.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "light": {
+      "file": "words/light.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "city": {
+      "file": "words/city.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "eye": {
+      "file": "words/eye.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "under": {
+      "file": "words/under.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "head": {
+      "file": "words/head.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "story": {
+      "file": "words/story.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "left": {
+      "file": "words/left.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "saw": {
+      "file": "words/saw.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "few": {
+      "file": "words/few.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "might": {
+      "file": "words/might.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "seem": {
+      "file": "words/seem.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "while": {
+      "file": "words/while.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "something": {
+      "file": "words/something.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "next": {
+      "file": "words/next.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hard": {
+      "file": "words/hard.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "close": {
+      "file": "words/close.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "open": {
+      "file": "words/open.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "life": {
+      "file": "words/life.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "example": {
+      "file": "words/example.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "begin": {
+      "file": "words/begin.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "always": {
+      "file": "words/always.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "those": {
+      "file": "words/those.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "both": {
+      "file": "words/both.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "paper": {
+      "file": "words/paper.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "group": {
+      "file": "words/group.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "together": {
+      "file": "words/together.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "often": {
+      "file": "words/often.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "until": {
+      "file": "words/until.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "important": {
+      "file": "words/important.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "feet": {
+      "file": "words/feet.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "children": {
+      "file": "words/children.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "side": {
+      "file": "words/side.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "car": {
+      "file": "words/car.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "walk": {
+      "file": "words/walk.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sea": {
+      "file": "words/sea.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "began": {
+      "file": "words/began.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mile": {
+      "file": "words/mile.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "took": {
+      "file": "words/took.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "river": {
+      "file": "words/river.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "grow": {
+      "file": "words/grow.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "four": {
+      "file": "words/four.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stop": {
+      "file": "words/stop.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "carry": {
+      "file": "words/carry.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "state": {
+      "file": "words/state.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "once": {
+      "file": "words/once.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "without": {
+      "file": "words/without.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "miss": {
+      "file": "words/miss.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "second": {
+      "file": "words/second.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "later": {
+      "file": "words/later.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "eat": {
+      "file": "words/eat.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "idea": {
+      "file": "words/idea.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "far": {
+      "file": "words/far.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "enough": {
+      "file": "words/enough.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "face": {
+      "file": "words/face.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "girl": {
+      "file": "words/girl.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "above": {
+      "file": "words/above.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cut": {
+      "file": "words/cut.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "young": {
+      "file": "words/young.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "soon": {
+      "file": "words/soon.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "list": {
+      "file": "words/list.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "talk": {
+      "file": "words/talk.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sometimes": {
+      "file": "words/sometimes.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "song": {
+      "file": "words/song.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "leave": {
+      "file": "words/leave.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "being": {
+      "file": "words/being.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "apple": {
+      "file": "words/apple.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "family": {
+      "file": "words/family.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bell": {
+      "file": "words/bell.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "baby": {
+      "file": "words/baby.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bear": {
+      "file": "words/bear.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "boat": {
+      "file": "words/boat.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bird": {
+      "file": "words/bird.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "birthday": {
+      "file": "words/birthday.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bus": {
+      "file": "words/bus.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bread": {
+      "file": "words/bread.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "corn": {
+      "file": "words/corn.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cow": {
+      "file": "words/cow.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "duck": {
+      "file": "words/duck.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cake": {
+      "file": "words/cake.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "farm": {
+      "file": "words/farm.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "farmer": {
+      "file": "words/farmer.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "egg": {
+      "file": "words/egg.mp3",
+      "bytes": 3404,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fire": {
+      "file": "words/fire.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fish": {
+      "file": "words/fish.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "floor": {
+      "file": "words/floor.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "flower": {
+      "file": "words/flower.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "game": {
+      "file": "words/game.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "garden": {
+      "file": "words/garden.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hill": {
+      "file": "words/hill.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ground": {
+      "file": "words/ground.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "grass": {
+      "file": "words/grass.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "leg": {
+      "file": "words/leg.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "horse": {
+      "file": "words/horse.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "kitten": {
+      "file": "words/kitten.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "milk": {
+      "file": "words/milk.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "morning": {
+      "file": "words/morning.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pig": {
+      "file": "words/pig.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "money": {
+      "file": "words/money.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "party": {
+      "file": "words/party.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ring": {
+      "file": "words/ring.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sheep": {
+      "file": "words/sheep.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rabbit": {
+      "file": "words/rabbit.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "seed": {
+      "file": "words/seed.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "street": {
+      "file": "words/street.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "snow": {
+      "file": "words/snow.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stick": {
+      "file": "words/stick.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sun": {
+      "file": "words/sun.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "top": {
+      "file": "words/top.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "toy": {
+      "file": "words/toy.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shoe": {
+      "file": "words/shoe.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wind": {
+      "file": "words/wind.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "window": {
+      "file": "words/window.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wood": {
+      "file": "words/wood.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sock": {
+      "file": "words/sock.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hat": {
+      "file": "words/hat.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cup": {
+      "file": "words/cup.mp3",
+      "bytes": 3116,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "spoon": {
+      "file": "words/spoon.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "train": {
+      "file": "words/train.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bike": {
+      "file": "words/bike.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "plate": {
+      "file": "words/plate.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ship": {
+      "file": "words/ship.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tent": {
+      "file": "words/tent.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "map": {
+      "file": "words/map.mp3",
+      "bytes": 3404,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "plane": {
+      "file": "words/plane.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "road": {
+      "file": "words/road.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "monster": {
+      "file": "words/monster.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "king": {
+      "file": "words/king.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "queen": {
+      "file": "words/queen.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "witch": {
+      "file": "words/witch.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "key": {
+      "file": "words/key.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "prince": {
+      "file": "words/prince.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "field": {
+      "file": "words/field.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cave": {
+      "file": "words/cave.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tower": {
+      "file": "words/tower.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "space": {
+      "file": "words/space.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "moon": {
+      "file": "words/moon.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "star": {
+      "file": "words/star.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rocket": {
+      "file": "words/rocket.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sky": {
+      "file": "words/sky.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cloud": {
+      "file": "words/cloud.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "present": {
+      "file": "words/present.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "snowman": {
+      "file": "words/snowman.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "breakfast": {
+      "file": "words/breakfast.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dinner": {
+      "file": "words/dinner.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "banana": {
+      "file": "words/banana.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "holiday": {
+      "file": "words/holiday.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sandwich": {
+      "file": "words/sandwich.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "grape": {
+      "file": "words/grape.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tomato": {
+      "file": "words/tomato.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "potato": {
+      "file": "words/potato.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "carrot": {
+      "file": "words/carrot.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "salt": {
+      "file": "words/salt.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sugar": {
+      "file": "words/sugar.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "jam": {
+      "file": "words/jam.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "soup": {
+      "file": "words/soup.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "butter": {
+      "file": "words/butter.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bedroom": {
+      "file": "words/bedroom.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bottle": {
+      "file": "words/bottle.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "teacher": {
+      "file": "words/teacher.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bathroom": {
+      "file": "words/bathroom.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "kitchen": {
+      "file": "words/kitchen.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "doctor": {
+      "file": "words/doctor.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nurse": {
+      "file": "words/nurse.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "police": {
+      "file": "words/police.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shop": {
+      "file": "words/shop.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "driver": {
+      "file": "words/driver.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "market": {
+      "file": "words/market.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "library": {
+      "file": "words/library.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hospital": {
+      "file": "words/hospital.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "park": {
+      "file": "words/park.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "beach": {
+      "file": "words/beach.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "airport": {
+      "file": "words/airport.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "station": {
+      "file": "words/station.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "zoo": {
+      "file": "words/zoo.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "museum": {
+      "file": "words/museum.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cinema": {
+      "file": "words/cinema.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "circus": {
+      "file": "words/circus.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "playground": {
+      "file": "words/playground.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "scissors": {
+      "file": "words/scissors.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rubber": {
+      "file": "words/rubber.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "classroom": {
+      "file": "words/classroom.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "notebook": {
+      "file": "words/notebook.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "paint": {
+      "file": "words/paint.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "brush": {
+      "file": "words/brush.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "clock": {
+      "file": "words/clock.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "crayon": {
+      "file": "words/crayon.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "carpet": {
+      "file": "words/carpet.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mirror": {
+      "file": "words/mirror.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pillow": {
+      "file": "words/pillow.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "blanket": {
+      "file": "words/blanket.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sofa": {
+      "file": "words/sofa.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ladder": {
+      "file": "words/ladder.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "basket": {
+      "file": "words/basket.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bucket": {
+      "file": "words/bucket.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "candle": {
+      "file": "words/candle.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "balloon": {
+      "file": "words/balloon.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "chick": {
+      "file": "words/chick.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "kite": {
+      "file": "words/kite.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "puppy": {
+      "file": "words/puppy.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "duckling": {
+      "file": "words/duckling.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fox": {
+      "file": "words/fox.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lamb": {
+      "file": "words/lamb.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pony": {
+      "file": "words/pony.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "calf": {
+      "file": "words/calf.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "owl": {
+      "file": "words/owl.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "frog": {
+      "file": "words/frog.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mouse": {
+      "file": "words/mouse.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "snake": {
+      "file": "words/snake.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "spider": {
+      "file": "words/spider.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bee": {
+      "file": "words/bee.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "butterfly": {
+      "file": "words/butterfly.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shell": {
+      "file": "words/shell.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ant": {
+      "file": "words/ant.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nest": {
+      "file": "words/nest.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "worm": {
+      "file": "words/worm.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tail": {
+      "file": "words/tail.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wing": {
+      "file": "words/wing.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fur": {
+      "file": "words/fur.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "feather": {
+      "file": "words/feather.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "paw": {
+      "file": "words/paw.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tooth": {
+      "file": "words/tooth.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nose": {
+      "file": "words/nose.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ear": {
+      "file": "words/ear.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "horn": {
+      "file": "words/horn.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hair": {
+      "file": "words/hair.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mouth": {
+      "file": "words/mouth.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "knee": {
+      "file": "words/knee.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "arm": {
+      "file": "words/arm.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "finger": {
+      "file": "words/finger.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "foot": {
+      "file": "words/foot.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "body": {
+      "file": "words/body.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tear": {
+      "file": "words/tear.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "smile": {
+      "file": "words/smile.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "voice": {
+      "file": "words/voice.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "noise": {
+      "file": "words/noise.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sight": {
+      "file": "words/sight.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "surprise": {
+      "file": "words/surprise.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fight": {
+      "file": "words/fight.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dream": {
+      "file": "words/dream.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tight": {
+      "file": "words/tight.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bright": {
+      "file": "words/bright.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "flight": {
+      "file": "words/flight.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lake": {
+      "file": "words/lake.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wake": {
+      "file": "words/wake.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bake": {
+      "file": "words/bake.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "deep": {
+      "file": "words/deep.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shake": {
+      "file": "words/shake.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sleep": {
+      "file": "words/sleep.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "feel": {
+      "file": "words/feel.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "week": {
+      "file": "words/week.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "meet": {
+      "file": "words/meet.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "goat": {
+      "file": "words/goat.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "soap": {
+      "file": "words/soap.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "toast": {
+      "file": "words/toast.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "free": {
+      "file": "words/free.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "float": {
+      "file": "words/float.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wait": {
+      "file": "words/wait.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sail": {
+      "file": "words/sail.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mail": {
+      "file": "words/mail.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "chain": {
+      "file": "words/chain.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "afraid": {
+      "file": "words/afraid.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "slow": {
+      "file": "words/slow.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shout": {
+      "file": "words/shout.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "short": {
+      "file": "words/short.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "round": {
+      "file": "words/round.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "thank": {
+      "file": "words/thank.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "thick": {
+      "file": "words/thick.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lunch": {
+      "file": "words/lunch.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "catch": {
+      "file": "words/catch.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "thin": {
+      "file": "words/thin.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dark": {
+      "file": "words/dark.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "card": {
+      "file": "words/card.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "scarf": {
+      "file": "words/scarf.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shark": {
+      "file": "words/shark.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fork": {
+      "file": "words/fork.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sport": {
+      "file": "words/sport.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "winter": {
+      "file": "words/winter.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sad": {
+      "file": "words/sad.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "summer": {
+      "file": "words/summer.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "happy": {
+      "file": "words/happy.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tired": {
+      "file": "words/tired.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "angry": {
+      "file": "words/angry.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "thirsty": {
+      "file": "words/thirsty.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hot": {
+      "file": "words/hot.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hungry": {
+      "file": "words/hungry.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cold": {
+      "file": "words/cold.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wet": {
+      "file": "words/wet.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dry": {
+      "file": "words/dry.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "warm": {
+      "file": "words/warm.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "clean": {
+      "file": "words/clean.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dirty": {
+      "file": "words/dirty.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "noisy": {
+      "file": "words/noisy.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "clever": {
+      "file": "words/clever.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "brave": {
+      "file": "words/brave.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "silly": {
+      "file": "words/silly.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "funny": {
+      "file": "words/funny.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "beautiful": {
+      "file": "words/beautiful.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ugly": {
+      "file": "words/ugly.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "strong": {
+      "file": "words/strong.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "scary": {
+      "file": "words/scary.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "weak": {
+      "file": "words/weak.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fast": {
+      "file": "words/fast.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "full": {
+      "file": "words/full.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "heavy": {
+      "file": "words/heavy.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "empty": {
+      "file": "words/empty.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "closed": {
+      "file": "words/closed.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "jump": {
+      "file": "words/jump.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "grey": {
+      "file": "words/grey.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "swim": {
+      "file": "words/swim.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "climb": {
+      "file": "words/climb.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sing": {
+      "file": "words/sing.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cook": {
+      "file": "words/cook.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dance": {
+      "file": "words/dance.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "draw": {
+      "file": "words/draw.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wash": {
+      "file": "words/wash.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "push": {
+      "file": "words/push.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pull": {
+      "file": "words/pull.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "build": {
+      "file": "words/build.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "throw": {
+      "file": "words/throw.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lose": {
+      "file": "words/lose.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "listen": {
+      "file": "words/listen.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cry": {
+      "file": "words/cry.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "speak": {
+      "file": "words/speak.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fall": {
+      "file": "words/fall.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "drive": {
+      "file": "words/drive.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dig": {
+      "file": "words/dig.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fly": {
+      "file": "words/fly.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ride": {
+      "file": "words/ride.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pick": {
+      "file": "words/pick.mp3",
+      "bytes": 3404,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "teach": {
+      "file": "words/teach.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "count": {
+      "file": "words/count.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "choose": {
+      "file": "words/choose.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "remember": {
+      "file": "words/remember.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "decide": {
+      "file": "words/decide.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "finish": {
+      "file": "words/finish.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hurry": {
+      "file": "words/hurry.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "knock": {
+      "file": "words/knock.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "slowly": {
+      "file": "words/slowly.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "quickly": {
+      "file": "words/quickly.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "quietly": {
+      "file": "words/quietly.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "loudly": {
+      "file": "words/loudly.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "suddenly": {
+      "file": "words/suddenly.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "carefully": {
+      "file": "words/carefully.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "finally": {
+      "file": "words/finally.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "already": {
+      "file": "words/already.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "early": {
+      "file": "words/early.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "inside": {
+      "file": "words/inside.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "late": {
+      "file": "words/late.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "outside": {
+      "file": "words/outside.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "upstairs": {
+      "file": "words/upstairs.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "downstairs": {
+      "file": "words/downstairs.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "everywhere": {
+      "file": "words/everywhere.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "six": {
+      "file": "words/six.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "five": {
+      "file": "words/five.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "somewhere": {
+      "file": "words/somewhere.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "seven": {
+      "file": "words/seven.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ten": {
+      "file": "words/ten.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "eight": {
+      "file": "words/eight.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nine": {
+      "file": "words/nine.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hundred": {
+      "file": "words/hundred.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "beside": {
+      "file": "words/beside.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "during": {
+      "file": "words/during.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "behind": {
+      "file": "words/behind.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "except": {
+      "file": "words/except.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "toward": {
+      "file": "words/toward.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "within": {
+      "file": "words/within.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "upon": {
+      "file": "words/upon.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "whether": {
+      "file": "words/whether.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hello": {
+      "file": "words/hello.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "although": {
+      "file": "words/although.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "unless": {
+      "file": "words/unless.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "yes": {
+      "file": "words/yes.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "goodbye": {
+      "file": "words/goodbye.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sorry": {
+      "file": "words/sorry.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "please": {
+      "file": "words/please.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "today": {
+      "file": "words/today.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "okay": {
+      "file": "words/okay.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bring": {
+      "file": "words/bring.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tomorrow": {
+      "file": "words/tomorrow.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "yesterday": {
+      "file": "words/yesterday.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tonight": {
+      "file": "words/tonight.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "buy": {
+      "file": "words/buy.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "break": {
+      "file": "words/break.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "borrow": {
+      "file": "words/borrow.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "arrive": {
+      "file": "words/arrive.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "believe": {
+      "file": "words/believe.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "become": {
+      "file": "words/become.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "burn": {
+      "file": "words/burn.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "check": {
+      "file": "words/check.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "collect": {
+      "file": "words/collect.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "complete": {
+      "file": "words/complete.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "copy": {
+      "file": "words/copy.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cover": {
+      "file": "words/cover.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "enter": {
+      "file": "words/enter.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "enjoy": {
+      "file": "words/enjoy.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "expect": {
+      "file": "words/expect.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "feed": {
+      "file": "words/feed.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "explain": {
+      "file": "words/explain.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "escape": {
+      "file": "words/escape.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fill": {
+      "file": "words/fill.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fix": {
+      "file": "words/fix.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hug": {
+      "file": "words/hug.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "gather": {
+      "file": "words/gather.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hate": {
+      "file": "words/hate.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "guess": {
+      "file": "words/guess.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hunt": {
+      "file": "words/hunt.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "join": {
+      "file": "words/join.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "invent": {
+      "file": "words/invent.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "kick": {
+      "file": "words/kick.mp3",
+      "bytes": 3260,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lock": {
+      "file": "words/lock.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mix": {
+      "file": "words/mix.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "invite": {
+      "file": "words/invite.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lend": {
+      "file": "words/lend.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "offer": {
+      "file": "words/offer.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pack": {
+      "file": "words/pack.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "plan": {
+      "file": "words/plan.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "notice": {
+      "file": "words/notice.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pass": {
+      "file": "words/pass.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pour": {
+      "file": "words/pour.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pay": {
+      "file": "words/pay.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "practice": {
+      "file": "words/practice.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pretend": {
+      "file": "words/pretend.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "prepare": {
+      "file": "words/prepare.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "receive": {
+      "file": "words/receive.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "return": {
+      "file": "words/return.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "save": {
+      "file": "words/save.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "search": {
+      "file": "words/search.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "protect": {
+      "file": "words/protect.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "reach": {
+      "file": "words/reach.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "share": {
+      "file": "words/share.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shut": {
+      "file": "words/shut.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "smell": {
+      "file": "words/smell.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "spend": {
+      "file": "words/spend.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shine": {
+      "file": "words/shine.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sort": {
+      "file": "words/sort.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "slide": {
+      "file": "words/slide.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "steal": {
+      "file": "words/steal.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "splash": {
+      "file": "words/splash.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stretch": {
+      "file": "words/stretch.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "switch": {
+      "file": "words/switch.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "taste": {
+      "file": "words/taste.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tidy": {
+      "file": "words/tidy.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "squeeze": {
+      "file": "words/squeeze.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tie": {
+      "file": "words/tie.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "trust": {
+      "file": "words/trust.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "touch": {
+      "file": "words/touch.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "treat": {
+      "file": "words/treat.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "visit": {
+      "file": "words/visit.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "weigh": {
+      "file": "words/weigh.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wave": {
+      "file": "words/wave.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "worry": {
+      "file": "words/worry.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "yell": {
+      "file": "words/yell.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "yawn": {
+      "file": "words/yawn.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wrap": {
+      "file": "words/wrap.mp3",
+      "bytes": 3404,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "spring": {
+      "file": "words/spring.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "afternoon": {
+      "file": "words/afternoon.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "season": {
+      "file": "words/season.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "weekend": {
+      "file": "words/weekend.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "weather": {
+      "file": "words/weather.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "autumn": {
+      "file": "words/autumn.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ice": {
+      "file": "words/ice.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rainbow": {
+      "file": "words/rainbow.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "snowflake": {
+      "file": "words/snowflake.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "mud": {
+      "file": "words/mud.mp3",
+      "bytes": 3692,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "puddle": {
+      "file": "words/puddle.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stone": {
+      "file": "words/stone.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "harbour": {
+      "file": "words/harbour.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lighthouse": {
+      "file": "words/lighthouse.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sand": {
+      "file": "words/sand.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ferry": {
+      "file": "words/ferry.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tractor": {
+      "file": "words/tractor.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lorry": {
+      "file": "words/lorry.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ambulance": {
+      "file": "words/ambulance.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "helmet": {
+      "file": "words/helmet.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "torch": {
+      "file": "words/torch.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "whistle": {
+      "file": "words/whistle.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hook": {
+      "file": "words/hook.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "net": {
+      "file": "words/net.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rope": {
+      "file": "words/rope.mp3",
+      "bytes": 3836,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nail": {
+      "file": "words/nail.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hammer": {
+      "file": "words/hammer.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "spade": {
+      "file": "words/spade.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wheel": {
+      "file": "words/wheel.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "engine": {
+      "file": "words/engine.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ticket": {
+      "file": "words/ticket.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "suitcase": {
+      "file": "words/suitcase.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "luggage": {
+      "file": "words/luggage.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "passport": {
+      "file": "words/passport.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stamp": {
+      "file": "words/stamp.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "postcard": {
+      "file": "words/postcard.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "envelope": {
+      "file": "words/envelope.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "queue": {
+      "file": "words/queue.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "parcel": {
+      "file": "words/parcel.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cupboard": {
+      "file": "words/cupboard.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shelf": {
+      "file": "words/shelf.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "drawer": {
+      "file": "words/drawer.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fridge": {
+      "file": "words/fridge.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "oven": {
+      "file": "words/oven.mp3",
+      "bytes": 4268,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "kettle": {
+      "file": "words/kettle.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tap": {
+      "file": "words/tap.mp3",
+      "bytes": 3548,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sink": {
+      "file": "words/sink.mp3",
+      "bytes": 4124,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "towel": {
+      "file": "words/towel.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "quilt": {
+      "file": "words/quilt.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "curtain": {
+      "file": "words/curtain.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "stairs": {
+      "file": "words/stairs.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "roof": {
+      "file": "words/roof.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "chimney": {
+      "file": "words/chimney.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "gate": {
+      "file": "words/gate.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fence": {
+      "file": "words/fence.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "path": {
+      "file": "words/path.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lawn": {
+      "file": "words/lawn.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "pond": {
+      "file": "words/pond.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "bench": {
+      "file": "words/bench.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hedge": {
+      "file": "words/hedge.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "swing": {
+      "file": "words/swing.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "seesaw": {
+      "file": "words/seesaw.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "delicious": {
+      "file": "words/delicious.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "enormous": {
+      "file": "words/enormous.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "tiny": {
+      "file": "words/tiny.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "gentle": {
+      "file": "words/gentle.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "careful": {
+      "file": "words/careful.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "huge": {
+      "file": "words/huge.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "curious": {
+      "file": "words/curious.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "careless": {
+      "file": "words/careless.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "cheerful": {
+      "file": "words/cheerful.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "comfortable": {
+      "file": "words/comfortable.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "difficult": {
+      "file": "words/difficult.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "dangerous": {
+      "file": "words/dangerous.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "easy": {
+      "file": "words/easy.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "excellent": {
+      "file": "words/excellent.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "favourite": {
+      "file": "words/favourite.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "famous": {
+      "file": "words/famous.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "friendly": {
+      "file": "words/friendly.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "frightened": {
+      "file": "words/frightened.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "honest": {
+      "file": "words/honest.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lazy": {
+      "file": "words/lazy.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "horrible": {
+      "file": "words/horrible.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "grateful": {
+      "file": "words/grateful.mp3",
+      "bytes": 5996,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lonely": {
+      "file": "words/lonely.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "naughty": {
+      "file": "words/naughty.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lucky": {
+      "file": "words/lucky.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nervous": {
+      "file": "words/nervous.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "patient": {
+      "file": "words/patient.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "poor": {
+      "file": "words/poor.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "popular": {
+      "file": "words/popular.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "quick": {
+      "file": "words/quick.mp3",
+      "bytes": 3980,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "polite": {
+      "file": "words/polite.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "proud": {
+      "file": "words/proud.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rich": {
+      "file": "words/rich.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "ready": {
+      "file": "words/ready.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rude": {
+      "file": "words/rude.mp3",
+      "bytes": 4412,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "safe": {
+      "file": "words/safe.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "serious": {
+      "file": "words/serious.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "smart": {
+      "file": "words/smart.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "sleepy": {
+      "file": "words/sleepy.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "special": {
+      "file": "words/special.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "surprised": {
+      "file": "words/surprised.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "shy": {
+      "file": "words/shy.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "terrible": {
+      "file": "words/terrible.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "unusual": {
+      "file": "words/unusual.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "useful": {
+      "file": "words/useful.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "wonderful": {
+      "file": "words/wonderful.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "badly": {
+      "file": "words/badly.mp3",
+      "bytes": 4700,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "worried": {
+      "file": "words/worried.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "clearly": {
+      "file": "words/clearly.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "easily": {
+      "file": "words/easily.mp3",
+      "bytes": 5276,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "exactly": {
+      "file": "words/exactly.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "hardly": {
+      "file": "words/hardly.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "certainly": {
+      "file": "words/certainly.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "immediately": {
+      "file": "words/immediately.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "luckily": {
+      "file": "words/luckily.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "nearly": {
+      "file": "words/nearly.mp3",
+      "bytes": 4988,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "perhaps": {
+      "file": "words/perhaps.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "probably": {
+      "file": "words/probably.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "properly": {
+      "file": "words/properly.mp3",
+      "bytes": 5564,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "rarely": {
+      "file": "words/rarely.mp3",
+      "bytes": 4844,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "instead": {
+      "file": "words/instead.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "safely": {
+      "file": "words/safely.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "recently": {
+      "file": "words/recently.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "seriously": {
+      "file": "words/seriously.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "simply": {
+      "file": "words/simply.mp3",
+      "bytes": 5708,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "usually": {
+      "file": "words/usually.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "telescope": {
+      "file": "words/telescope.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "lantern": {
+      "file": "words/lantern.mp3",
+      "bytes": 5852,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "surely": {
+      "file": "words/surely.mp3",
+      "bytes": 5132,
+      "voice": "en-GB-SoniaNeural"
+    },
+    "fright": {
+      "file": "words/fright.mp3",
+      "bytes": 5420,
+      "voice": "en-GB-SoniaNeural"
+    }
+  },
+  "sentences": {
+    "The key of the magic house began to glow.": {
+      "file": "sentences/b138eb5308c0.mp3",
+      "bytes": 15212,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "This book is for you, said Biff.": {
+      "file": "sentences/ed34abe7b19c.mp3",
+      "bytes": 12764,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "They read a book about dragons.": {
+      "file": "sentences/88f54aebebcd.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The letter was from Gran.": {
+      "file": "sentences/aa76594b10b5.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "gran"
+    },
+    "Chip went to the park with Wilma.": {
+      "file": "sentences/a0e77f34dcea.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "Kipper looked up at the tall castle.": {
+      "file": "sentences/7559819289d3.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Floppy ran out of the garden.": {
+      "file": "sentences/6664ae22f9ad.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "floppy"
+    },
+    "They walked across the old bridge.": {
+      "file": "sentences/5f4bba4a68fe.mp3",
+      "bytes": 12476,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff did not want to be alone in the dark.": {
+      "file": "sentences/863f6410040b.mp3",
+      "bytes": 14348,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "They went along the secret path.": {
+      "file": "sentences/8a0e8f644709.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Chip found a strange box under the tree.": {
+      "file": "sentences/418f6c98dd04.mp3",
+      "bytes": 13484,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "Can you hear the thunder, asked Kipper.": {
+      "file": "sentences/eaf635da7601.mp3",
+      "bytes": 13628,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "They stopped to watch the fireworks.": {
+      "file": "sentences/e55a94279257.mp3",
+      "bytes": 12908,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Wilma knew the way to the hidden door.": {
+      "file": "sentences/94225555c97e.mp3",
+      "bytes": 13628,
+      "voice": "en-GB-HollieNeural",
+      "speaker": "wilma"
+    },
+    "Come and look at this, shouted Chip.": {
+      "file": "sentences/f09b43a96e23.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "Mum and Dad went to the shops.": {
+      "file": "sentences/90b509c8ed43.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "mum"
+    },
+    "The joke made everyone laugh.": {
+      "file": "sentences/e6f52415094a.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff thought it was a very good idea.": {
+      "file": "sentences/f3cd739dbe79.mp3",
+      "bytes": 12908,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Wilma began to skip along the street.": {
+      "file": "sentences/c22cf56a6786.mp3",
+      "bytes": 13340,
+      "voice": "en-GB-HollieNeural",
+      "speaker": "wilma"
+    },
+    "Kipper sat down on the big stone.": {
+      "file": "sentences/1784229783a2.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Stand still, said the pirate captain.": {
+      "file": "sentences/7f4bcaaef879.mp3",
+      "bytes": 16076,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They had to cross the busy road.": {
+      "file": "sentences/0cd4f6120540.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Put the magic key on the table.": {
+      "file": "sentences/e2c0b550c509.mp3",
+      "bytes": 12620,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Take the map and lead the way.": {
+      "file": "sentences/efb9537a94d2.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Give me the golden crown, said the king.": {
+      "file": "sentences/74de9acf7ee7.mp3",
+      "bytes": 15500,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff had a very strange dream.": {
+      "file": "sentences/bfd85282650f.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Be careful, don't drop the treasure.": {
+      "file": "sentences/314c7635eaf3.mp3",
+      "bytes": 14492,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I hope we can go on another adventure.": {
+      "file": "sentences/e64b7eec1e4a.mp3",
+      "bytes": 14204,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Chip has a new book about space.": {
+      "file": "sentences/a6a5492debd0.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "They had to get through the forest.": {
+      "file": "sentences/a6fb52827f71.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We need to find the magic key first.": {
+      "file": "sentences/c0a567feb0cf.mp3",
+      "bytes": 14492,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Let's make a map of the island.": {
+      "file": "sentences/1e6f5a9708dd.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I wish the magic key would work again.": {
+      "file": "sentences/444b097e859f.mp3",
+      "bytes": 14060,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Is this a real dragon, asked Kipper.": {
+      "file": "sentences/5deb89f62cb2.mp3",
+      "bytes": 14636,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "I think we went the wrong way.": {
+      "file": "sentences/5d9c7161a5c2.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The old castle stood on the hill.": {
+      "file": "sentences/20a52696bec4.mp3",
+      "bytes": 12476,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Floppy was fast asleep by the fire.": {
+      "file": "sentences/1aceb9735155.mp3",
+      "bytes": 13628,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "floppy"
+    },
+    "Be quiet, whispered Biff, I can hear something.": {
+      "file": "sentences/ef2ef32c9f83.mp3",
+      "bytes": 18812,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "It was quite dark inside the cave.": {
+      "file": "sentences/ffb36e26a617.mp3",
+      "bytes": 13772,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They were almost at the top of the mountain.": {
+      "file": "sentences/89029750577b.mp3",
+      "bytes": 14492,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The children were excited about the trip.": {
+      "file": "sentences/ded126e7cc7b.mp3",
+      "bytes": 14060,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff has a sister named Wilma.": {
+      "file": "sentences/c4e3ef0bf66b.mp3",
+      "bytes": 12476,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Chip is Biff's brother.": {
+      "file": "sentences/54e2d35a2bcc.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Everyone wanted to see the secret room.": {
+      "file": "sentences/df26f009d3f9.mp3",
+      "bytes": 14636,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Kipper drew the map with a pencil.": {
+      "file": "sentences/0a460699de11.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Biff used a ruler to draw a straight line.": {
+      "file": "sentences/67cc7d71c4b8.mp3",
+      "bytes": 15356,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Chip packed his bag for the school trip.": {
+      "file": "sentences/d691f8c99379.mp3",
+      "bytes": 12476,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "They met a Chinese dragon in the story.": {
+      "file": "sentences/c766a47cf3f3.mp3",
+      "bytes": 15068,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Kipper kicked the ball into the garden.": {
+      "file": "sentences/f85d618cd3bc.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "The magic key was inside a small box.": {
+      "file": "sentences/5f9a86f41f34.mp3",
+      "bytes": 16220,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Wilma brought her doll on the adventure.": {
+      "file": "sentences/d397a000bb17.mp3",
+      "bytes": 13484,
+      "voice": "en-GB-HollieNeural",
+      "speaker": "wilma"
+    },
+    "Kipper stood on a chair to reach the book.": {
+      "file": "sentences/e197e0436a1b.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Biff hid under the bed during the storm.": {
+      "file": "sentences/1fd25760302e.mp3",
+      "bytes": 14204,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "They spread the ancient map on the table.": {
+      "file": "sentences/de214ae64420.mp3",
+      "bytes": 14924,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The dragon was no bigger than a chicken.": {
+      "file": "sentences/299f2f64a4d8.mp3",
+      "bytes": 14348,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The magic key made everything glow.": {
+      "file": "sentences/15504acf7ceb.mp3",
+      "bytes": 13772,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The key could take them anywhere.": {
+      "file": "sentences/86aa59b59d2c.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Chip knew he had made a mistake.": {
+      "file": "sentences/c10d683c8734.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "There was nothing behind the door.": {
+      "file": "sentences/818ba34f018c.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff had never seen such a big castle.": {
+      "file": "sentences/3515ce2955af.mp3",
+      "bytes": 15644,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "They tried to lift the heavy treasure chest.": {
+      "file": "sentences/002d3496bd6e.mp3",
+      "bytes": 15500,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Kipper put on his coat before going out.": {
+      "file": "sentences/b98afd4476e8.mp3",
+      "bytes": 13484,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Don't forget the magic key, said Wilma.": {
+      "file": "sentences/722bdc05d728.mp3",
+      "bytes": 17228,
+      "voice": "en-GB-HollieNeural",
+      "speaker": "wilma"
+    },
+    "The giant mouse wanted some cheese.": {
+      "file": "sentences/d8c8e9d460e5.mp3",
+      "bytes": 13628,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The pirate had to brake the ship quickly.": {
+      "file": "sentences/0ab68e189993.mp3",
+      "bytes": 14492,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Are you really a magic key, asked Biff.": {
+      "file": "sentences/d22de5156e43.mp3",
+      "bytes": 16364,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Chip was the hero of the adventure.": {
+      "file": "sentences/41d8037c8854.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "Kipper painted the door yellow.": {
+      "file": "sentences/8dd18ba3168c.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "A red bus stopped at the village.": {
+      "file": "sentences/44427106b895.mp3",
+      "bytes": 12620,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The sky was a bright blue that morning.": {
+      "file": "sentences/888d784cfc4e.mp3",
+      "bytes": 14204,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The dragon's eyes were glowing green.": {
+      "file": "sentences/a3f6354d068c.mp3",
+      "bytes": 13628,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "A white rabbit ran across the path.": {
+      "file": "sentences/a9c7a5fc04ca.mp3",
+      "bytes": 13484,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The black clouds warned of a storm.": {
+      "file": "sentences/d53776ced759.mp3",
+      "bytes": 13340,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Wilma wore her pink dress to the castle.": {
+      "file": "sentences/59d03c961d16.mp3",
+      "bytes": 14492,
+      "voice": "en-GB-HollieNeural",
+      "speaker": "wilma"
+    },
+    "Floppy was a happy brown dog.": {
+      "file": "sentences/388951320556.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "floppy"
+    },
+    "That was a great adventure, said Chip.": {
+      "file": "sentences/2d970ca4976f.mp3",
+      "bytes": 13484,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "They picked orange flowers by the stream.": {
+      "file": "sentences/ca8acef3584a.mp3",
+      "bytes": 14780,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The wizard's cloak was dark purple.": {
+      "file": "sentences/e88d421cba06.mp3",
+      "bytes": 13628,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "A little bird sat on Kipper's shoulder.": {
+      "file": "sentences/e0acfcfe9003.mp3",
+      "bytes": 13052,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "They flew through the night sky on the dragon.": {
+      "file": "sentences/8d38d5265af3.mp3",
+      "bytes": 15644,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The magic key glowed in the evening light.": {
+      "file": "sentences/a7deac903f98.mp3",
+      "bytes": 15068,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Does the magic key always work at midnight?": {
+      "file": "sentences/78ca759da781.mp3",
+      "bytes": 16364,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Some of the treasure was still in the cave.": {
+      "file": "sentences/f2c17d75ad1c.mp3",
+      "bytes": 14636,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "What is behind that door, whispered Wilma.": {
+      "file": "sentences/ef7b660f9856.mp3",
+      "bytes": 16508,
+      "voice": "en-GB-HollieNeural",
+      "speaker": "wilma"
+    },
+    "It was such a strange place to be.": {
+      "file": "sentences/eac8de22e640.mp3",
+      "bytes": 12764,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "When will the adventure begin, asked Kipper.": {
+      "file": "sentences/2654f867918e.mp3",
+      "bytes": 15068,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Where did the magic key take us this time?": {
+      "file": "sentences/ce3da1f38295.mp3",
+      "bytes": 15644,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Who left the secret message on the table?": {
+      "file": "sentences/eb43969ceab2.mp3",
+      "bytes": 15932,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Why did the castle start to disappear?": {
+      "file": "sentences/2f1ac98a55c8.mp3",
+      "bytes": 15068,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I wonder what we will find today.": {
+      "file": "sentences/c02ae70f75db.mp3",
+      "bytes": 13052,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They saw a strange post by the road.": {
+      "file": "sentences/573427d406a2.mp3",
+      "bytes": 14348,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It is time to go back home, said Mum.": {
+      "file": "sentences/334fdd8c60bb.mp3",
+      "bytes": 15500,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "mum"
+    },
+    "\"Look at me,\" said Biff.": {
+      "file": "sentences/1c3937b87d1d.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Stay close to me in the dark forest.": {
+      "file": "sentences/7826ccf2bba0.mp3",
+      "bytes": 14780,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The goblin played a trick on the children.": {
+      "file": "sentences/17de5ddab3e4.mp3",
+      "bytes": 14348,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Kipper climbed the big tree.": {
+      "file": "sentences/986092d422fb.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Floppy was a good ____.": {
+      "file": "sentences/f54b13c31874.mp3",
+      "bytes": 21116,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "floppy"
+    },
+    "____ was in the kitchen.": {
+      "file": "sentences/1669755157f7.mp3",
+      "bytes": 22700,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They painted the house blue.": {
+      "file": "sentences/c9d70e14996d.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "____ wanted a new house.": {
+      "file": "sentences/b522eebb6897.mp3",
+      "bytes": 23852,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Chip can ____ very fast.": {
+      "file": "sentences/a05736ee41ba.mp3",
+      "bytes": 22268,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "The ____ sat on the mat.": {
+      "file": "sentences/485573e2b715.mp3",
+      "bytes": 23276,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It was a ____ red bus.": {
+      "file": "sentences/dad4842a8349.mp3",
+      "bytes": 24428,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff wanted to play outside.": {
+      "file": "sentences/714ed168a88c.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "Kipper had a good idea.": {
+      "file": "sentences/a0caad73a19c.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "Let us ____ to the park.": {
+      "file": "sentences/096545e2de12.mp3",
+      "bytes": 23276,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "What can you ____?": {
+      "file": "sentences/a5a88ed60b1a.mp3",
+      "bytes": 20540,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Chip opened the door.": {
+      "file": "sentences/d9e73f1e1835.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "They wanted to go home.": {
+      "file": "sentences/32ede08a9de1.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Can you help me find it?": {
+      "file": "sentences/e200a933708d.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff went to school.": {
+      "file": "sentences/d775caaf3b60.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "It started to rain outside.": {
+      "file": "sentences/d007ea4eb82e.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It was a magic book.": {
+      "file": "sentences/af310da8113e.mp3",
+      "bytes": 8156,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Can you find the key?": {
+      "file": "sentences/7970a77afc8e.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He jumped in the water.": {
+      "file": "sentences/26e6ce44ea6c.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I want to read a book.": {
+      "file": "sentences/9e445142a1de.mp3",
+      "bytes": 8156,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We had a fun ____.": {
+      "file": "sentences/b52bed5cb4cb.mp3",
+      "bytes": 21260,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It was time for an adventure.": {
+      "file": "sentences/f8b8b9fad26c.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They got a ____ bicycle.": {
+      "file": "sentences/61e93b4c094d.mp3",
+      "bytes": 23852,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The key began to magic.": {
+      "file": "sentences/2e8213ceb71a.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They found a giant castle.": {
+      "file": "sentences/29fe62d3bb57.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They walked into the village.": {
+      "file": "sentences/be7c7d0645a7.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "There was a secret room.": {
+      "file": "sentences/65454fb29905.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The pirate had a wooden leg.": {
+      "file": "sentences/bf282a07bc3e.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "A dragon lived in the cave.": {
+      "file": "sentences/27dd3d95848f.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The palace was made of gold.": {
+      "file": "sentences/ec01811e9eeb.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They came to rescue the princess.": {
+      "file": "sentences/f457dc201a87.mp3",
+      "bytes": 12908,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They walked through the dark forest.": {
+      "file": "sentences/bf86b357ee9a.mp3",
+      "bytes": 12620,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We found hidden treasure.": {
+      "file": "sentences/16a2b71bd8f3.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Chip climbed the high mountain.": {
+      "file": "sentences/17921bc9bf06.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "chip"
+    },
+    "They sailed to the island.": {
+      "file": "sentences/0d3d0705cacb.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "There was a flash and thunder.": {
+      "file": "sentences/d38e0619dd4e.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They crossed the old bridge.": {
+      "file": "sentences/1a7f85878ea1.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It was a dangerous journey.": {
+      "file": "sentences/60b4e00c4ee7.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "A giant was sleeping inside.": {
+      "file": "sentences/08f45b3e296e.mp3",
+      "bytes": 12332,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The king wore a golden crown.": {
+      "file": "sentences/15bb0deea93a.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The storm blew the ship away.": {
+      "file": "sentences/4df8d332f88d.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The noise frighten Kipper.": {
+      "file": "sentences/4be9916b3a32.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "kipper"
+    },
+    "They would travel through time.": {
+      "file": "sentences/3eedf6ec3bbe.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They had to hide from the troll.": {
+      "file": "sentences/e16e4dd43ec8.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They wanted to explore the cave.": {
+      "file": "sentences/8c3d23d30d2e.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "What did the children discover?": {
+      "file": "sentences/2daed1df110e.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Lightning split the sky in two.": {
+      "file": "sentences/ce0576898a08.mp3",
+      "bytes": 13196,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The door began to disappear.": {
+      "file": "sentences/655fb47c7bf8.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "A strange light filled the room.": {
+      "file": "sentences/dffceae747b1.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Biff heard a faint whisper.": {
+      "file": "sentences/8826dbe76ce1.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-MaisieNeural",
+      "speaker": "biff"
+    },
+    "The guard stood by the gate.": {
+      "file": "sentences/297ebb38a13c.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The cat is on the bed.": {
+      "file": "sentences/3dd004713c8d.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The ancient map showed the way.": {
+      "file": "sentences/c5f241c2b54e.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They are in the garden.": {
+      "file": "sentences/3735951cdc08.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It will be cold tonight.": {
+      "file": "sentences/756725e8aec4.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She was very tired.": {
+      "file": "sentences/942dd8cbbd1e.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I have two sisters.": {
+      "file": "sentences/85dd7a55e1ec.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He did not come today.": {
+      "file": "sentences/75e30d319c49.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "All the children were there.": {
+      "file": "sentences/4624197e23e2.mp3",
+      "bytes": 9596,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We were at school all day.": {
+      "file": "sentences/13694ce3abbf.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can swim very well.": {
+      "file": "sentences/14682c6ac3d1.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He said it was too late.": {
+      "file": "sentences/508ad7479afa.mp3",
+      "bytes": 9596,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "You can use my pen.": {
+      "file": "sentences/0399ffaccd4b.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We will go home soon.": {
+      "file": "sentences/917ce615cde9.mp3",
+      "bytes": 9596,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We ate, then we played.": {
+      "file": "sentences/150d6d246342.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He would like some water.": {
+      "file": "sentences/36c51010ae86.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It was so dark outside.": {
+      "file": "sentences/d7b0826db875.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I like this story very much.": {
+      "file": "sentences/1c683f05c1d8.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I want more cake.": {
+      "file": "sentences/a11065237e13.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can write my name.": {
+      "file": "sentences/ca58e8c44521.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She could not find her shoe.": {
+      "file": "sentences/cd898609253c.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I have been to the beach.": {
+      "file": "sentences/d72e93297e61.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She was the first to arrive.": {
+      "file": "sentences/bb867c38c6bf.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We must go now.": {
+      "file": "sentences/13e591926d5f.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It was a long journey.": {
+      "file": "sentences/95264a9ab5d6.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He sat down on the chair.": {
+      "file": "sentences/f00c25b18b47.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She made a cake for me.": {
+      "file": "sentences/70b5891ec7de.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He did the washing up.": {
+      "file": "sentences/336b9847f015.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "You may come in now.": {
+      "file": "sentences/ce298aa1baf0.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Do you know her name?": {
+      "file": "sentences/9265d648ee61.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They live near the river.": {
+      "file": "sentences/c377dc75159d.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Most children like this book.": {
+      "file": "sentences/69ece021fa32.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The water is very cold.": {
+      "file": "sentences/7a59fabe7cc2.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I just finished my homework.": {
+      "file": "sentences/d85a68caf2c0.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I think this is the right way.": {
+      "file": "sentences/428119e5db6f.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He did not eat much.": {
+      "file": "sentences/7c638609b468.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "You are right about the answer.": {
+      "file": "sentences/11c159915973.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The soup is too hot.": {
+      "file": "sentences/7ff842a6c2c6.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Tell me about your day.": {
+      "file": "sentences/0a5995eb13b6.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Show me your new picture.": {
+      "file": "sentences/1128ef43e6bf.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She also likes to draw.": {
+      "file": "sentences/1c288ccaba5a.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She came to my house yesterday.": {
+      "file": "sentences/2eb118950421.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She sings very well.": {
+      "file": "sentences/009ad2d1dd08.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "This is a small stone.": {
+      "file": "sentences/94ce17567950.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Even the dog was quiet.": {
+      "file": "sentences/8fb54e89f75f.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We must be quiet here.": {
+      "file": "sentences/a2e5d52c6239.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Turn left at the bridge.": {
+      "file": "sentences/ab019814555d.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "You can ask me any question.": {
+      "file": "sentences/aed63c98b38b.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Two men were waiting by the gate.": {
+      "file": "sentences/745963d6a823.mp3",
+      "bytes": 12332,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They are different in colour.": {
+      "file": "sentences/51171fe033ca.mp3",
+      "bytes": 9740,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She can read this book alone.": {
+      "file": "sentences/ab12235df770.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We will move to a new house.": {
+      "file": "sentences/2ff5c5a7c9be.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Please read it again.": {
+      "file": "sentences/d5b8ab83535d.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He took off his coat.": {
+      "file": "sentences/ad4503b55896.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Try again and do not give up.": {
+      "file": "sentences/415e59226ef1.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She knows the answer.": {
+      "file": "sentences/72888782632c.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The bird flew away.": {
+      "file": "sentences/770b53ab217b.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He likes to study at night.": {
+      "file": "sentences/06333dc18b71.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She is still in bed.": {
+      "file": "sentences/d2cc1b414957.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "You should wash your hands.": {
+      "file": "sentences/abc8a7ef4fe0.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "You can keep this book.": {
+      "file": "sentences/be0cd1259b67.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We learn new words at school.": {
+      "file": "sentences/ba0942387f4c.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The bird flew very high.": {
+      "file": "sentences/84a94c483cfe.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The film will start soon.": {
+      "file": "sentences/9d66d3403ddf.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The room was full of light.": {
+      "file": "sentences/17ea269b57f1.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I saw a big bird in the tree.": {
+      "file": "sentences/a6b1d865bbb0.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He left his bag on the bus.": {
+      "file": "sentences/c47a90b66b5b.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Please open the window.": {
+      "file": "sentences/466d2c824dd7.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The test was hard for him.": {
+      "file": "sentences/d503ccb47a19.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Close the door before you go.": {
+      "file": "sentences/306394ac28b2.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They walked home together.": {
+      "file": "sentences/c56158a90827.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He always helps his sister.": {
+      "file": "sentences/dc11eab40852.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The children played in the garden.": {
+      "file": "sentences/09238c29026d.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It is important to be kind.": {
+      "file": "sentences/b5c344d6a9e2.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "My feet were wet from the snow.": {
+      "file": "sentences/2b39735bfb10.mp3",
+      "bytes": 12332,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We walk to school every morning.": {
+      "file": "sentences/a569d7ba796b.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He took the book home.": {
+      "file": "sentences/23fd48c00a1a.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The story began with a storm.": {
+      "file": "sentences/e0f950ee84c6.mp3",
+      "bytes": 12476,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We have enough food for everyone.": {
+      "file": "sentences/731ed3285037.mp3",
+      "bytes": 12476,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can carry this bag myself.": {
+      "file": "sentences/74eb2e6b8ad2.mp3",
+      "bytes": 12764,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The bus will stop at the corner.": {
+      "file": "sentences/9cc8b61d967f.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He came second in the race.": {
+      "file": "sentences/c822a37e41f7.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Sometimes we go to the park.": {
+      "file": "sentences/2c02e5208ba3.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Cut the paper into two parts.": {
+      "file": "sentences/7f5377550a93.mp3",
+      "bytes": 13484,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We eat breakfast at seven.": {
+      "file": "sentences/ce36845d39cb.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We talk about the story.": {
+      "file": "sentences/d70e6ea394d3.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She will be back soon.": {
+      "file": "sentences/3a1cfbf11417.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the apple?": {
+      "file": "sentences/aea4844c1f3d.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The baby was being very quiet.": {
+      "file": "sentences/114214c4aee7.mp3",
+      "bytes": 12908,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the baby?": {
+      "file": "sentences/303595e4f6ea.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the bear!": {
+      "file": "sentences/4db2e9c213a2.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the bell.": {
+      "file": "sentences/a7b380bc6b68.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The bird is over there.": {
+      "file": "sentences/ed8a9a427c88.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the boat!": {
+      "file": "sentences/8d0fbed2b682.mp3",
+      "bytes": 6572,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "My birthday is in the summer.": {
+      "file": "sentences/cfad98d92e1a.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the bus!": {
+      "file": "sentences/03546830aae1.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We bought bread from the shop.": {
+      "file": "sentences/9dbdb7f5bad4.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the cake!": {
+      "file": "sentences/f75338819152.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the corn!": {
+      "file": "sentences/f4cd0cccce0d.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The duck is over there.": {
+      "file": "sentences/4cf3839e1c55.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the cow.": {
+      "file": "sentences/0810970b4e02.mp3",
+      "bytes": 8156,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The egg is over there.": {
+      "file": "sentences/64f840101793.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the farm?": {
+      "file": "sentences/8fbf854e58ad.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the farmer.": {
+      "file": "sentences/353157c7621e.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the fire?": {
+      "file": "sentences/7e1a075a906e.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the fish!": {
+      "file": "sentences/16d98df88ff3.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the floor!": {
+      "file": "sentences/44074be1fb48.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the flower.": {
+      "file": "sentences/e95f8532723d.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the game?": {
+      "file": "sentences/f013439ca20a.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The grass was long and green.": {
+      "file": "sentences/7a4e3ac258e8.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The garden is over there.": {
+      "file": "sentences/2638ed489e48.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The hill is over there.": {
+      "file": "sentences/77a30b8c8cd3.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the kitten.": {
+      "file": "sentences/42ae84a20a28.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the ground.": {
+      "file": "sentences/30becf1dfe45.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The horse is over there.": {
+      "file": "sentences/f040cc9b1603.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the leg?": {
+      "file": "sentences/d207622eaad1.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I had milk with my breakfast.": {
+      "file": "sentences/e4f8a918a33c.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He saved his money in a jar.": {
+      "file": "sentences/6e01eb68448f.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We went out early in the morning.": {
+      "file": "sentences/31440468479a.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the pig?": {
+      "file": "sentences/f0e0a1329115.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the rabbit?": {
+      "file": "sentences/80ad9f1e9bbf.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The seed is over there.": {
+      "file": "sentences/794e83a62e18.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the ring!": {
+      "file": "sentences/814d678b5b31.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the sheep.": {
+      "file": "sentences/9ac341ea4eac.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the shoe.": {
+      "file": "sentences/a59a0fc88801.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the stick!": {
+      "file": "sentences/1f8e6fa38882.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The snow covered the whole garden.": {
+      "file": "sentences/2792f0c5aecc.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the sun!": {
+      "file": "sentences/d4073810b7e9.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the street.": {
+      "file": "sentences/258dbb5d2061.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the toy?": {
+      "file": "sentences/9422538cc16e.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the wind!": {
+      "file": "sentences/463a4d08c538.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The table is made of wood.": {
+      "file": "sentences/2bb133f21377.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the window!": {
+      "file": "sentences/0e69feec2d06.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the hat.": {
+      "file": "sentences/9419673ae75c.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the sock!": {
+      "file": "sentences/f32e745db484.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the cup?": {
+      "file": "sentences/d14d9d3be0d6.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The spoon is over there.": {
+      "file": "sentences/12704050fbdb.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the plate?": {
+      "file": "sentences/5c602936631e.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the train!": {
+      "file": "sentences/528635f51c4d.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The bike is over there.": {
+      "file": "sentences/a4d1ad73881d.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the plane!": {
+      "file": "sentences/86858a65d43a.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the ship!": {
+      "file": "sentences/46bd4c77a236.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the tent.": {
+      "file": "sentences/0efa1b03a138.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the map!": {
+      "file": "sentences/e3a5eb3287f5.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the road!": {
+      "file": "sentences/f24fd0b8dd43.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the monster?": {
+      "file": "sentences/03b190858921.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the witch.": {
+      "file": "sentences/bef6aa709a34.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the queen?": {
+      "file": "sentences/b4a31a3fa7d8.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the king.": {
+      "file": "sentences/00bfebc886b5.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the key.": {
+      "file": "sentences/e5da99739ae4.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The cave is over there.": {
+      "file": "sentences/b0578dbf0a60.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the field?": {
+      "file": "sentences/8c1d7e298409.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The prince is over there.": {
+      "file": "sentences/2032dc087b1b.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The tower is over there.": {
+      "file": "sentences/3f31b7561713.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The moon is over there.": {
+      "file": "sentences/504a40cf76af.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the rocket!": {
+      "file": "sentences/7f757c532f62.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the star?": {
+      "file": "sentences/39849d72946f.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The sky is over there.": {
+      "file": "sentences/e50e46eb679d.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The cloud is over there.": {
+      "file": "sentences/4d348c21883c.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the snowman.": {
+      "file": "sentences/e02a4b181919.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the sandwich.": {
+      "file": "sentences/dcf35e559de2.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The banana is over there.": {
+      "file": "sentences/94e121b2e806.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the present.": {
+      "file": "sentences/dab2ca1a99e4.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the grape.": {
+      "file": "sentences/ff0c9cde5668.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the carrot.": {
+      "file": "sentences/4ce33c49f432.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the tomato?": {
+      "file": "sentences/757ae69fc846.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the potato.": {
+      "file": "sentences/ee7652cc7b49.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the sugar?": {
+      "file": "sentences/9d25d283f27d.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the salt?": {
+      "file": "sentences/5a8df7b10c54.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the soup.": {
+      "file": "sentences/3009339464c1.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the butter!": {
+      "file": "sentences/5082c46fbf65.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the jam?": {
+      "file": "sentences/5a8a4d9ab08f.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the bottle?": {
+      "file": "sentences/15a2ec4a69d1.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the bedroom!": {
+      "file": "sentences/15e70589ab86.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the kitchen!": {
+      "file": "sentences/a444213e7120.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the bathroom?": {
+      "file": "sentences/f69d3b47de44.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the teacher?": {
+      "file": "sentences/053b56a3066c.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The nurse is over there.": {
+      "file": "sentences/2a69f0db4824.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the doctor.": {
+      "file": "sentences/2e364f97fd0e.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the police?": {
+      "file": "sentences/ac9bb0e0685e.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the driver!": {
+      "file": "sentences/80ee4eb42fe6.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the shop?": {
+      "file": "sentences/cc3d10e8727b.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the market!": {
+      "file": "sentences/9f405aa1edd2.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the library.": {
+      "file": "sentences/83474179ee9c.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the station!": {
+      "file": "sentences/a30b78871a65.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the hospital?": {
+      "file": "sentences/98310f97f15c.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the beach.": {
+      "file": "sentences/ed26d31c7f4b.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the airport.": {
+      "file": "sentences/e3f9e4970e97.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the park?": {
+      "file": "sentences/1682ce6ca231.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the museum?": {
+      "file": "sentences/177b6d90da6a.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the zoo?": {
+      "file": "sentences/f92e338211da.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The cinema is over there.": {
+      "file": "sentences/3b23d159ad03.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the playground.": {
+      "file": "sentences/b561dd79ce28.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the classroom.": {
+      "file": "sentences/d94bc3fa1b26.mp3",
+      "bytes": 9740,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the rubber!": {
+      "file": "sentences/191cbd47a1f4.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the notebook.": {
+      "file": "sentences/16d5cf58f90c.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She cut the paper with scissors.": {
+      "file": "sentences/0bf94b9f3bff.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the brush?": {
+      "file": "sentences/6a430ca1fb9f.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the crayon?": {
+      "file": "sentences/b8882e46cd55.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We paint the wall blue.": {
+      "file": "sentences/b9adf448d5ca.mp3",
+      "bytes": 9596,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the clock?": {
+      "file": "sentences/2eb18650e3fb.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the mirror.": {
+      "file": "sentences/3efc3eb5c947.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the blanket.": {
+      "file": "sentences/327778105dd9.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the carpet.": {
+      "file": "sentences/15cbd4e7b42f.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The pillow is over there.": {
+      "file": "sentences/332e02515dba.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the sofa.": {
+      "file": "sentences/585a9f5b3f71.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the ladder?": {
+      "file": "sentences/afae37eac143.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the bucket?": {
+      "file": "sentences/f5c71ee1c845.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The candle is over there.": {
+      "file": "sentences/ba04757c6504.mp3",
+      "bytes": 9596,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the basket?": {
+      "file": "sentences/f6178d25a18c.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the kite.": {
+      "file": "sentences/704985149982.mp3",
+      "bytes": 8156,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the balloon.": {
+      "file": "sentences/82e895ee295f.mp3",
+      "bytes": 8876,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the duckling.": {
+      "file": "sentences/651152aa4aac.mp3",
+      "bytes": 9164,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the puppy!": {
+      "file": "sentences/9ed15642a5b0.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the chick!": {
+      "file": "sentences/d22e1715151d.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the lamb?": {
+      "file": "sentences/5b5fad608aaa.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the calf!": {
+      "file": "sentences/9d8c70bd7c71.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the pony?": {
+      "file": "sentences/b95780820c90.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the fox.": {
+      "file": "sentences/f53ddf11121e.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the frog!": {
+      "file": "sentences/40d5de3cc196.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the owl!": {
+      "file": "sentences/04e00b2e9c0c.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The mouse is over there.": {
+      "file": "sentences/649bc61f5b8c.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the snake!": {
+      "file": "sentences/2ff9d49aaea6.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The spider is over there.": {
+      "file": "sentences/16bbcafe4dc7.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the bee?": {
+      "file": "sentences/d9a8c3f747a2.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the butterfly.": {
+      "file": "sentences/c10b1958503c.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the ant.": {
+      "file": "sentences/10288b65c9e5.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the worm.": {
+      "file": "sentences/bdc3ee9d5840.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the feather.": {
+      "file": "sentences/3adf88b4f90c.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the shell!": {
+      "file": "sentences/951abb3aa746.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the nest!": {
+      "file": "sentences/dcea8d2ca63c.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the tail!": {
+      "file": "sentences/e6bb126bfffc.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the paw?": {
+      "file": "sentences/5ba3f139458c.mp3",
+      "bytes": 7292,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the wing.": {
+      "file": "sentences/c7ea3540de20.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the horn.": {
+      "file": "sentences/e1b9ed1d7942.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the fur.": {
+      "file": "sentences/559288510f74.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the tooth!": {
+      "file": "sentences/e75956c790d3.mp3",
+      "bytes": 7436,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the nose.": {
+      "file": "sentences/1e79f1dafc2e.mp3",
+      "bytes": 8732,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the ear?": {
+      "file": "sentences/33ec7c1e77de.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the mouth.": {
+      "file": "sentences/ddcf3836a929.mp3",
+      "bytes": 8588,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Look at the arm!": {
+      "file": "sentences/ff5b3a0238ac.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The finger is over there.": {
+      "file": "sentences/5084c1485e86.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can see the knee.": {
+      "file": "sentences/913296ff23f4.mp3",
+      "bytes": 7868,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Where is the foot?": {
+      "file": "sentences/87bf4f11092d.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The stars were bright last night.": {
+      "file": "sentences/b185a1efaf5a.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I wake up at six every day.": {
+      "file": "sentences/26b458f8524f.mp3",
+      "bytes": 12332,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The baby will sleep soon.": {
+      "file": "sentences/bda5b66557f5.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Let us meet at the gate.": {
+      "file": "sentences/0661d01decfe.mp3",
+      "bytes": 9596,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Please wait for me here.": {
+      "file": "sentences/9fa7039adefa.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He is afraid of the dark.": {
+      "file": "sentences/1745adc125cc.mp3",
+      "bytes": 9740,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The story is very short.": {
+      "file": "sentences/e08796546309.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The old bus is very slow.": {
+      "file": "sentences/fa01334c02c9.mp3",
+      "bytes": 12332,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The room was dark and quiet.": {
+      "file": "sentences/3a917de104f9.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The children look happy today.": {
+      "file": "sentences/e79077a46e9f.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She felt sad about the news.": {
+      "file": "sentences/212684b59e80.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I am tired after the game.": {
+      "file": "sentences/f9536166c342.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She was angry about the mess.": {
+      "file": "sentences/798ab2690381.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The children were hungry after school.": {
+      "file": "sentences/99807d711009.mp3",
+      "bytes": 13628,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I am thirsty after the run.": {
+      "file": "sentences/fffe5bc08861.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We clean the classroom on Friday.": {
+      "file": "sentences/b391671a8379.mp3",
+      "bytes": 13196,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The street was noisy this morning.": {
+      "file": "sentences/7190825df848.mp3",
+      "bytes": 12620,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The garden looks beautiful.": {
+      "file": "sentences/ab615f964774.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The little bird was weak.": {
+      "file": "sentences/0f7e562100eb.mp3",
+      "bytes": 9740,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He is strong enough to lift it.": {
+      "file": "sentences/9477cb53e753.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The bottle is empty now.": {
+      "file": "sentences/983f62c7ee13.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "That is a fast train.": {
+      "file": "sentences/e1d9443147bb.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The frog can jump very high.": {
+      "file": "sentences/cab81a2e81a4.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I can swim in the sea.": {
+      "file": "sentences/f14cd4b815fd.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The box is full of toys.": {
+      "file": "sentences/a3cf00758e78.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We climb the hill on Sunday.": {
+      "file": "sentences/343109fa953b.mp3",
+      "bytes": 11612,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They sing a song together.": {
+      "file": "sentences/5d9dda100a8f.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She likes to dance at the party.": {
+      "file": "sentences/8c5b0f06a362.mp3",
+      "bytes": 12188,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Wash your hands before dinner.": {
+      "file": "sentences/f55331e86553.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Grandpa can cook very well.": {
+      "file": "sentences/c0549117fa65.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She likes to draw animals.": {
+      "file": "sentences/c787c06d1282.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They build a sand castle.": {
+      "file": "sentences/ed0607cc99a5.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He had to push the heavy box.": {
+      "file": "sentences/50058be536a7.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Pull the rope as hard as you can.": {
+      "file": "sentences/73887eee35bc.mp3",
+      "bytes": 12044,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Do not lose your key again.": {
+      "file": "sentences/cc506cb18086.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Listen to the teacher carefully.": {
+      "file": "sentences/d8df9591efed.mp3",
+      "bytes": 12764,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She can speak two languages.": {
+      "file": "sentences/e78649ccb421.mp3",
+      "bytes": 12332,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The little boy began to cry.": {
+      "file": "sentences/6e62dd8e968f.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Dad will drive us to the beach.": {
+      "file": "sentences/f9ab9fa4790b.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "dad"
+    },
+    "The birds fly over the tree.": {
+      "file": "sentences/366469b50035.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She can ride a red bike.": {
+      "file": "sentences/47de203be840.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She will teach us to draw.": {
+      "file": "sentences/7b3bc5e8e378.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He ran quickly to the gate.": {
+      "file": "sentences/1b1e1bbaf0f6.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I will finish my work first.": {
+      "file": "sentences/1cff3399e16c.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The turtle moved slowly.": {
+      "file": "sentences/cba8b58747cb.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She closed the door quietly.": {
+      "file": "sentences/fe3c4bcb8bd9.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The dog barked loudly.": {
+      "file": "sentences/78420f49ffd8.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He carried the glass carefully.": {
+      "file": "sentences/3700517c6669.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Finally the rain stopped.": {
+      "file": "sentences/38c9c5276ec0.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Suddenly the light went out.": {
+      "file": "sentences/311be055c40c.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She had already eaten.": {
+      "file": "sentences/2c34a745ea70.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We got up early.": {
+      "file": "sentences/32276d9167b5.mp3",
+      "bytes": 7724,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He was late for school.": {
+      "file": "sentences/a004500cd5fe.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It was warm inside the house.": {
+      "file": "sentences/09ce72a05814.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The children played outside.": {
+      "file": "sentences/38859a7c5da3.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She went upstairs to bed.": {
+      "file": "sentences/06fe150a74d3.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He ran downstairs for breakfast.": {
+      "file": "sentences/9372509b85ea.mp3",
+      "bytes": 13196,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "There was water everywhere.": {
+      "file": "sentences/2a0e90087157.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "There were a hundred people there.": {
+      "file": "sentences/fe2f5fb42886.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I left my hat somewhere.": {
+      "file": "sentences/1efe1500197f.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She said hello to the teacher.": {
+      "file": "sentences/418098370396.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Please close the door.": {
+      "file": "sentences/cdfe76a72db7.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He waved goodbye at the gate.": {
+      "file": "sentences/ceda271283a4.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I am sorry about the mess.": {
+      "file": "sentences/59d1c3f2c1c2.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It is okay to make a mistake.": {
+      "file": "sentences/255e24fd41dc.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He said yes to the plan.": {
+      "file": "sentences/d68be09aaa1c.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We are going to the beach today.": {
+      "file": "sentences/4d2f69f7b780.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We will visit them tomorrow.": {
+      "file": "sentences/382be265090d.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It rained all day yesterday.": {
+      "file": "sentences/edb16633bd8b.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We will read a story tonight.": {
+      "file": "sentences/0d2d61bc70b3.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Bring your bag to school.": {
+      "file": "sentences/3d7b1c6cfd83.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Mum will buy some bread.": {
+      "file": "sentences/619f0bfd34a4.mp3",
+      "bytes": 9020,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "mum"
+    },
+    "She slept all afternoon.": {
+      "file": "sentences/07af22910a09.mp3",
+      "bytes": 10460,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The ice was cold and hard.": {
+      "file": "sentences/2c6cdb3dc870.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He had to pay for the ticket.": {
+      "file": "sentences/127b920b496a.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "The sand was warm under my feet.": {
+      "file": "sentences/783850f3c9e9.mp3",
+      "bytes": 12764,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "His boots were covered in mud.": {
+      "file": "sentences/96efed3b41a7.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He ran up the stairs.": {
+      "file": "sentences/e713eb30264e.mp3",
+      "bytes": 9308,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Be careful with the glass.": {
+      "file": "sentences/7c2396df2b59.mp3",
+      "bytes": 10748,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Are you ready to go?": {
+      "file": "sentences/92534f9a201e.mp3",
+      "bytes": 8300,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "This question is easy.": {
+      "file": "sentences/108bc4c7f8c8.mp3",
+      "bytes": 9452,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She was surprised to see us.": {
+      "file": "sentences/ad711366d73b.mp3",
+      "bytes": 11468,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He hurt his knee badly.": {
+      "file": "sentences/6be1c4a1d133.mp3",
+      "bytes": 9884,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I will certainly help you.": {
+      "file": "sentences/a9ab0e14c32f.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She spoke clearly and slowly.": {
+      "file": "sentences/b5d0bdadb1f6.mp3",
+      "bytes": 12908,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He climbed the tree easily.": {
+      "file": "sentences/3a5bea27cc8d.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "That is exactly what I said.": {
+      "file": "sentences/3d12c3a2fb8f.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "I could hardly see in the fog.": {
+      "file": "sentences/804fb42237c7.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She came immediately when called.": {
+      "file": "sentences/19eb0586d2ad.mp3",
+      "bytes": 12764,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We had tea instead of coffee.": {
+      "file": "sentences/4777014df298.mp3",
+      "bytes": 11900,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Luckily nobody was hurt.": {
+      "file": "sentences/fcf2796c8406.mp3",
+      "bytes": 11036,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We nearly missed the bus.": {
+      "file": "sentences/d524ac53e0d5.mp3",
+      "bytes": 10316,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Perhaps it will snow tonight.": {
+      "file": "sentences/b166ca914520.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Put the books back properly.": {
+      "file": "sentences/6128bf3cf9b8.mp3",
+      "bytes": 10892,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It will probably rain later.": {
+      "file": "sentences/3e37c83e7dea.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "She recently moved house.": {
+      "file": "sentences/fdaf05361141.mp3",
+      "bytes": 11180,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "They arrived home safely.": {
+      "file": "sentences/42235c8c624d.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He took the warning seriously.": {
+      "file": "sentences/390c64682206.mp3",
+      "bytes": 11756,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He rarely eats sweets.": {
+      "file": "sentences/d0352592a697.mp3",
+      "bytes": 10172,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "It is simply too cold.": {
+      "file": "sentences/2c2955e823e8.mp3",
+      "bytes": 10028,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Surely you remember me.": {
+      "file": "sentences/2356d6bd42a2.mp3",
+      "bytes": 9596,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "We usually walk to school.": {
+      "file": "sentences/430b56a86e1f.mp3",
+      "bytes": 11324,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "Floppy had a fright in the dark.": {
+      "file": "sentences/503976f4a2bb.mp3",
+      "bytes": 10604,
+      "voice": "en-GB-RyanNeural",
+      "speaker": "floppy"
+    },
+    "She carried a lantern in the dark wood.": {
+      "file": "sentences/59f1b9aed8b1.mp3",
+      "bytes": 14204,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    },
+    "He looked at the moon with a telescope.": {
+      "file": "sentences/c9d40e8f1de9.mp3",
+      "bytes": 13052,
+      "voice": "en-GB-SoniaNeural",
+      "speaker": "narrator"
+    }
+  },
+  "voices": {
+    "narrador": "en-GB-SoniaNeural",
+    "narrator": "en-GB-SoniaNeural",
+    "vocab": "en-GB-SoniaNeural",
+    "biff": "en-GB-MaisieNeural",
+    "wilma": "en-GB-HollieNeural",
+    "chip": "en-GB-RyanNeural",
+    "kipper": "en-GB-RyanNeural",
+    "floppy": "en-GB-RyanNeural",
+    "mum": "en-GB-SoniaNeural",
+    "dad": "en-GB-RyanNeural",
+    "gran": "en-GB-SoniaNeural",
+    "wilf": "en-GB-RyanNeural",
+    "nadim": "en-GB-RyanNeural",
+    "anneena": "en-GB-MaisieNeural"
+  },
+  "generated_at": "2026-10-25T14:39:37.554Z",
+  "counts": {
+    "words": 903,
+    "sentences": 495
+  }
+}

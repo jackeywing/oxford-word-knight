@@ -3,3 +3,8 @@ backend/db.sqlite3
 backend/db.sqlite3-wal
 backend/db.sqlite3-shm
 .DS_Store
+
+# 环境变量与密钥（绝不可提交）
+.env
+.env.*
+!.env.example

@@ -165,6 +165,69 @@ practice_events(id, player_id, card_type, word, focus, is_correct, response_ms, 
 
 实测（CDP 模拟）：768 与 1024 两个宽度下均**无横向溢出**。
 
+## 🔊 发音音频（Azure Speech，构建期生成）
+
+**为什么不用运行时 TTS**：GitHub Pages 是纯静态站，前端直连 Azure 会把 key 暴露在浏览器。
+所以音频在**构建期**批量生成成 mp3，前端用 `<audio>` 播放，零外部依赖、零延迟。
+
+### 注册与凭据
+
+1. 免费 Azure 账户：https://azure.microsoft.com/zh-cn/free/
+2. 创建 Speech 资源（选 **Free F0**，区域建议 `eastasia`）：
+   https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices
+3. 资源页 → 「密钥和终结点」→ 复制 KEY 1 与 Region
+
+写进 `backend/.env`（已在 `.gitignore`）：
+
+```bash
+AZURE_SPEECH_KEY=***
+AZURE_SPEECH_REGION=eastasia
+```
+
+### 生成
+
+```bash
+npm run gen:audio              # 全量（缺什么补什么，增量）
+npm run gen:audio:words        # 只生单词
+npm run gen:audio:sentences    # 只生例句
+node backend/gen-audio.js --limit 20    # 试跑
+node backend/gen-audio.js --force       # 强制重生成
+```
+
+产物：
+
+```
+docs/audio/
+  words/<word>.mp3          903 个单词发音
+  sentences/<sha1>.mp3      497 条例句朗读
+  manifest.json             word/sentence → 文件映射 + 音色
+```
+
+### 音色映射（ORT 是英式教材，统一 en-GB）
+
+| 角色 | 音色 | 说明 |
+|---|---|---|
+| 单词发音 | `en-GB-SoniaNeural` | 统一、清晰，rate -10% 方便跟读 |
+| 旁白 | `en-GB-SoniaNeural` | |
+| Biff | `en-GB-MaisieNeural` | **Azure 官方标注「孩子」的音色** |
+| Wilma | `en-GB-HollieNeural` | |
+| Chip | `en-GB-RyanNeural` | |
+| Kipper | `en-GB-RyanNeural` + pitch +8% | 模拟更小的孩子 |
+| Floppy | `en-GB-RyanNeural` + pitch +22% | 宠物 |
+
+### 两个必须知道的坑
+
+1. **Azure 会在尾部补一段固定静音**（实测 1.0–1.4 秒），不处理的话 `of` 也要播 1.87 秒。
+   生成后统一用 ffmpeg 反向裁剪：`areverse,silenceremove,areverse,apad=pad_dur=0.08`。
+   没有 ffmpeg 时自动跳过裁剪，不影响生成。
+2. **前端播放优先级**：`<audio>`（预生成 mp3）→ `speechSynthesis`（兜底）。
+   新词还没生成音频时自动走系统语音，不会没声音。
+
+### 免费额度
+
+Azure F0：**每月 50 万字符 Neural TTS**。
+本项目 903 词 + 497 例句 ≈ **17,632 字符 = 3.5%**，可免费重跑约 28 次。
+
 ## 🧩 单一引擎：`shared/engine.js`
 
 **问题**：`backend/practice.js` 与 `build-pages.js` 各有一份特训引擎代码。

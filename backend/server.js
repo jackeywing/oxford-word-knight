@@ -543,6 +543,26 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ── /audio/* ── Azure 预生成的发音音频（二进制直出，供前端 <audio> 播放）
+  if (req.method === 'GET' && pathname.startsWith('/audio/')) {
+    const rel = decodeURIComponent(pathname.slice('/audio/'.length));
+    if (rel.includes('..')) { res.writeHead(403); return res.end('Forbidden'); }
+    const full = path.join(__dirname, '..', 'docs', 'audio', rel);
+    try {
+      const buf = fs.readFileSync(full);
+      const ct = rel.endsWith('.mp3') ? 'audio/mpeg'
+               : rel.endsWith('.json') ? 'application/json; charset=utf-8'
+               : 'application/octet-stream';
+      res.writeHead(200, {
+        'Content-Type': ct,
+        'Content-Length': buf.length,
+        'Cache-Control': 'public, max-age=604800',   // 音频内容不变，缓存一周
+      });
+      res.end(buf);
+    } catch (e) { res.writeHead(404); res.end('Not Found'); }
+    return;
+  }
+
   // 页面：HITL 审阅台
   if (req.method === 'GET' && (pathname === '/portal' || pathname === '/portal.html' || pathname === '/hitl'))
     return serveFile(res, 'frontend/portal.html', 'text/html; charset=utf-8');

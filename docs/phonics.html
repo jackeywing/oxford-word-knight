@@ -864,7 +864,36 @@ function pickVoice(gender){
   }catch(e){ return null; }
 }
 
-function speak(text,rate=0.85){
+/* ── Azure 预生成音频（构建期产出，见 backend/gen-audio.js）──
+ * 静态站不能在前端调 TTS API（key 会暴露），所以音频是构建期落盘的 mp3。
+ * 有音频文件就播文件：音质稳定、支持 iOS、不依赖系统装了哪些语音。
+ * 没有就回落到 speechSynthesis（新词还没生成时的兜底）。
+ */
+let AUDIO_MANIFEST=null, _curAudio=null;
+(async()=>{ try{ const r=await fetch('audio/manifest.json'); if(r.ok) AUDIO_MANIFEST=await r.json(); }catch(e){} })();
+
+function playFile(rel){
+  return new Promise((resolve)=>{
+    try{
+      if(_curAudio){ try{_curAudio.pause();}catch(e){} _curAudio=null; }
+      const a=new Audio('audio/'+rel);
+      _curAudio=a;
+      let settled=false;
+      const done=(v)=>{ if(settled) return; settled=true; resolve(v); };
+      a.onended=()=>done(true);
+      a.onerror=()=>done(false);
+      a.play().catch(()=>done(false));
+      setTimeout(()=>done(true), 8000);          // 保险：不让 Promise 永远挂着
+    }catch(e){ resolve(false); }
+  });
+}
+function audioForWord(w){
+  const k=String(w||'').trim().toLowerCase();
+  return AUDIO_MANIFEST && AUDIO_MANIFEST.words && AUDIO_MANIFEST.words[k];
+}
+
+/* 系统语音兜底（原实现，保持不变） */
+function speakSynth(text,rate=0.85){
   try{
     if(!('speechSynthesis' in window)){
       if(typeof toast==='function') toast('⚠️ 这个浏览器不支持发音','bad');
@@ -885,6 +914,18 @@ function speak(text,rate=0.85){
     speechSynthesis.speak(u);
     return true;
   }catch(e){ return false; }
+}
+
+/* 统一入口：预生成 mp3 优先，失败或被浏览器拦（Autoplay 策略）则回落到系统语音。
+ * <audio> 比 speechSynthesis 严格——没有用户手势时 play() 会被 NotAllowedError 拒绝，
+ * 这里必须回退，否则会出现"点了没声音"。 */
+function speak(text,rate=0.85){
+  const hit=audioForWord(text);
+  if(hit){
+    playFile(hit.file).then((ok)=>{ if(!ok) speakSynth(text,rate); });
+    return true;
+  }
+  return speakSynth(text,rate);
 }
 
 /* 切换角色后立刻用新音色报一次名字，家长能马上听出差别 */
