@@ -65,8 +65,8 @@ module.exports = function createPractice(db) {
   /* ───────────── helpers ───────────── */
 
   const wordsInBank = (level) =>
-    level ? db.prepare('SELECT oxford_level, word, hint, sentence FROM words WHERE oxford_level = ?').all(level)
-          : db.prepare('SELECT oxford_level, word, hint, sentence FROM words').all();
+    level ? db.prepare('SELECT oxford_level, word, hint, sentence, pos FROM words WHERE oxford_level = ?').all(level)
+          : db.prepare('SELECT oxford_level, word, hint, sentence, pos FROM words').all();
 
   /** 玩家薄弱音素（error_weight 高者优先） */
   function weakPhonemes(player, minWeight = 0.6) {

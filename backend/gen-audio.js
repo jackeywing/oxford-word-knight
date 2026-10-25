@@ -94,6 +94,10 @@ const RATE_CHAR = { chip: '', kipper: '-8%', floppy: '-8%' };
 
 /* 角色自我介绍：文本必须与 frontend/practice.html 的 GREET 完全一致，
    否则前端按文本查不到音频，会掉回系统语音（之前就是这个问题）。 */
+/* 闯关内容也要按角色走：每个角色单独生成一份单词音频。
+   之前只生成中性的一份（Sonia），所以无论选谁，题干发音都是同一个人。 */
+const WORD_VARIANTS = ['biff', 'chip', 'kipper', 'wilma', 'floppy'];
+
 const PHRASES = [
   { key: 'hello-biff',   speaker: 'biff',   text: 'Hello, I am Biff.' },
   { key: 'hello-chip',   speaker: 'chip',   text: 'Hello, I am Chip.' },
@@ -264,24 +268,45 @@ async function pool(items, worker, concurrency) {
     console.log(`  完成，失败 ${errs.length}`);
   }
 
-  /* ── 1. 单词 ── */
+  /* ── 1. 单词（中性一份 + 每个角色一份） ── */
   if (!ONLY || ONLY === 'words') {
     let list = rows.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
     if (LIMIT) list = list.slice(0, LIMIT);
-    const todo = list.filter((r) => {
-      if (FORCE) return true;
-      const f = path.join(WORD_DIR, safeName(r.word) + '.mp3');
-      return !fs.existsSync(f);
+
+    const jobs = [];
+    for (const r of list) {
+      jobs.push({ word: r.word, speaker: '', label: 'word:' + r.word });
+      for (const c of WORD_VARIANTS) jobs.push({ word: r.word, speaker: c, label: `word:${r.word}@${c}` });
+    }
+
+    const todo = jobs.filter((j) => {
+      const f = path.join(WORD_DIR, safeName(j.word) + (j.speaker ? '__' + j.speaker : '') + '.mp3');
+      return FORCE || !fs.existsSync(f);
     });
-    console.log(`\n【单词】共 ${list.length}，待生成 ${todo.length}（已存在 ${list.length - todo.length}）`);
+    console.log(`\n【单词】共 ${list.length} 词 × ${WORD_VARIANTS.length + 1} 份 = ${jobs.length}，待生成 ${todo.length}`);
+
+    manifest.words = manifest.words || {};
     const errs = await pool(
-      todo.map((r) => ({ word: r.word, label: 'word:' + r.word })),
-      async (it) => {
-        const raw = await synth(it.word, VOICE.vocab, { rate: RATE.vocab });
+      todo.map((j) => ({ ...j })),
+      async (j) => {
+        const voice = j.speaker ? voiceFor(j.speaker, 'sentence') : VOICE.vocab;
+        const pitch = j.speaker ? PITCH[j.speaker] : '';
+        const rate = j.speaker ? (RATE_CHAR[j.speaker] || '') : RATE.vocab;
+        const raw = await synth(j.word, voice, { pitch, rate });
         const buf = trimSilence(raw);
-        const file = 'words/' + safeName(it.word) + '.mp3';
+        const base = safeName(j.word);
+        const file = 'words/' + base + (j.speaker ? '__' + j.speaker : '') + '.mp3';
         fs.writeFileSync(path.join(OUT_DIR, file), buf);
-        manifest.words[it.word.toLowerCase()] = { file, bytes: buf.length, voice: VOICE.vocab };
+
+        const key = j.word.toLowerCase();
+        const cur = manifest.words[key] || { file: 'words/' + base + '.mp3', bytes: 0, voice: VOICE.vocab, variants: {} };
+        cur.variants = cur.variants || {};
+        if (j.speaker) {
+          cur.variants[j.speaker] = { file, bytes: buf.length, voice, pitch: pitch || '', rate: rate || '' };
+        } else {
+          cur.file = file; cur.bytes = buf.length; cur.voice = VOICE.vocab;
+        }
+        manifest.words[key] = cur;
       },
       CONC
     );

@@ -82,6 +82,8 @@
   .ch-prompt{font-size:.46em;color:#8D6E63;margin-bottom:12px;line-height:1.8;}
   .ch-word{font-family:'Press Start 2P',monospace;font-size:2.1em;color:#3E2723;text-align:center;letter-spacing:3px;margin:10px 0 4px;word-break:break-word;}
   .ch-sentence{font-size:1.05em;color:#3E2723;margin-bottom:6px;line-height:1.7;text-align:center;font-family:-apple-system,'PingFang SC',sans-serif;font-weight:600;}
+.ch-hint{font-size:.46em;color:#5D4037;background:#FFF8E1;border-left:3px solid #FFD54F;padding:6px 10px;margin:6px 0 10px;line-height:1.7}
+.ch-hint b{color:#BF360C}
   .ch-sentence .blank{color:#F9A825;letter-spacing:2px;border-bottom:3px solid #F9A825;padding:0 10px;}
   .speak-btn{display:block;margin:8px auto 14px;font-size:.42em;padding:10px 18px;}
 
@@ -309,7 +311,11 @@ function playFile(rel){
 }
 function audioForWord(w){
   const k=String(w||'').trim().toLowerCase();
-  return AUDIO_MANIFEST && AUDIO_MANIFEST.words && AUDIO_MANIFEST.words[k];
+  const e=AUDIO_MANIFEST && AUDIO_MANIFEST.words && AUDIO_MANIFEST.words[k];
+  if(!e) return null;
+  // 优先当前角色的那份：闯关内容和自我介绍必须是同一个声音
+  const v=e.variants && e.variants[ch];
+  return v || e;
 }
 /* 整句/短语：先精确匹配 phrases（角色开场白），再匹配例句库。
    之前只查 words，所以 "Hello, I am Biff." 永远查不到 → 掉回系统语音，
@@ -499,6 +505,7 @@ function renderCard(){
     body=`${typeBadge(t)}
       <div class="ch-prompt">${card.prompt}</div>
       <div class="ch-sentence">${s}</div>
+      ${card.hint?`<div class="ch-hint">💡 要填的词是：<b>${card.hint}</b></div>`:''}
       <div class="opts" id="opts">
         ${card.options.map(o=>`<button class="opt wide" onclick="pick('${o}',this)">${o}</button>`).join('')}
       </div>`;

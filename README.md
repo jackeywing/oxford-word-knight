@@ -203,6 +203,22 @@ docs/audio/
   manifest.json             word/sentence → 文件映射 + 音色
 ```
 
+### 单词音频也是按角色一份
+
+闯关内容（音节/音素/视觉词）念的是单词，所以单词音频必须也按角色区分，
+否则会出现"自我介绍变了、闯关内容没变"。
+
+```
+docs/audio/words/<word>.mp3           中性（Sonia），新词的兜底
+docs/audio/words/<word>__biff.mp3     Maisie
+docs/audio/words/<word>__chip.mp3     Ryan -5%
+docs/audio/words/<word>__kipper.mp3   Ryan +15% / -8%
+docs/audio/words/<word>__wilma.mp3    Hollie
+docs/audio/words/<word>__floppy.mp3   Ryan +35% / -8%
+```
+
+前端 `audioForWord()` 优先取 `variants[当前角色]`，没有就用中性版。
+
 ### 音色映射（ORT 是英式教材，统一 en-GB）
 
 | 角色 | 音色 | 说明 |

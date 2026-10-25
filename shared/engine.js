@@ -332,7 +332,20 @@
       const targetRow = weightedPick(usePool, (r) => 1 + priorityWeight(r.word) * 1.6);
       const target = targetRow.word;
       const sameRule = usePool.filter((r) => norm(r.word) !== norm(target)).slice(0, 2);
-      const decoys = poolSingle.filter((r) => !norm(r.word).includes(chosen.p.grapheme)).slice(0, 1);
+
+      /*
+       * 干扰项：优先选「词性不同」的词。
+       * 之前随便挑一个不含目标字母组合的词，会出现 "I can see the _____" 里
+       * mirror（名词）和 airport（名词）都成立的情况——句子本身区分不了。
+       * 词性不同至少能排除一部分语法上同样成立的干扰项；真正消歧靠前端展示中文释义。
+       */
+      const tPos = String(targetRow.pos || '').toLowerCase();
+      const decoys = (() => {
+        const notSameRule = poolSingle.filter((r) => !norm(r.word).includes(chosen.p.grapheme)
+          && norm(r.word) !== norm(target));
+        const diffPos = tPos ? notSameRule.filter((r) => String(r.pos || '').toLowerCase() && String(r.pos).toLowerCase() !== tPos) : [];
+        return (diffPos.length ? diffPos : notSameRule).slice(0, 1);
+      })();
 
       let options = [target, ...sameRule.map((r) => r.word), ...decoys.map((r) => r.word)];
       options = [...new Set(options)];
