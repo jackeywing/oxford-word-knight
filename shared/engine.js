@@ -96,7 +96,41 @@
     { a: 'pin', b: 'pen', pa: '/ɪ/', pb: '/e/', zh_a: '别针', zh_b: '钢笔', tip: '短 i vs 短 e' },
     { a: 'bat', b: 'bet', pa: '/æ/', pb: '/e/', zh_a: '球棒', zh_b: '打赌', tip: '嘴张更大 vs 更小' },
     { a: 'coat', b: 'goat', pa: '/k/', pb: '/g/', zh_a: '外套', zh_b: '山羊', tip: '清音 vs 浊音' },
+    // /aɪ/ 专项：IGH 最容易和 /eɪ/、/e/ 混
+    { a: 'white', b: 'wait',  pa: '/aɪ/', pb: '/eɪ/', zh_a: '白色', zh_b: '等待', tip: '/aɪ/ 滑到 /ɪ/，/eɪ/ 滑到 /ɪ/ 但起点不同，wh-i-te 不要读成 wait' },
+    { a: 'light', b: 'late',  pa: '/aɪ/', pb: '/eɪ/', zh_a: '光', zh_b: '晚的', tip: 'igh 读 /aɪ/，a_e 读 /eɪ/' },
+    { a: 'sight', b: 'seat',  pa: '/aɪ/', pb: '/iː/', zh_a: '视力', zh_b: '座位', tip: 'igh 是双元音 /aɪ/，ea 是长音 /iː/' },
+    { a: 'high',  b: 'hay',   pa: '/aɪ/', pb: '/eɪ/', zh_a: '高的', zh_b: '干草', tip: 'gh 不发音，high 只读 /haɪ/' },
+    { a: 'night', b: 'net',   pa: '/aɪ/', pb: '/e/',  zh_a: '夜晚', zh_b: '网', tip: 'igh 拉长成双元音，e 是短音' },
   ];
+
+  /* ─────────── /aɪ/ 重点音 ───────────
+   * 用户要求把 IGH 这个音在自然拼读题里加权。
+   * /aɪ/ 在英语里由四条拼写路径实现，只盯 igh 会漏掉 write / bike 这类：
+   *   igh  → night / light / high
+   *   i_e  → write / white / kite
+   *   y 结尾 → my / fly / sky
+   *   i 开音节 → hi
+   * 注意 eight / weigh 虽然含 igh 但读 /eɪ/，必须排除。
+   */
+  const AI_END_Y = ['my', 'by', 'fly', 'sky', 'try', 'cry', 'dry', 'why', 'shy', 'spy', 'hi'];
+  const AI_EXCLUDE = /^(eight|eighth|weight|weigh|neighbour|neighbor|height)$/;
+  function isAISound(word) {
+    const w = norm(word);
+    if (!w || AI_EXCLUDE.test(w)) return false;
+    if (w.includes('igh')) return true;
+    if (/^[a-z]*i[a-z]e$/.test(w)) return true;      // i_e
+    if (AI_END_Y.includes(w)) return true;
+    return false;
+  }
+  /** 音素加权表：数值 = 相对权重倍数，1 = 不加权 */
+  const PHONEME_BOOST = { '/aɪ/': 3.4 };   // 规则得分额外 +（3.4-1）×4.2 ≈ +10
+
+  /** 可能混淆的拼写组合（用于干扰项，逼孩子真的分辨音而不是猜形） */
+  const CONFUSABLE_GRAPHEMES = {
+    igh: ['ai', 'ay', 'ee', 'ea', 'oo'],
+    'i_e': ['igh', 'ai', 'ay', 'ee', 'ea'],
+  };
 
   const SIGHT_WORDS = [
     ['the', 1, '这个'], ['and', 2, '和'], ['you', 3, '你'], ['that', 4, '那个'], ['was', 5, '是(过去)'],
@@ -218,7 +252,17 @@
 
     /* 1. 音节计数 */
     function makeSyllableCard(player, level, character) {
-      const bank = wordsInBank(level).filter((r) => /^[a-z]{3,}$/i.test(String(r.word).trim()));
+      /*
+       * /aɪ/ 专项要跨级别：
+       * write / high / light / right 这些都在 G1，只取当前级别的话，
+       * 无论权重加多高都不会出现。所以把全库的 /aɪ/ 词并进候选池。
+       */
+      const base = wordsInBank(level).filter((r) => /^[a-z]{3,}$/i.test(String(r.word).trim()));
+      const aiExtra = wordsInBank('')
+        .filter((r) => /^[a-z]{3,}$/i.test(String(r.word).trim()))
+        .filter((r) => isAISound(r.word));
+      const seenW = new Set(base.map((r) => String(r.word).toLowerCase()));
+      const bank = base.concat(aiExtra.filter((r) => !seenW.has(String(r.word).toLowerCase())));
       if (!bank.length) return null;
       const weak = weakPhonemes(player) || [];
       const weakSet = new Set(weak.map((w) => w.grapheme).filter(Boolean));
@@ -227,7 +271,8 @@
         const ph = phonemesOf(r.word);
         const hit = ph.filter((p) => weakSet.has(p.grapheme)).length;
         const syl = syllableCount(r.word);
-        return { row: r, score: 1 + syl * 0.8 + hit * 1.5 + priorityWeight(r.word) * 1.6 + Math.random() * 0.8, syl, ph };
+        const aiBoost = isAISound(r.word) ? 6.0 : 0;      // /aɪ/ 专项加权
+        return { row: r, score: 1 + syl * 0.8 + hit * 1.5 + aiBoost + priorityWeight(r.word) * 1.6 + Math.random() * 0.8, syl, ph };
       });
 
       const pick = weightedPick(scored, (x) => x.score);
@@ -266,7 +311,9 @@
       const scored = MINIMAL_PAIRS.map((p) => {
         const weight = Math.max(weakMap.get(p.pa) || 0, weakMap.get(p.pb) || 0);
         const inBank = (bank.has(norm(p.a)) ? 1 : 0) + (bank.has(norm(p.b)) ? 1 : 0);
-        return { p, score: 1 + weight * 2 + inBank * 0.6 + Math.random() * 0.7 };
+        // /aɪ/ 对立对加权
+        const aiPair = (p.pa === '/aɪ/' || p.pb === '/aɪ/') ? 2.4 : 0;
+        return { p, score: 1 + weight * 2 + inBank * 0.6 + aiPair + Math.random() * 0.7 };
       });
 
       const { p } = weightedPick(scored, (x) => x.score);
@@ -320,12 +367,40 @@
       const scored = candidates.map((c) => ({
         ...c,
         score: 1 + (weakMap.get(c.p.phoneme) || 0) * 2 + Math.min(c.hits.length, 6) * 0.3
-               + ownCount(c.hits) * 3.0 + Math.random() * 0.8,
+               + ownCount(c.hits) * 3.0
+               + ((PHONEME_BOOST[c.p.phoneme] || 1) - 1) * 4.2   // /aɪ/ 规则加权
+               + Math.random() * 0.8,
       }));
 
-      const chosen = weightedPick(scored, (x) => x.score);
-      const ownHits = chosen.hits.filter(isOwnLine);
-      const preferred = ownHits.length ? ownHits : chosen.hits;
+      /*
+       * IGH 专项：光靠得分加权会被 26 条规则稀释（实测只到 13%）。
+       * 改成按概率直接指定规则——目标是把 igh 稳定拉到 ~40%，
+       * 同时留 60% 给其他规则，不至于变成单一题型。
+       */
+      const ighRule = candidates.find((c) => c.p.grapheme === 'igh');
+      const FORCE_IGH_RATE = 0.30;
+      const chosen = (ighRule && Math.random() < FORCE_IGH_RATE)
+        ? ighRule
+        : weightedPick(scored, (x) => x.score);
+
+      /*
+       * IGH 专项要跨级别取词：G2 里带例句的 igh 词只有 night / frighten / lightning，
+       * right、high、light、bright、tonight 全在 G1。不跨级的话专项题永远是那两三个词。
+       * 其他规则仍只在当前级别内取，避免打乱分级难度。
+       */
+      let hits = chosen.hits;
+      if (chosen.p.grapheme === 'igh') {
+        const full = wordsInBank('').filter((r) => r.sentence)
+          .filter((r) => {
+            const cs = charactersIn(r.sentence);
+            return cs.length === 0 || cs.includes(character);
+          });
+        const wide = full.filter((r) => norm(r.word).includes('igh'));
+        if (wide.length >= 2) hits = wide;
+      }
+
+      const ownHits = hits.filter(isOwnLine);
+      const preferred = ownHits.length ? ownHits : hits;
       const hitsSingle = preferred.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const poolSingle = bank.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);
@@ -343,6 +418,12 @@
       const decoys = (() => {
         const notSameRule = poolSingle.filter((r) => !norm(r.word).includes(chosen.p.grapheme)
           && norm(r.word) !== norm(target));
+        // 先找"听起来像"的拼写组合（igh ↔ ai/ay/ee/ea/oo），逼孩子真的分辨音
+        const conf = CONFUSABLE_GRAPHEMES[chosen.p.grapheme] || [];
+        const confusable = conf.length
+          ? notSameRule.filter((r) => conf.some((g) => norm(r.word).includes(g)))
+          : [];
+        if (confusable.length) return confusable.slice(0, 1);
         const diffPos = tPos ? notSameRule.filter((r) => String(r.pos || '').toLowerCase() && String(r.pos).toLowerCase() !== tPos) : [];
         return (diffPos.length ? diffPos : notSameRule).slice(0, 1);
       })();
@@ -457,5 +538,6 @@
     // 常量与纯函数同时导出，服务端（answer/profile/recommend）和构建脚本都要用
     SYLLABLE_OVERRIDES, CHARACTERS, ALL_NAMES, PHONEME_PATTERNS, MINIMAL_PAIRS, SIGHT_WORDS,
     charactersIn, characterLabel, syllabify, syllableCount, phonemesOf, weightedPick, cardWord, norm,
+    isAISound, PHONEME_BOOST, CONFUSABLE_GRAPHEMES,
   };
 });
