@@ -240,9 +240,15 @@ const server = http.createServer((req, res) => {
     try {
       const ch = query.character;
       // 选词统一走 pick.pickRound（服务端与静态版同一套规则）
-      const pool = db.prepare(
-        'SELECT id, word, hint, sentence FROM words WHERE oxford_level = ?'
-      ).all(level);
+      /*
+       * 用户指定的高频词（show/last/even/left/pass/eye/should/shall/would/wrong/try）
+       * 大多在 G1，而这里取的是单一 level。不跨级并入的话，加权等于白做。
+       */
+      const FOCUS = ['show','last','even','left','pass','eye','should','shall','would','wrong','try'];
+      const pool = db.prepare(`
+        SELECT id, word, hint, sentence FROM words
+         WHERE oxford_level = ? OR LOWER(word) IN (${FOCUS.map(() => '?').join(',')})
+      `).all(level, ...FOCUS);
 
       // 人工权重：跨级别 JOIN，给 G1 的词加权后在 G2 也能出现
       const prio = {};

@@ -38009,6 +38009,48 @@
           "rate": "-8%"
         }
       }
+    },
+    "shall": {
+      "file": "words/shall.mp3",
+      "bytes": 4556,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/shall__biff.mp3",
+          "bytes": 3836,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/shall__chip.mp3",
+          "bytes": 3980,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "wilma": {
+          "file": "words/shall__wilma.mp3",
+          "bytes": 4412,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/shall__kipper.mp3",
+          "bytes": 4412,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "floppy": {
+          "file": "words/shall__floppy.mp3",
+          "bytes": 4268,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
     }
   },
   "sentences": {
@@ -40999,9 +41041,9 @@
     "nadim": "en-GB-RyanNeural",
     "anneena": "en-GB-MaisieNeural"
   },
-  "generated_at": "2026-10-27T10:23:06.905Z",
+  "generated_at": "2026-10-27T12:32:20.035Z",
   "counts": {
-    "words": 905,
+    "words": 906,
     "sentences": 495,
     "phrases": 5
   },

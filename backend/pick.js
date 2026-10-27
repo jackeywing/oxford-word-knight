@@ -29,7 +29,15 @@
  *   "每次闯关都一样"的主因。现在 0.4+0.16×★（★5≈1.2），配合 seen 惩罚会轮换。
  */
 
+const { FOCUS_WORDS } = require('../shared/engine.js');
+
 const CHARACTER_NAMES = ['biff', 'chip', 'kipper', 'wilma', 'floppy', 'gran', 'mum', 'dad', 'wilf'];
+
+/* 用户指定高频词：0.26 是实测值——
+ * 8 个名额要在 900+ 词里排进前八，普通词门槛约 0.99 分，
+ * +0.26 让每个词单轮命中率约 27%，11 个词合计每轮 3 个左右。
+ * 给 1.0 会变成 11 个词霸占全部名额。 */
+const FOCUS_BOOST = 0.26;
 
 function charactersIn(sentence) {
   const s = String(sentence || '');
@@ -90,6 +98,7 @@ function pickRound({ pool = [], count = 8, character = '', seen, miss, priority 
       if (missSet.has(k)) s += 3.5;
       if (seenSet.has(k)) s -= 3.0;
     }
+    if (FOCUS_WORDS.has(k)) s += FOCUS_BOOST;
     const star = Number(prio.get(k)) || 0;
     if (star > 0) s += 0.4 + star * 0.16;
     return { w, s };

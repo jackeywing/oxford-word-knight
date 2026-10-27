@@ -123,6 +123,15 @@
     if (AI_END_Y.includes(w)) return true;
     return false;
   }
+  /* ─────────── 用户指定的高频词 ───────────
+   * 这 11 个词在闯关和特训里都要提高出现率。
+   * 主游戏（backend/pick.js）与特训（本文件）共用同一份名单，避免两边不一致。
+   * 系数各自不同是因为两边的分数量纲不同，不是笔误。
+   */
+  const FOCUS_WORDS = new Set([
+    'show', 'last', 'even', 'left', 'pass', 'eye', 'should', 'shall', 'would', 'wrong', 'try',
+  ]);
+
   /** 音素加权表：数值 = 相对权重倍数，1 = 不加权 */
   const PHONEME_BOOST = { '/aɪ/': 3.4 };   // 规则得分额外 +（3.4-1）×4.2 ≈ +10
 
@@ -258,9 +267,10 @@
        * 无论权重加多高都不会出现。所以把全库的 /aɪ/ 词并进候选池。
        */
       const base = wordsInBank(level).filter((r) => /^[a-z]{3,}$/i.test(String(r.word).trim()));
+      /* /aɪ/ 词和用户指定高频词大多在 G1，必须跨级并入，否则加权无效 */
       const aiExtra = wordsInBank('')
         .filter((r) => /^[a-z]{3,}$/i.test(String(r.word).trim()))
-        .filter((r) => isAISound(r.word));
+        .filter((r) => isAISound(r.word) || FOCUS_WORDS.has(String(r.word).toLowerCase()));
       const seenW = new Set(base.map((r) => String(r.word).toLowerCase()));
       const bank = base.concat(aiExtra.filter((r) => !seenW.has(String(r.word).toLowerCase())));
       if (!bank.length) return null;
@@ -272,7 +282,8 @@
         const hit = ph.filter((p) => weakSet.has(p.grapheme)).length;
         const syl = syllableCount(r.word);
         const aiBoost = isAISound(r.word) ? 6.0 : 0;      // /aɪ/ 专项加权
-        return { row: r, score: 1 + syl * 0.8 + hit * 1.5 + aiBoost + priorityWeight(r.word) * 1.6 + Math.random() * 0.8, syl, ph };
+        const focusBoost = FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 6.0 : 0;
+        return { row: r, score: 1 + syl * 0.8 + hit * 1.5 + aiBoost + focusBoost + priorityWeight(r.word) * 1.6 + Math.random() * 0.8, syl, ph };
       });
 
       const pick = weightedPick(scored, (x) => x.score);
@@ -404,7 +415,8 @@
       const hitsSingle = preferred.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const poolSingle = bank.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);
-      const targetRow = weightedPick(usePool, (r) => 1 + priorityWeight(r.word) * 1.6);
+      const targetRow = weightedPick(usePool, (r) => 1 + priorityWeight(r.word) * 1.6
+        + (FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 6.0 : 0));
       const target = targetRow.word;
       const sameRule = usePool.filter((r) => norm(r.word) !== norm(target)).slice(0, 2);
 
@@ -538,6 +550,6 @@
     // 常量与纯函数同时导出，服务端（answer/profile/recommend）和构建脚本都要用
     SYLLABLE_OVERRIDES, CHARACTERS, ALL_NAMES, PHONEME_PATTERNS, MINIMAL_PAIRS, SIGHT_WORDS,
     charactersIn, characterLabel, syllabify, syllableCount, phonemesOf, weightedPick, cardWord, norm,
-    isAISound, PHONEME_BOOST, CONFUSABLE_GRAPHEMES,
+    isAISound, PHONEME_BOOST, CONFUSABLE_GRAPHEMES, FOCUS_WORDS,
   };
 });
