@@ -115,109 +115,48 @@ module.exports = function createPractice(db) {
   const nextTask = (opts) => engine.nextTask(opts);
 
   /* ───────────── 答题处理 + 图谱更新（闭环核心） ───────────── */
+  /* ───────────── 答题处理（闭环核心） ─────────────
+   * 判定、反馈文案、学情增量都由 shared/engine.js 提供（前后端共用同一份）。
+   * 这里只负责把增量写进 SQLite。
+   */
+  function upsertWordState(p, w) {
+    db.prepare(`
+      INSERT INTO word_state (player_id, word, error_count, correct, expected, actual, last_seen)
+      VALUES (?, ?, ?, ?, ?, ?, datetime('now','localtime'))
+      ON CONFLICT(player_id, word) DO UPDATE SET
+        error_count = error_count + excluded.error_count,
+        correct     = correct + excluded.correct,
+        expected    = COALESCE(excluded.expected, expected),
+        actual      = COALESCE(excluded.actual, actual),
+        last_seen   = datetime('now','localtime')
+    `).run(p, w.word, w.error ? 1 : 0, w.correct ? 1 : 0,
+           w.expected === undefined ? null : w.expected,
+           w.actual === undefined ? null : w.actual);
+  }
+
   function answer({ player, card, response, response_ms = 0, ip = '' }) {
     const p = player || 'guest';
     const ms = Math.max(0, parseInt(response_ms) || 0);
     const type = card.card_type;
-    let ok = false;
 
-    if (type === 'SYLLABLE_COUNTING') ok = Number(response) === Number(card.correct);
-    else ok = String(response) === String(card.correct);
+    const ok = E.gradeAnswer(card, response);
+    const deltas = E.learningDeltas(card, ok, ms, response);
 
-    const hesitant = ms > 5000;
-    const newRecord = db.prepare(
-      `SELECT 1 FROM word_state WHERE player_id = ? AND word = ?`
-    ).get(p, card.word || card.audio_text || '');
-
-    // ── 写回图谱 ──
-    if (type === 'SYLLABLE_COUNTING') {
-      const w = card.word;
-      db.prepare(`
-        INSERT INTO word_state (player_id, word, error_count, correct, expected, actual, last_seen)
-        VALUES (?, ?, ?, ?, ?, ?, datetime('now','localtime'))
-        ON CONFLICT(player_id, word) DO UPDATE SET
-          error_count = error_count + excluded.error_count,
-          correct = correct + excluded.correct,
-          expected = excluded.expected, actual = excluded.actual,
-          last_seen = datetime('now','localtime')
-      `).run(p, w, ok ? 0 : 1, ok ? 1 : 0, card.correct, Number(response) || 0);
-      // 命中薄弱音素也加一点权重
-      (card.meta.graphemes || []).forEach((g) => {
-        const ph = PHONEME_PATTERNS.find((x) => x.grapheme === g);
-        if (ph && !ok) bumpPhoneme(p, ph.phoneme, ph.grapheme, 0.3, false);
-      });
-    } else if (type === 'PHONEME_DISCRIMINATION') {
-      const pair = card.reveal.phonemes;
-      // 答错：正确音素加重；答对：轻微衰减
-      bumpPhoneme(p, pair[card.correct === card.reveal.pair[0] ? 0 : 1],
-        (card.meta.graphemes || [])[0] || '', ok ? -0.5 : 1.6, ok);
-      if (!ok) {
-        const otherSym = pair[card.correct === card.reveal.pair[0] ? 1 : 0];
-        const otherG = (PHONEME_PATTERNS.find((x) => x.phoneme === otherSym) || {}).grapheme || '';
-        bumpPhoneme(p, otherSym, otherG, 0.6, false);
-      }
-      db.prepare(`
-        INSERT INTO word_state (player_id, word, error_count, correct, last_seen)
-        VALUES (?, ?, ?, ?, datetime('now','localtime'))
-        ON CONFLICT(player_id, word) DO UPDATE SET
-          error_count = error_count + excluded.error_count,
-          correct = correct + excluded.correct,
-          last_seen = datetime('now','localtime')
-      `).run(p, card.correct, ok ? 0 : 1, ok ? 1 : 0);
-    } else if (type === 'PHONICS_CONTEXT_MATCH') {
-      const ph = PHONEME_PATTERNS.find((x) => x.grapheme === card.reveal.grapheme);
-      if (ph) bumpPhoneme(p, ph.phoneme, ph.grapheme, ok ? (hesitant ? -0.3 : -0.7) : 1.2, ok);
-      db.prepare(`
-        INSERT INTO word_state (player_id, word, error_count, correct, last_seen)
-        VALUES (?, ?, ?, ?, datetime('now','localtime'))
-        ON CONFLICT(player_id, word) DO UPDATE SET
-          error_count = error_count + excluded.error_count,
-          correct = correct + excluded.correct,
-          last_seen = datetime('now','localtime')
-      `).run(p, card.correct, ok ? 0 : 1, ok ? 1 : 0);
-    } else if (type === 'SIGHT_WORD_FLASH') {
-      db.prepare(`
-        INSERT INTO word_state (player_id, word, error_count, correct, last_seen)
-        VALUES (?, ?, ?, ?, datetime('now','localtime'))
-        ON CONFLICT(player_id, word) DO UPDATE SET
-          error_count = error_count + excluded.error_count,
-          correct = correct + excluded.correct,
-          last_seen = datetime('now','localtime')
-      `).run(p, card.word, ok ? 0 : 1, ok ? 1 : 0);
-    }
+    for (const w of deltas.words) upsertWordState(p, w);
+    for (const ph of deltas.phonemes) bumpPhoneme(p, ph.phoneme, ph.grapheme, ph.delta, ph.correct);
 
     db.prepare(
       `INSERT INTO practice_events (player_id, card_type, word, focus, is_correct, response_ms, ip)
        VALUES (?, ?, ?, ?, ?, ?, ?)`
     ).run(p, type, card.word || card.audio_text || card.correct || '', card.focus || '', ok ? 1 : 0, ms, String(ip || ''));
 
-    // ── 即时反馈文案（面向 8-9 岁） ──
-    let fb;
-    if (ok && ms < 2000) fb = { message: '太棒了！秒答！', type: 'encouragement', effect: 'confetti' };
-    else if (ok) fb = { message: '答对了！做得好！', type: 'encouragement', effect: 'star' };
-    else if (type === 'SYLLABLE_COUNTING')
-      fb = { message: `这个词要这样切：${card.reveal.display}`, type: 'hint', hint: `拍着手跟着读：${card.reveal.display}`, effect: 'bounce', next_action: 'retry' };
-    else if (type === 'PHONEME_DISCRIMINATION')
-      fb = { message: `注意听：${card.reveal.phonemes[0]} 和 ${card.reveal.phonemes[1]} 是不同的音`, type: 'correction', hint: `${card.reveal.tip}！再听一遍`, effect: 'shake', next_action: 'retry' };
-    else if (type === 'PHONICS_CONTEXT_MATCH')
-      fb = { message: `${card.reveal.grapheme} 通常发 ${card.reveal.phoneme}`, type: 'hint', hint: `同家族的词还有：${card.reveal.family.join('、')}`, effect: 'glow', next_action: 'review_rule' };
-    else
-      fb = { message: `再记一次：${card.reveal.word} = ${card.reveal.zh}`, type: 'hint', hint: card.reveal.tip, effect: 'bounce', next_action: 'retry' };
-
-    // 标点题：上面几条模板都基于单词/音素，用在这里会出现 undefined
-    if (card.card_type === 'PUNCTUATION_MARK') {
-      const mk = (card.reveal || {}).mark || card.correct;
-      fb = ok
-        ? { message: `答对了！这里用 ${mk}`, type: 'encouragement', effect: 'star' }
-        : { message: `这里应该用 ${mk}`, type: 'correction', hint: (card.reveal || {}).tip || '', effect: 'shake', next_action: 'retry' };
-    }
-
+    const fb = E.buildFeedback(card, ok, ms);
     return {
       is_correct: ok,
       correct_answer: card.correct,
       feedback: fb,
-      reveal: ok ? card.reveal : card.reveal,     // 答对答错都给出讲解（教学优先）
-      hesitant,
+      reveal: card.reveal,                     // 答对答错都给讲解（教学优先）
+      hesitant: deltas.hesitant,
       next_task_hint: ok ? 'continue' : (fb.next_action || 'retry'),
     };
   }
@@ -236,86 +175,40 @@ module.exports = function createPractice(db) {
     const totals = db.prepare(`
       SELECT COUNT(*) n, SUM(is_correct) ok, ROUND(AVG(response_ms)) avg_ms
         FROM practice_events WHERE player_id = ?
-    `).get(p);
+    `).get(p) || {};
     const byType = db.prepare(`
       SELECT card_type, COUNT(*) n, SUM(is_correct) ok
         FROM practice_events WHERE player_id = ? GROUP BY card_type
     `).all(p);
-    return {
-      player: p,
-      total: totals.n || 0,
-      correct: totals.ok || 0,
-      accuracy: totals.n ? Math.round((totals.ok / totals.n) * 100) : 0,
-      avg_ms: totals.avg_ms || 0,
-      weak_phonemes: weak,
-      trouble_words: words.filter((w) => w.error_count > 0),
-      by_type: byType,
-    };
+    return E.buildProfile({ player: p, weakPhonemes: weak, words, totals, byType });
   }
 
   /* ───────────── 靶向推荐（等价"诊断即推书"） ───────────── */
-  function troubleWordFallback(p, level) {
+  /** 错过的词（含中文提示），推荐兜底用 */
+  function troubleWords(p) {
     // hints live on `words`, not on `word_state` — join instead of selecting w.hint
-    const bad = db.prepare(`
+    const rows = db.prepare(`
       SELECT s.word, COALESCE(w.hint, '') hint
         FROM word_state s
         LEFT JOIN words w ON LOWER(w.word) = LOWER(s.word)
        WHERE s.player_id = ? AND s.error_count > 0
        ORDER BY s.error_count DESC, s.last_seen DESC LIMIT 8
     `).all(p);
-    if (!bad.length) return null;
-    return {
-      reason: '这些词你错过，先回去读一遍',
-      focus: [],
-      words: bad.map(r => ({ word: r.word, hint: r.hint || '', grapheme: '', phoneme: '' })),
-    };
+    return rows.map((r) => ({ word: r.word, hint: r.hint || '', grapheme: '', phoneme: '' }));
   }
 
   function recommend(player, level) {
     const p = player || 'guest';
-    const bank = wordsInBank(level);
-    // 诊断（focus）与匹配（找词）要分开：
-    //   allWeak —— 所有薄弱音素，含没有字母组合的（如 /ʃ/），用于告诉孩子「你弱在哪」
-    //   weak    —— 其中带字母组合的，才可能回到词库层面匹配到词
     const allWeak = db.prepare(`
       SELECT phoneme, grapheme, error_weight FROM phoneme_state
        WHERE player_id = ? AND error_weight > 0
        ORDER BY error_weight DESC LIMIT 3
     `).all(p);
-    const weak = allWeak.filter((w) => w.grapheme);
-
-    if (!allWeak.length) {
-      return troubleWordFallback(p, level)
-        || { reason: '还没有明显薄弱点，继续按进度练习就好', focus: [], words: [] };
-    }
-    const picked = [];
-    const reasons = [];
-    for (const w of weak) {
-      const hits = bank.filter((r) => w.grapheme && norm(r.word).includes(w.grapheme));
-      if (hits.length) {
-        reasons.push(`「${w.grapheme}」${w.phoneme} 错误权重 ${Math.round(w.error_weight * 100) / 100}`);
-        hits.slice(0, 6).forEach((r) => {
-          if (!picked.some((x) => x.word === r.word))
-            picked.push({ word: r.word, hint: r.hint, grapheme: w.grapheme, phoneme: w.phoneme });
-        });
-      }
-    }
-    const focus = allWeak.map((w) => ({
-      grapheme: w.grapheme || '', phoneme: w.phoneme, weight: Math.round(w.error_weight * 100) / 100,
-    }));
-
-    // 薄弱组合在本级字库里一个词都没有 → 退回"错过的词"，但诊断结论不能丢：
-    // 孩子确实有这个薄弱点，focus 必须照常给出，否则 UI 会显示"没有焦点"
-    if (!picked.length) {
-      const fb = troubleWordFallback(p, level);
-      if (fb) return { ...fb, focus };
-    }
-
-    return {
-      reason: reasons.length ? '优先补这些音：' + reasons.join('；') : '继续巩固',
-      focus,
-      words: picked.slice(0, 12),
-    };
+    return E.buildRecommendation({
+      allWeak,
+      bank: wordsInBank(level),
+      fallbackWords: troubleWords(p),
+    });
   }
 
   return { nextTask, answer, profile, recommend, syllabify, syllableCount, phonemesOf,

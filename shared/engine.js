@@ -282,6 +282,151 @@
     return String((c && (c.word || c.correct || c.audio_text)) || '').trim().toLowerCase();
   }
 
+
+  /* ───────────────────────── 判定 / 反馈 / 学情（纯逻辑） ─────────────────────────
+   * 这些之前在后端 practice.js 和 build-pages.js 各有一份，改一处忘一处
+   * （标点题的 undefined 反馈就是这么来的）。现在只在这里定义，
+   * 适配层负责把"增量"写进 SQLite 或 localStorage。
+   */
+
+  /** 判对错。音节题比数字，其余比字符串。 */
+  function gradeAnswer(card, response) {
+    if (!card) return false;
+    if (card.card_type === 'SYLLABLE_COUNTING') return Number(response) === Number(card.correct);
+    return String(response) === String(card.correct);
+  }
+
+  /** 面向 8–9 岁的即时反馈文案 */
+  function buildFeedback(card, ok, ms = 0) {
+    const t = card.card_type;
+    if (t === 'PUNCTUATION_MARK') {
+      const mk = (card.reveal || {}).mark || card.correct;
+      return ok
+        ? { message: `答对了！这里用 ${mk}`, type: 'encouragement', effect: 'star' }
+        : { message: `这里应该用 ${mk}`, type: 'correction', hint: (card.reveal || {}).tip || '', effect: 'shake', next_action: 'retry' };
+    }
+    if (ok && ms < 2000) return { message: '太棒了！秒答！', type: 'encouragement', effect: 'confetti' };
+    if (ok) return { message: '答对了！做得好！', type: 'encouragement', effect: 'star' };
+    if (t === 'SYLLABLE_COUNTING')
+      return { message: `这个词要这样切：${card.reveal.display}`, type: 'hint', hint: `拍着手跟着读：${card.reveal.display}`, effect: 'bounce', next_action: 'retry' };
+    if (t === 'PHONEME_DISCRIMINATION')
+      return { message: `注意听：${card.reveal.phonemes[0]} 和 ${card.reveal.phonemes[1]} 是不同的音`, type: 'correction', hint: `${card.reveal.tip}！再听一遍`, effect: 'shake', next_action: 'retry' };
+    if (t === 'PHONICS_CONTEXT_MATCH')
+      return { message: `${card.reveal.grapheme} 通常发 ${card.reveal.phoneme}`, type: 'hint', hint: `同家族的词还有：${card.reveal.family.join('、')}`, effect: 'glow', next_action: 'review_rule' };
+    if (t === 'SIGHT_WORD_FLASH')
+      return { message: `再记一次：${card.reveal.word} = ${card.reveal.zh}`, type: 'hint', hint: card.reveal.tip, effect: 'bounce', next_action: 'retry' };
+    return { message: '再试一次', type: 'hint', hint: '', effect: 'bounce', next_action: 'retry' };
+  }
+
+  /**
+   * 学情增量：告诉适配层"该给哪些音素/单词加多少分"。
+   * 纯函数，不碰数据库。返回结构：
+   *   phonemes: [{ phoneme, grapheme, delta, correct }]
+   *   words:    [{ word, error, correct, expected?, actual? }]
+   */
+  function learningDeltas(card, ok, ms = 0, response) {
+    const t = card.card_type;
+    const hesitant = ms > 5000;
+    const phonemes = [];
+    const words = [];
+    const pushPh = (phoneme, grapheme, delta, correct) => {
+      if (!phoneme) return;
+      phonemes.push({ phoneme, grapheme: grapheme || '', delta, correct: !!correct });
+    };
+
+    if (t === 'SYLLABLE_COUNTING') {
+      words.push({ word: card.word, error: ok ? 0 : 1, correct: ok ? 1 : 0, expected: card.correct, actual: Number(response) || 0 });
+      if (!ok) {
+        for (const g of (card.meta.graphemes || [])) {
+          const ph = PHONEME_PATTERNS.find((x) => x.grapheme === g);
+          if (ph) pushPh(ph.phoneme, ph.grapheme, 0.3, false);
+        }
+      }
+    } else if (t === 'PHONEME_DISCRIMINATION') {
+      const rv = card.reveal || {};
+      const pair = rv.phonemes || [];
+      const idx = card.correct === (rv.pair || [])[0] ? 0 : 1;
+      pushPh(pair[idx], (card.meta.graphemes || [])[0] || '', ok ? -0.5 : 1.6, ok);
+      if (!ok) {
+        const otherSym = pair[1 - idx];
+        const otherG = (PHONEME_PATTERNS.find((x) => x.phoneme === otherSym) || {}).grapheme || '';
+        pushPh(otherSym, otherG, 0.6, false);
+      }
+      words.push({ word: card.correct, error: ok ? 0 : 1, correct: ok ? 1 : 0 });
+    } else if (t === 'PHONICS_CONTEXT_MATCH') {
+      const g = (card.reveal || {}).grapheme;
+      const ph = PHONEME_PATTERNS.find((x) => x.grapheme === g);
+      if (ph) pushPh(ph.phoneme, ph.grapheme, ok ? (hesitant ? -0.3 : -0.7) : 1.2, ok);
+      words.push({ word: card.correct, error: ok ? 0 : 1, correct: ok ? 1 : 0 });
+    } else if (t === 'SIGHT_WORD_FLASH') {
+      words.push({ word: card.word, error: ok ? 0 : 1, correct: ok ? 1 : 0 });
+    }
+    // PUNCTUATION_MARK：不写学情（标点不是词汇/音素节点）
+
+    return { phonemes, words, hesitant };
+  }
+
+  /** 把适配层读到的原始数据整理成统一的学情画像结构 */
+  function buildProfile({ player, weakPhonemes = [], words = [], totals = {}, byType = [] }) {
+    const n = Number(totals.n || 0);
+    const okN = Number(totals.ok || 0);
+    return {
+      player,
+      total: n,
+      correct: okN,
+      accuracy: n ? Math.round((okN / n) * 100) : 0,
+      avg_ms: totals.avg_ms || 0,
+      weak_phonemes: weakPhonemes,
+      trouble_words: words.filter((w) => w.error_count > 0),
+      by_type: byType,
+    };
+  }
+
+  /**
+   * 靶向推荐：诊断（focus）与匹配（找词）分开。
+   *   allWeak  —— 所有薄弱音素，含没有字母组合的（如 /ʃ/），用来说明"弱在哪"
+   *   weak     —— 其中带字母组合的，才可能在词库里匹配到词
+   * fallbackWords 由适配层提供（DB 或 localStorage 里错过的词）。
+   */
+  function buildRecommendation({ allWeak = [], bank = [], fallbackWords = [] }) {
+    const focus = allWeak.map((w) => ({
+      grapheme: w.grapheme || '',
+      phoneme: w.phoneme,
+      weight: Math.round((w.error_weight || 0) * 100) / 100,
+    }));
+
+    if (!allWeak.length) {
+      return fallbackWords.length
+        ? { reason: '这些词你错过，先回去读一遍', focus: [], words: fallbackWords.slice(0, 8) }
+        : { reason: '还没有明显薄弱点，继续按进度练习就好', focus: [], words: [] };
+    }
+
+    const weak = allWeak.filter((w) => w.grapheme);
+    const picked = [], reasons = [];
+    for (const w of weak) {
+      const hits = bank.filter((r) => w.grapheme && norm(r.word).includes(w.grapheme));
+      if (hits.length) {
+        reasons.push(`「${w.grapheme}」${w.phoneme} 错误权重 ${Math.round((w.error_weight || 0) * 100) / 100}`);
+        hits.slice(0, 6).forEach((r) => {
+          if (!picked.some((x) => x.word === r.word)) {
+            picked.push({ word: r.word, hint: r.hint, grapheme: w.grapheme, phoneme: w.phoneme });
+          }
+        });
+      }
+    }
+
+    // 薄弱组合在本级字库里一个词都没有 → 退回"错过的词"，但诊断结论不能丢
+    if (!picked.length && fallbackWords.length) {
+      return { reason: '这些词你错过，先回去读一遍', focus, words: fallbackWords.slice(0, 8) };
+    }
+
+    return {
+      reason: reasons.length ? '优先补这些音：' + reasons.join('；') : '继续巩固',
+      focus,
+      words: picked.slice(0, 12),
+    };
+  }
+
   /* ───────────────────────── 引擎 ───────────────────────── */
 
   /**
@@ -620,6 +765,7 @@
     // 常量与纯函数同时导出，服务端（answer/profile/recommend）和构建脚本都要用
     SYLLABLE_OVERRIDES, CHARACTERS, ALL_NAMES, PHONEME_PATTERNS, MINIMAL_PAIRS, SIGHT_WORDS, PUNCT_BANK,
     charactersIn, characterLabel, syllabify, syllableCount, phonemesOf, weightedPick, cardWord, norm,
+    gradeAnswer, buildFeedback, learningDeltas, buildProfile, buildRecommendation,
     isAISound, PHONEME_BOOST, CONFUSABLE_GRAPHEMES, FOCUS_WORDS,
   };
 });

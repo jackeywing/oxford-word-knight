@@ -52,7 +52,9 @@ const get = async (u) => (await fetch(B + u)).json();
 
   ok('高权重生词每轮必现', uw.every((w) => (wordHit.get(String(w.word).toLowerCase()) || 0) >= ROUNDS * 0.8),
     uw.map((w) => w.word + '×' + (wordHit.get(String(w.word).toLowerCase()) || 0)).join(', ') || '（未录入生词）');
-  ok('其余词抽样足够分散', distinctNormal >= 180,
+  // 阈值从 180 降到 165：FOCUS_WORDS 那 11 个高频词（在 pick.js 里 +0.26）
+  // 会占掉一部分名额，普通词的覆盖面自然下降。实测 175–199，165 留足余量。
+  ok('其余词抽样足够分散', distinctNormal >= 165,
     `${distinctNormal} 个普通词出现过（${totalNormal} 次抽样）`);
 
   const top = normal.sort((a, b) => b[1] - a[1]).slice(0, 5);
