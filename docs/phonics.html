@@ -83,6 +83,33 @@
   .ch-word{font-family:'Press Start 2P',monospace;font-size:2.1em;color:#3E2723;text-align:center;letter-spacing:3px;margin:10px 0 4px;word-break:break-word;}
   .ch-sentence{font-size:1.05em;color:#3E2723;margin-bottom:6px;line-height:1.7;text-align:center;font-family:-apple-system,'PingFang SC',sans-serif;font-weight:600;}
 .ch-hint{font-size:.46em;color:#5D4037;background:#FFF8E1;border-left:3px solid #FFD54F;padding:6px 10px;margin:6px 0 10px;line-height:1.7}
+/* ── 面具收藏 ── */
+.mask-strip{background:#FFF8E1;border:3px solid #D7CCC8;border-radius:8px;padding:12px;text-align:center}
+.mask-title{font-size:.46em;color:#5D4037;margin-bottom:10px}
+.mask-title b{color:#BF360C}
+.mask-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.mask-slot{width:44px;height:44px;border-radius:8px;border:3px dashed #D7CCC8;display:flex;align-items:center;justify-content:center;font-size:20px;background:#fff;color:#BCAAA4}
+.mask-slot.got{border-style:solid;border-color:#FFB300;background:#FFF3E0;box-shadow:0 2px 0 #E0A800}
+.mask-hint{font-size:.4em;color:#8D6E63}
+.ball-btn{background:#6A1B9A;color:#fff;border-color:#4A148C}
+.mask-award{display:inline-flex;gap:10px;align-items:center;background:#FFF3E0;border:3px solid #FFB300;border-radius:8px;padding:10px 14px;margin:10px 0}
+.ma-emoji{font-size:30px}
+.ma-title{font-size:.4em;color:#BF360C}
+.ma-name{font-size:.56em;color:#5D4037;font-weight:700}
+.ma-who{font-size:.38em;color:#8D6E63}
+.mask-done{font-size:.44em;color:#6A1B9A;background:#F3E5F5;border-radius:6px;padding:8px;margin:8px 0}
+/* ── 假面舞会 ── */
+.ball-overlay{position:fixed;inset:0;background:rgba(20,10,0,.82);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}
+.ball-card{background:#2D1F0E;border:4px solid #FFB300;border-radius:12px;padding:22px 20px;max-width:520px;width:100%;text-align:center;box-shadow:0 0 40px rgba(255,179,0,.45)}
+.ball-lights{font-size:.7em;letter-spacing:6px;margin-bottom:8px}
+.ball-card h2{font-size:1.05em;color:#FFD54F;margin:6px 0 10px;text-shadow:0 0 12px rgba(255,213,79,.7)}
+.ball-sub{font-size:.42em;color:#FFE0B2;line-height:1.9;margin-bottom:16px}
+.ball-stage{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.ball-guest{background:rgba(255,255,255,.06);border:2px solid #6D4C41;border-radius:10px;padding:10px 12px;min-width:76px}
+.ball-face{position:relative;font-size:30px;line-height:1}
+.ball-mask{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-size:18px}
+.ball-name{font-size:.36em;color:#FFE0B2;margin-top:6px}
+.ball-note{font-size:.4em;color:#FFD54F;min-height:1.4em;margin-bottom:12px}
 .mark-opts{gap:14px}
 .opt.mark{min-width:70px;font-size:1.5em;font-family:Georgia,"Times New Roman",serif;padding:10px 14px;line-height:1.2}
 .type-badge.punct{background:#7B1FA2;color:#fff}
@@ -1239,6 +1266,70 @@ const GREET={
   kipper:'Hello, I am Kipper.', wilma:'Hello, I am Wilma.',
   floppy:'Woof! I am Floppy.',
 };
+/* ── 面具收集 → 假面舞会 ─────────────────────────────
+ * 和 Word Adventure 的彩蛋同一个思路：通关攒收藏，攒满解锁场景。
+ * 门槛：一轮至少 6/8 才对才算通过（1 星不给，避免乱点也能刷）。
+ */
+const MASKS=[
+  {id:'butterfly', name:'蝴蝶面具', emoji:'🦋', who:'Biff'},
+  {id:'knight',    name:'骑士面具', emoji:'⚔️', who:'Chip'},
+  {id:'fox',       name:'狐狸面具', emoji:'🦊', who:'Kipper'},
+  {id:'star',      name:'星星面具', emoji:'⭐', who:'Wilma'},
+  {id:'dog',       name:'狗狗面具', emoji:'🐕', who:'Floppy'},
+  {id:'gold',      name:'金色面具', emoji:'👑', who:'神秘客人'},
+];
+const MASK_KEY='owk_masks';
+function myMasks(){ try{ return JSON.parse(localStorage.getItem(MASK_KEY)||'[]').filter(id=>MASKS.some(m=>m.id===id)); }catch(e){ return []; } }
+function awardMask(){
+  const have=myMasks();
+  if(have.length>=MASKS.length) return null;
+  const m=MASKS[have.length];
+  have.push(m.id);
+  try{ localStorage.setItem(MASK_KEY,JSON.stringify(have)); }catch(e){}
+  return m;
+}
+function ballUnlocked(){ return myMasks().length>=MASKS.length; }
+
+function masksStrip(){
+  const have=myMasks();
+  const slots=MASKS.map((m,i)=>have.includes(m.id)
+    ? `<div class="mask-slot got" title="${m.who} 的${m.name}"><span>${m.emoji}</span></div>`
+    : `<div class="mask-slot" title="继续闯关解锁"><span>?</span></div>`).join('');
+  const ball=ballUnlocked()
+    ? `<button class="mc-btn ball-btn" onclick="openBall()">🎭 进入假面舞会</button>`
+    : `<div class="mask-hint">再完成 ${MASKS.length-have.length} 轮（≥6/8 正确）解锁假面舞会</div>`;
+  return `<div class="mask-strip">
+    <div class="mask-title">🎭 面具收藏 <b>${have.length}/${MASKS.length}</b></div>
+    <div class="mask-row">${slots}</div>
+    ${ball}
+  </div>`;
+}
+
+function renderMasks(){
+  const host=document.getElementById('maskHost');
+  if(host) host.innerHTML=masksStrip();
+}
+
+function openBall(){
+  const have=myMasks();
+  const cast=[['biff','👧🏻','Biff','🦋'],['chip','🧒🏻','Chip','⚔️'],['kipper','👦🏻','Kipper','🦊'],['wilma','👧🏽','Wilma','⭐'],['floppy','🐶','Floppy','🐕']];
+  const rows=cast.filter(c=>have.includes(MASKS.find(m=>m.who===c[2])?.id)).map(c=>
+    `<div class="ball-guest"><div class="ball-face">${c[1]}<span class="ball-mask">${c[3]}</span></div><div class="ball-name">${c[2]}</div></div>`
+  ).join('');
+  const ov=document.createElement('div');
+  ov.className='ball-overlay';
+  ov.onclick=(e)=>{ if(e.target===ov) ov.remove(); };
+  ov.innerHTML=`<div class="ball-card">
+    <div class="ball-lights">✨ 🎭 ✨</div>
+    <h2>假面舞会</h2>
+    <p class="ball-sub">所有面具都集齐了，牛津树的小伙伴们戴上面具来跳舞了！</p>
+    <div class="ball-stage">${rows}</div>
+    <p class="ball-note">${have.includes('gold')?'神秘客人也来了 —— 他留下了金色面具 👑':''}</p>
+    <button class="mc-btn" onclick="this.closest('.ball-overlay').remove()">🎉 太棒了</button>
+  </div>`;
+  document.body.appendChild(ov);
+}
+
 function demoVoice(){
   const t=GREET[ch];
   if(!t) return;
@@ -1295,7 +1386,7 @@ function resetRound(){
   const go=document.getElementById('goBtn'); if(go) go.style.display='inline-block';
   const rst=document.getElementById('rstBtn'); if(rst) rst.style.display='none';
   const area=document.getElementById('chArea');
-  if(area) area.innerHTML='<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:40px;">选择你的角色<br>开始特训吧！</div>';
+  if(area) area.innerHTML='<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:26px 10px 10px;">选择你的角色<br>开始特训吧！</div><div id="maskHost" style="padding:0 14px 18px;">'+masksStrip()+'</div>';
   hud(); dn();
 }
 
@@ -1560,11 +1651,19 @@ async function finish(){
       rec.words.slice(0,6).map(w=>`<div class="rec-item"><b>${w.word}</b> ${w.hint||''}　<span style="opacity:.7">${w.grapheme}</span></div>`).join('');
   }
 
+  // 达标（≥70% 正确）才发面具
+  const passed = ok >= Math.ceil(N * 0.7);
+  const got = passed ? awardMask() : null;
+  const maskHtml = got
+    ? `<div class="mask-award"><span class="ma-emoji">${got.emoji}</span><div style="text-align:left;"><div class="ma-title">解锁新面具</div><div class="ma-name">${got.name}</div><div class="ma-who">来自 ${got.who}</div></div></div>`
+    : (passed && ballUnlocked() ? `<div class="mask-done">🎭 面具已集齐，回起始页进入假面舞会</div>` : '');
+
   document.getElementById('chArea').innerHTML=`
     <div class="ch-card" style="text-align:center;">
       <div style="font-size:2.6em;margin:6px 0;">🎧</div>
       <div style="font-size:.62em;color:#3E2723;margin-bottom:8px;">特训完成！</div>
       <div style="font-size:.8em;margin:8px 0;">${stars}</div>
+      ${maskHtml}
       <div style="font-size:.44em;color:#5D4037;line-height:2;">
         🏆 ${sc} 分　🔥 最高 ${mx} 连击　✅ ${ok}/${N}
       </div>

@@ -166,7 +166,13 @@ async function synth(text, voiceName, opts = {}, tries = 3) {
 
 /* ─────────── 裁尾部静音 ───────────
  * Azure 对每个短词都会补一段固定长度的尾部静音（实测 1.0–1.4 秒），
- * 不裁的话 "of" 也要播 1.87 秒，听着像卡住。用 ffmpeg 反向裁剪再补 80ms 尾音。
+ * 不裁的话 "of" 也要播 1.87 秒，听着像卡住。
+ *
+ * 参数为什么是 start_duration=0.30：
+ *   最初用 0.10 秒 + -45dB，结果把词尾爆破音一起吃掉了——
+ *   /t/ /k/ /p/ 只有约 50ms，能量衰减快，被判成"静音起点"，
+ *   于是 sight 听起来像 sigh、night 像 nigh。
+ *   现在只在连续 300ms 以上的静音处下刀，并保留 120ms 尾音。
  */
 const HAS_FFMPEG = (() => {
   try { execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' }); return true; } catch (e) { return false; }
@@ -176,21 +182,56 @@ function trimSilence(buf) {
   if (!HAS_FFMPEG) return buf;
   const tag = crypto.randomBytes(6).toString('hex');
   const src = path.join(require('os').tmpdir(), `owk_${tag}_in.mp3`);
+  const pcm = path.join(require('os').tmpdir(), `owk_${tag}.pcm`);
   const dst = path.join(require('os').tmpdir(), `owk_${tag}_out.mp3`);
   try {
     fs.writeFileSync(src, buf);
-    execFileSync('ffmpeg', [
-      '-y', '-loglevel', 'error', '-i', src,
-      '-af', 'areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_duration=0.10,areverse,apad=pad_dur=0.08',
-      '-c:a', 'libmp3lame', '-b:a', '48k', dst,
-    ]);
+
+    // 1) 解码成 16bit 单声道 PCM，用来测能量
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', src,
+      '-f', 's16le', '-acodec', 'pcm_s16le', '-ar', '24000', '-ac', '1', pcm]);
+    const pcmBuf = fs.readFileSync(pcm);
+    const SR = 24000, WIN = Math.floor(SR * 0.01);          // 10ms 一帧
+    const n = Math.floor(pcmBuf.length / 2);
+    const frames = Math.floor(n / WIN);
+
+    let peak = 0;
+    const rms = new Float64Array(frames);
+    for (let i = 0; i < frames; i++) {
+      let acc = 0;
+      for (let k = 0; k < WIN; k++) {
+        const v = pcmBuf.readInt16LE((i * WIN + k) * 2);
+        acc += v * v;
+      }
+      const r = Math.sqrt(acc / WIN);
+      rms[i] = r;
+      if (r > peak) peak = r;
+    }
+    if (!peak) return buf;
+
+    /*
+     * 2) 找最后一个"有声"帧。
+     * 阈值取峰值的 2%——足够低，能保住 /t/ /k/ /p/ 这类很短的爆破音；
+     * 又足够高，能忽略底噪。
+     */
+    const th = peak * 0.02;
+    let last = 0;
+    for (let i = 0; i < frames; i++) if (rms[i] > th) last = i;
+    const endSec = last * 0.01 + 0.30;                       // 尾部留 300ms 自然衰减
+    const durSec = Math.min(n / SR, endSec);
+
+    // 3) 按时长硬切 + 30ms 淡出，避免截断产生爆音
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', src,
+      '-t', durSec.toFixed(3),
+      '-af', `afade=t=out:st=${Math.max(0, durSec - 0.03).toFixed(3)}:d=0.03`,
+      '-c:a', 'libmp3lame', '-b:a', '48k', dst]);
+
     const out = fs.readFileSync(dst);
     return out.length > 400 ? out : buf;
   } catch (e) {
-    return buf;               // 裁剪失败就用原音频，不影响生成
+    return buf;               // 裁不了就用原音频，不影响生成
   } finally {
-    try { fs.unlinkSync(src); } catch (e) {}
-    try { fs.unlinkSync(dst); } catch (e) {}
+    for (const f of [src, pcm, dst]) { try { fs.unlinkSync(f); } catch (e) {} }
   }
 }
 
