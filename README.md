@@ -274,6 +274,29 @@ createEngine({
   `function genSyllable` / `const chosen = scored[0]` / `Math.min(5, scored.length)`
   —— 再出现手工副本会直接构建失败
 
+## ✏️ 标点填空题型（PUNCTUATION_MARK）
+
+第五种题型，和其他四种混在一起出（一轮 8 题里有 1 题）。
+
+**覆盖的标点**：`?` `.` `!` `,` `:` `;` `"` `'`
+
+**设计约束：正确答案必须唯一。**
+英语里 `.` 和 `!` 经常都说得通，所以每条题干都带明确线索：
+
+| 线索 | 正确答案 | 例 |
+|---|---|---|
+| `asked` + 疑问词 | `?` | `"Where is my key{}" asked Biff.` |
+| `What a…` / `How…` | `!` | `"What a big dog{}" said Chip.` |
+| `shouted` + 祈使 | `!` | `"Stop{}" shouted the guard.` |
+| 列举 | `,` | `Biff bought a map{} a rope and a torch.` |
+| 冒号引出列举 | `:` | `She had three things{} a map, a rope and a torch.` |
+| `said, …` 引述 | `"` | `Biff said, {}Come here!{}` |
+| 所有格/缩写 | `'` | `Biff{}s bag is on the table.` |
+| 两个完整句相连 | `;` | `It was cold{} we went inside.` |
+
+题库 `PUNCT_BANK` 24 条，定义在 `shared/engine.js`，前后端共用。
+选项点击用 `data-v` 而不是内联参数——标点里带引号，直接拼进 `onclick` 会破坏 HTML。
+
 ## 🎲 出题权重：冷启动随机 → 错题加权
 
 **实测问题**：同一角色连续闯关，相邻两轮平均重合 **4.86/8（61%）**。

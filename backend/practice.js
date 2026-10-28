@@ -204,6 +204,14 @@ module.exports = function createPractice(db) {
     else
       fb = { message: `再记一次：${card.reveal.word} = ${card.reveal.zh}`, type: 'hint', hint: card.reveal.tip, effect: 'bounce', next_action: 'retry' };
 
+    // 标点题：上面几条模板都基于单词/音素，用在这里会出现 undefined
+    if (card.card_type === 'PUNCTUATION_MARK') {
+      const mk = (card.reveal || {}).mark || card.correct;
+      fb = ok
+        ? { message: `答对了！这里用 ${mk}`, type: 'encouragement', effect: 'star' }
+        : { message: `这里应该用 ${mk}`, type: 'correction', hint: (card.reveal || {}).tip || '', effect: 'shake', next_action: 'retry' };
+    }
+
     return {
       is_correct: ok,
       correct_answer: card.correct,

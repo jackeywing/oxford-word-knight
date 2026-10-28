@@ -83,6 +83,9 @@
   .ch-word{font-family:'Press Start 2P',monospace;font-size:2.1em;color:#3E2723;text-align:center;letter-spacing:3px;margin:10px 0 4px;word-break:break-word;}
   .ch-sentence{font-size:1.05em;color:#3E2723;margin-bottom:6px;line-height:1.7;text-align:center;font-family:-apple-system,'PingFang SC',sans-serif;font-weight:600;}
 .ch-hint{font-size:.46em;color:#5D4037;background:#FFF8E1;border-left:3px solid #FFD54F;padding:6px 10px;margin:6px 0 10px;line-height:1.7}
+.mark-opts{gap:14px}
+.opt.mark{min-width:70px;font-size:1.5em;font-family:Georgia,"Times New Roman",serif;padding:10px 14px;line-height:1.2}
+.type-badge.punct{background:#7B1FA2;color:#fff}
 .ch-hint b{color:#BF360C}
   .ch-sentence .blank{color:#F9A825;letter-spacing:2px;border-bottom:3px solid #F9A825;padding:0 10px;}
   .speak-btn{display:block;margin:8px auto 14px;font-size:.42em;padding:10px 18px;}
@@ -373,6 +376,51 @@
     igh: ['ai', 'ay', 'ee', 'ea', 'oo'],
     'i_e': ['igh', 'ai', 'ay', 'ee', 'ea'],
   };
+
+
+  /* ─────────── 标点填空（句末 + 句中） ───────────
+   * 设计原则：每个空的正确答案必须**唯一**。
+   * 英语里 "." 和 "!" 经常都说得通，所以每条都带明确线索：
+   *   疑问 → asked / what / where / why
+   *   感叹 → What a… / How… / shouted
+   *   冒号 → 后面紧跟列举
+   *   引号 → 有 said / asked + 引述内容
+   * 干扰项只放"看起来可能对、实际不合适"的标点。
+   */
+  const PUNCT_BANK = [
+    // 句末：问号
+    { s: '"Where is my key{}" asked Biff.',       mark: '?', options: ['?', '.', '!'],   tip: '疑问句用问号' },
+    { s: '"What is in the box{}" asked Chip.',    mark: '?', options: ['?', '.', ','],   tip: '直接提问用问号' },
+    { s: '"Can you help me{}" said Kipper.',      mark: '?', options: ['?', '!', '.'],   tip: 'Can 开头的疑问句' },
+    { s: '"Why did the dog run away{}" asked Wilma.', mark: '?', options: ['?', '.', ':'], tip: 'Why 提问用问号' },
+    { s: '"Who is at the door{}" asked Mum.',     mark: '?', options: ['?', '.', '!'],   tip: 'Who 提问用问号' },
+    // 句末：感叹号
+    { s: '"What a big dog{}" said Chip.',         mark: '!', options: ['!', '.', '?'],   tip: 'What a… 是感叹句' },
+    { s: '"How fast you run{}" said Biff.',       mark: '!', options: ['!', '.', ','],   tip: 'How… 是感叹句' },
+    { s: '"Look out{}" shouted Wilma.',           mark: '!', options: ['!', '.', '?'],   tip: 'shouted + 提醒，用感叹号' },
+    { s: '"Stop{}" shouted the guard.',           mark: '!', options: ['!', '.', ','],   tip: '命令 + shouted' },
+    // 句末：句号
+    { s: 'These are my books{}',                  mark: '.', options: ['.', '?', '!'],   tip: '陈述一件事用句号' },
+    { s: 'The key was under the mat{}',           mark: '.', options: ['.', '?', ':'],   tip: '陈述句用句号' },
+    { s: 'Floppy slept by the fire all night{}',  mark: '.', options: ['.', '!', '?'],   tip: '陈述句用句号' },
+    // 句中：逗号
+    { s: 'Biff bought a map{} a rope and a torch.', mark: ',', options: [',', '.', ':'], tip: '列举中间用逗号' },
+    { s: 'First we ran{} then we hid.',            mark: ',', options: [',', '.', ';'],  tip: '两个短句之间用逗号' },
+    { s: 'Chip{} Kipper and Wilma went outside.',  mark: ',', options: [',', '.', ':'],  tip: '并列人名用逗号隔开' },
+    // 句中：冒号（引出列举）
+    { s: 'She had three things{} a map, a rope and a torch.', mark: ':', options: [':', ',', '.'], tip: '冒号后面引出列举' },
+    { s: 'We need two things{} water and food.',   mark: ':', options: [':', ',', ';'],  tip: '冒号引出要说明的内容' },
+    // 引号
+    { s: 'Biff said, {}Come here!{}',              mark: '"', options: ['"', "'", '('],   tip: '人物说的话要用双引号' },
+    { s: '{}Look at that{} said Chip.',            mark: '"', options: ['"', "'", ')'],   tip: '引述原话用双引号' },
+    // 撇号
+    { s: 'Biff{}s bag is on the table.',           mark: "'", options: ["'", '"', ','],   tip: '表示"某人的"要用撇号' },
+    { s: 'Kipper can{}t find his sock.',           mark: "'", options: ["'", '"', '-'],   tip: 'can not 缩写成 can\'t，用撇号' },
+    { s: 'It{}s time to go home.',                 mark: "'", options: ["'", '"', '.'],   tip: 'it is 缩写成 it\'s' },
+    // 分号（较难，少量）
+    { s: 'It was cold{} we went inside.',          mark: ';', options: [';', ',', ':'],   tip: '两个完整句子相连用分号' },
+    { s: 'Biff ran fast{} she still missed the bus.', mark: ';', options: [';', '.', ','], tip: '分号连接两个完整句子' },
+  ];
 
   const SIGHT_WORDS = [
     ['the', 1, '这个'], ['and', 2, '和'], ['you', 3, '你'], ['that', 4, '那个'], ['was', 5, '是(过去)'],
@@ -732,12 +780,36 @@
       };
     }
 
+    /* 5. 标点填空（句末 + 句中） */
+    function makePunctuationCard(player, level) {
+      const item = weightedPick(PUNCT_BANK, () => 1);
+      if (!item) return null;
+      const shown = item.s.replace(/\{\}/g, '_____');
+      const full = item.s.replace(/\{\}/g, item.mark);
+      return {
+        card_type: 'PUNCTUATION_MARK',
+        word: item.mark,                       // 供 cardWord 去重（同轮不重复同一标点）
+        sentence: shown,
+        prompt: '空格里应该填哪个标点？',
+        options: item.options.slice().sort(() => Math.random() - 0.5),
+        correct: item.mark,
+        focus: 'punct:' + item.mark,
+        reveal: {
+          mark: item.mark,
+          tip: item.tip,
+          full,
+        },
+        meta: { mark: item.mark },
+      };
+    }
+
     /* 出题入口 */
     function nextTask({ player, level = 'G1', type, character, exclude } = {}) {
       const p = player || 'guest';
-      const T = type && ['syllable', 'phoneme', 'phonics', 'sight'].includes(type)
+      const TYPES = ['syllable', 'phoneme', 'phonics', 'sight', 'punctuation'];
+      const T = type && TYPES.includes(type)
         ? type
-        : ['syllable', 'phoneme', 'phonics', 'sight'][Math.floor(Math.random() * 4)];
+        : TYPES[Math.floor(Math.random() * TYPES.length)];
 
       // 本轮已考过的词：跨题型也要排除（同一个词换个题型不能再出现）
       const skip = new Set(
@@ -749,6 +821,7 @@
         if (T === 'syllable') c = makeSyllableCard(p, level, character);
         else if (T === 'phoneme') c = makePhonemeCard(p, level);
         else if (T === 'phonics') c = makePhonicsCard(p, level, character);
+        else if (T === 'punctuation') c = makePunctuationCard(p, level);
         else c = makeSightWordCard(p, level);
         if (!c) c = makeSyllableCard(p, level, character) || makePhonemeCard(p, level);
         return c;
@@ -773,7 +846,7 @@
     }
 
     return {
-      nextTask, makeSyllableCard, makePhonemeCard, makePhonicsCard, makeSightWordCard,
+      nextTask, makeSyllableCard, makePhonemeCard, makePhonicsCard, makeSightWordCard, makePunctuationCard,
       cardWord, errOf,
     };
   }
@@ -781,7 +854,7 @@
   return {
     createEngine,
     // 常量与纯函数同时导出，服务端（answer/profile/recommend）和构建脚本都要用
-    SYLLABLE_OVERRIDES, CHARACTERS, ALL_NAMES, PHONEME_PATTERNS, MINIMAL_PAIRS, SIGHT_WORDS,
+    SYLLABLE_OVERRIDES, CHARACTERS, ALL_NAMES, PHONEME_PATTERNS, MINIMAL_PAIRS, SIGHT_WORDS, PUNCT_BANK,
     charactersIn, characterLabel, syllabify, syllableCount, phonemesOf, weightedPick, cardWord, norm,
     isAISound, PHONEME_BOOST, CONFUSABLE_GRAPHEMES, FOCUS_WORDS,
   };
@@ -879,6 +952,7 @@ function answerCard(p, card, response, ms) {
   else if (card.card_type === 'SYLLABLE_COUNTING') fb = { message: '这个词要这样切：' + card.reveal.display, hint: '拍着手跟着读：' + card.reveal.display };
   else if (card.card_type === 'PHONEME_DISCRIMINATION') fb = { message: '注意听：' + card.reveal.phonemes[0] + ' 和 ' + card.reveal.phonemes[1] + ' 是不同的音', hint: card.reveal.tip + '！再听一遍' };
   else if (card.card_type === 'PHONICS_CONTEXT_MATCH') fb = { message: card.reveal.grapheme + ' 通常发 ' + card.reveal.phoneme, hint: '同家族的词还有：' + card.reveal.family.join('、') };
+  else if (card.card_type === 'PUNCTUATION_MARK') fb = { message: (okk ? '答对了！这里用 ' : '这里应该用 ') + card.correct, hint: (card.reveal || {}).tip || '' };
   else fb = { message: '再记一次：' + card.reveal.word + ' = ' + card.reveal.zh, hint: card.reveal.tip };
 
   return { is_correct: okk, correct_answer: card.correct, feedback: fb, reveal: card.reveal, hesitant };
@@ -1123,7 +1197,7 @@ function start(){
   roundWords=[]; playing=true;
   clearInterval(timerId);
   // 每轮固定覆盖 4 种题型各 2 次（打乱顺序），避免随机抽样漏掉某一类
-  plan=['syllable','phoneme','phonics','sight','syllable','phoneme','phonics','sight']
+  plan=['syllable','punctuation','phonics','sight','syllable','phoneme','phonics','sight']
     .sort(()=>Math.random()-0.5);
   i=0;sc=0;cb=0;mx=0;xp=0;ls=[];round=[];answered=false;
   document.getElementById('goBtn').style.display='none';
@@ -1151,7 +1225,8 @@ function typeBadge(t){
   const m={SYLLABLE_COUNTING:['syllable','🔢 音节计数'],
            PHONEME_DISCRIMINATION:['phoneme','👂 音素辨析'],
            PHONICS_CONTEXT_MATCH:['phonics','🔤 拼读规则'],
-           SIGHT_WORD_FLASH:['sight','⚡ 视觉词闪现']};
+           SIGHT_WORD_FLASH:['sight','⚡ 视觉词闪现'],
+           PUNCTUATION_MARK:['punct','✏️ 标点填空']};
   const [cls,label]=m[t]||['syllable','练习'];
   return `<span class="type-badge ${cls}">${label}</span>`;
 }
@@ -1185,6 +1260,16 @@ function renderCard(){
       ${card.hint?`<div class="ch-hint">💡 要填的词是：<b>${card.hint}</b></div>`:''}
       <div class="opts" id="opts">
         ${card.options.map(o=>`<button class="opt wide" onclick="pick('${o}',this)">${o}</button>`).join('')}
+      </div>`;
+  }
+  else if(t==='PUNCTUATION_MARK'){
+    const esc=v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const s2=String(card.sentence).replace(/_____/g,'<span class="blank">_____</span>');
+    body=`${typeBadge(t)}
+      <div class="ch-prompt">${card.prompt}</div>
+      <div class="ch-sentence">${s2}</div>
+      <div class="opts mark-opts" id="opts">
+        ${card.options.map(o=>`<button class="opt mark" data-v="${esc(o)}" onclick="pickMark(this)">${esc(o)}</button>`).join('')}
       </div>`;
   }
   else { // SIGHT_WORD_FLASH
@@ -1261,6 +1346,8 @@ function pauseTimer(){ clearInterval(timerId); timerPaused=true; }
 function resumeTimer(){ if(timerPaused && !answered){ timerPaused=false; startTimer(); } }
 
 /* ── 答题 ── */
+function pickMark(btn){ pick(btn.dataset.v, btn); }
+
 async function pick(val,btn,timeout=false){
   if(answered) return;
   answered=true;
@@ -1313,6 +1400,8 @@ function renderFeedback(res,okk,timeout){
     </div>`;
   } else if(card.card_type==='PHONICS_CONTEXT_MATCH' && rv.grapheme){
     extra=`<div class="reveal">字母组合 <span class="ph">${rv.grapheme}</span> → ${rv.phoneme}<br>${rv.articulation||''}<br>同家族：${(rv.family||[]).join('、')}</div>`;
+  } else if(card.card_type==='PUNCTUATION_MARK' && rv.mark){
+    extra=`<div class="reveal">完整句子：<span class="ph">${rv.full}</span><br>${rv.tip||''}</div>`;
   } else if(card.card_type==='SIGHT_WORD_FLASH' && rv.word){
     extra=`<div class="reveal"><span class="ph">${rv.word}</span> = ${rv.zh}<br>${rv.tip||''}</div>`;
   }

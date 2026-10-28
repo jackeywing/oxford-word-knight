@@ -141,6 +141,51 @@
     'i_e': ['igh', 'ai', 'ay', 'ee', 'ea'],
   };
 
+
+  /* ─────────── 标点填空（句末 + 句中） ───────────
+   * 设计原则：每个空的正确答案必须**唯一**。
+   * 英语里 "." 和 "!" 经常都说得通，所以每条都带明确线索：
+   *   疑问 → asked / what / where / why
+   *   感叹 → What a… / How… / shouted
+   *   冒号 → 后面紧跟列举
+   *   引号 → 有 said / asked + 引述内容
+   * 干扰项只放"看起来可能对、实际不合适"的标点。
+   */
+  const PUNCT_BANK = [
+    // 句末：问号
+    { s: '"Where is my key{}" asked Biff.',       mark: '?', options: ['?', '.', '!'],   tip: '疑问句用问号' },
+    { s: '"What is in the box{}" asked Chip.',    mark: '?', options: ['?', '.', ','],   tip: '直接提问用问号' },
+    { s: '"Can you help me{}" said Kipper.',      mark: '?', options: ['?', '!', '.'],   tip: 'Can 开头的疑问句' },
+    { s: '"Why did the dog run away{}" asked Wilma.', mark: '?', options: ['?', '.', ':'], tip: 'Why 提问用问号' },
+    { s: '"Who is at the door{}" asked Mum.',     mark: '?', options: ['?', '.', '!'],   tip: 'Who 提问用问号' },
+    // 句末：感叹号
+    { s: '"What a big dog{}" said Chip.',         mark: '!', options: ['!', '.', '?'],   tip: 'What a… 是感叹句' },
+    { s: '"How fast you run{}" said Biff.',       mark: '!', options: ['!', '.', ','],   tip: 'How… 是感叹句' },
+    { s: '"Look out{}" shouted Wilma.',           mark: '!', options: ['!', '.', '?'],   tip: 'shouted + 提醒，用感叹号' },
+    { s: '"Stop{}" shouted the guard.',           mark: '!', options: ['!', '.', ','],   tip: '命令 + shouted' },
+    // 句末：句号
+    { s: 'These are my books{}',                  mark: '.', options: ['.', '?', '!'],   tip: '陈述一件事用句号' },
+    { s: 'The key was under the mat{}',           mark: '.', options: ['.', '?', ':'],   tip: '陈述句用句号' },
+    { s: 'Floppy slept by the fire all night{}',  mark: '.', options: ['.', '!', '?'],   tip: '陈述句用句号' },
+    // 句中：逗号
+    { s: 'Biff bought a map{} a rope and a torch.', mark: ',', options: [',', '.', ':'], tip: '列举中间用逗号' },
+    { s: 'First we ran{} then we hid.',            mark: ',', options: [',', '.', ';'],  tip: '两个短句之间用逗号' },
+    { s: 'Chip{} Kipper and Wilma went outside.',  mark: ',', options: [',', '.', ':'],  tip: '并列人名用逗号隔开' },
+    // 句中：冒号（引出列举）
+    { s: 'She had three things{} a map, a rope and a torch.', mark: ':', options: [':', ',', '.'], tip: '冒号后面引出列举' },
+    { s: 'We need two things{} water and food.',   mark: ':', options: [':', ',', ';'],  tip: '冒号引出要说明的内容' },
+    // 引号
+    { s: 'Biff said, {}Come here!{}',              mark: '"', options: ['"', "'", '('],   tip: '人物说的话要用双引号' },
+    { s: '{}Look at that{} said Chip.',            mark: '"', options: ['"', "'", ')'],   tip: '引述原话用双引号' },
+    // 撇号
+    { s: 'Biff{}s bag is on the table.',           mark: "'", options: ["'", '"', ','],   tip: '表示"某人的"要用撇号' },
+    { s: 'Kipper can{}t find his sock.',           mark: "'", options: ["'", '"', '-'],   tip: 'can not 缩写成 can\'t，用撇号' },
+    { s: 'It{}s time to go home.',                 mark: "'", options: ["'", '"', '.'],   tip: 'it is 缩写成 it\'s' },
+    // 分号（较难，少量）
+    { s: 'It was cold{} we went inside.',          mark: ';', options: [';', ',', ':'],   tip: '两个完整句子相连用分号' },
+    { s: 'Biff ran fast{} she still missed the bus.', mark: ';', options: [';', '.', ','], tip: '分号连接两个完整句子' },
+  ];
+
   const SIGHT_WORDS = [
     ['the', 1, '这个'], ['and', 2, '和'], ['you', 3, '你'], ['that', 4, '那个'], ['was', 5, '是(过去)'],
     ['for', 6, '为了'], ['are', 7, '是'], ['with', 8, '和…一起'], ['they', 9, '他们'], ['have', 10, '有'],
@@ -499,12 +544,36 @@
       };
     }
 
+    /* 5. 标点填空（句末 + 句中） */
+    function makePunctuationCard(player, level) {
+      const item = weightedPick(PUNCT_BANK, () => 1);
+      if (!item) return null;
+      const shown = item.s.replace(/\{\}/g, '_____');
+      const full = item.s.replace(/\{\}/g, item.mark);
+      return {
+        card_type: 'PUNCTUATION_MARK',
+        word: item.mark,                       // 供 cardWord 去重（同轮不重复同一标点）
+        sentence: shown,
+        prompt: '空格里应该填哪个标点？',
+        options: item.options.slice().sort(() => Math.random() - 0.5),
+        correct: item.mark,
+        focus: 'punct:' + item.mark,
+        reveal: {
+          mark: item.mark,
+          tip: item.tip,
+          full,
+        },
+        meta: { mark: item.mark },
+      };
+    }
+
     /* 出题入口 */
     function nextTask({ player, level = 'G1', type, character, exclude } = {}) {
       const p = player || 'guest';
-      const T = type && ['syllable', 'phoneme', 'phonics', 'sight'].includes(type)
+      const TYPES = ['syllable', 'phoneme', 'phonics', 'sight', 'punctuation'];
+      const T = type && TYPES.includes(type)
         ? type
-        : ['syllable', 'phoneme', 'phonics', 'sight'][Math.floor(Math.random() * 4)];
+        : TYPES[Math.floor(Math.random() * TYPES.length)];
 
       // 本轮已考过的词：跨题型也要排除（同一个词换个题型不能再出现）
       const skip = new Set(
@@ -516,6 +585,7 @@
         if (T === 'syllable') c = makeSyllableCard(p, level, character);
         else if (T === 'phoneme') c = makePhonemeCard(p, level);
         else if (T === 'phonics') c = makePhonicsCard(p, level, character);
+        else if (T === 'punctuation') c = makePunctuationCard(p, level);
         else c = makeSightWordCard(p, level);
         if (!c) c = makeSyllableCard(p, level, character) || makePhonemeCard(p, level);
         return c;
@@ -540,7 +610,7 @@
     }
 
     return {
-      nextTask, makeSyllableCard, makePhonemeCard, makePhonicsCard, makeSightWordCard,
+      nextTask, makeSyllableCard, makePhonemeCard, makePhonicsCard, makeSightWordCard, makePunctuationCard,
       cardWord, errOf,
     };
   }
@@ -548,7 +618,7 @@
   return {
     createEngine,
     // 常量与纯函数同时导出，服务端（answer/profile/recommend）和构建脚本都要用
-    SYLLABLE_OVERRIDES, CHARACTERS, ALL_NAMES, PHONEME_PATTERNS, MINIMAL_PAIRS, SIGHT_WORDS,
+    SYLLABLE_OVERRIDES, CHARACTERS, ALL_NAMES, PHONEME_PATTERNS, MINIMAL_PAIRS, SIGHT_WORDS, PUNCT_BANK,
     charactersIn, characterLabel, syllabify, syllableCount, phonemesOf, weightedPick, cardWord, norm,
     isAISound, PHONEME_BOOST, CONFUSABLE_GRAPHEMES, FOCUS_WORDS,
   };

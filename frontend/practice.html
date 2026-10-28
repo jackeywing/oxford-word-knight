@@ -83,6 +83,9 @@
   .ch-word{font-family:'Press Start 2P',monospace;font-size:2.1em;color:#3E2723;text-align:center;letter-spacing:3px;margin:10px 0 4px;word-break:break-word;}
   .ch-sentence{font-size:1.05em;color:#3E2723;margin-bottom:6px;line-height:1.7;text-align:center;font-family:-apple-system,'PingFang SC',sans-serif;font-weight:600;}
 .ch-hint{font-size:.46em;color:#5D4037;background:#FFF8E1;border-left:3px solid #FFD54F;padding:6px 10px;margin:6px 0 10px;line-height:1.7}
+.mark-opts{gap:14px}
+.opt.mark{min-width:70px;font-size:1.5em;font-family:Georgia,"Times New Roman",serif;padding:10px 14px;line-height:1.2}
+.type-badge.punct{background:#7B1FA2;color:#fff}
 .ch-hint b{color:#BF360C}
   .ch-sentence .blank{color:#F9A825;letter-spacing:2px;border-bottom:3px solid #F9A825;padding:0 10px;}
   .speak-btn{display:block;margin:8px auto 14px;font-size:.42em;padding:10px 18px;}
@@ -446,7 +449,7 @@ function start(){
   roundWords=[]; playing=true;
   clearInterval(timerId);
   // 每轮固定覆盖 4 种题型各 2 次（打乱顺序），避免随机抽样漏掉某一类
-  plan=['syllable','phoneme','phonics','sight','syllable','phoneme','phonics','sight']
+  plan=['syllable','punctuation','phonics','sight','syllable','phoneme','phonics','sight']
     .sort(()=>Math.random()-0.5);
   i=0;sc=0;cb=0;mx=0;xp=0;ls=[];round=[];answered=false;
   document.getElementById('goBtn').style.display='none';
@@ -474,7 +477,8 @@ function typeBadge(t){
   const m={SYLLABLE_COUNTING:['syllable','🔢 音节计数'],
            PHONEME_DISCRIMINATION:['phoneme','👂 音素辨析'],
            PHONICS_CONTEXT_MATCH:['phonics','🔤 拼读规则'],
-           SIGHT_WORD_FLASH:['sight','⚡ 视觉词闪现']};
+           SIGHT_WORD_FLASH:['sight','⚡ 视觉词闪现'],
+           PUNCTUATION_MARK:['punct','✏️ 标点填空']};
   const [cls,label]=m[t]||['syllable','练习'];
   return `<span class="type-badge ${cls}">${label}</span>`;
 }
@@ -508,6 +512,16 @@ function renderCard(){
       ${card.hint?`<div class="ch-hint">💡 要填的词是：<b>${card.hint}</b></div>`:''}
       <div class="opts" id="opts">
         ${card.options.map(o=>`<button class="opt wide" onclick="pick('${o}',this)">${o}</button>`).join('')}
+      </div>`;
+  }
+  else if(t==='PUNCTUATION_MARK'){
+    const esc=v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const s2=String(card.sentence).replace(/_____/g,'<span class="blank">_____</span>');
+    body=`${typeBadge(t)}
+      <div class="ch-prompt">${card.prompt}</div>
+      <div class="ch-sentence">${s2}</div>
+      <div class="opts mark-opts" id="opts">
+        ${card.options.map(o=>`<button class="opt mark" data-v="${esc(o)}" onclick="pickMark(this)">${esc(o)}</button>`).join('')}
       </div>`;
   }
   else { // SIGHT_WORD_FLASH
@@ -584,6 +598,8 @@ function pauseTimer(){ clearInterval(timerId); timerPaused=true; }
 function resumeTimer(){ if(timerPaused && !answered){ timerPaused=false; startTimer(); } }
 
 /* ── 答题 ── */
+function pickMark(btn){ pick(btn.dataset.v, btn); }
+
 async function pick(val,btn,timeout=false){
   if(answered) return;
   answered=true;
@@ -639,6 +655,8 @@ function renderFeedback(res,okk,timeout){
     </div>`;
   } else if(card.card_type==='PHONICS_CONTEXT_MATCH' && rv.grapheme){
     extra=`<div class="reveal">字母组合 <span class="ph">${rv.grapheme}</span> → ${rv.phoneme}<br>${rv.articulation||''}<br>同家族：${(rv.family||[]).join('、')}</div>`;
+  } else if(card.card_type==='PUNCTUATION_MARK' && rv.mark){
+    extra=`<div class="reveal">完整句子：<span class="ph">${rv.full}</span><br>${rv.tip||''}</div>`;
   } else if(card.card_type==='SIGHT_WORD_FLASH' && rv.word){
     extra=`<div class="reveal"><span class="ph">${rv.word}</span> = ${rv.zh}<br>${rv.tip||''}</div>`;
   }
