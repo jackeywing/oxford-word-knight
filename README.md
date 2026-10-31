@@ -239,6 +239,58 @@ docs/audio/words/<word>__floppy.mp3   Ryan +35% / -8%
 2. **前端播放优先级**：`<audio>`（预生成 mp3）→ `speechSynthesis`（兜底）。
    新词还没生成音频时自动走系统语音，不会没声音。
 
+### 首屏请求：34 KB 索引，不再拉 1 MB manifest
+
+`audio/manifest.json` 有 1 MB，里面是每个词的 `bytes` / `voice` / 5 个角色变体路径——
+前端一个都用不上：
+
+- 词的路径可推导：`words/<word>.mp3` / `words/<word>__<char>.mp3`
+- 例句文件名是 `sha1(句子).slice(0,12)`，推不出来，所以保留映射
+
+所以 `backend/build-audio-index.js` 从 manifest 生成 `audio/index.json`（**34 KB，-96.7%**），
+前端只拉这一条。manifest 继续留在仓库里给生成脚本做增量跳过，浏览器不再请求它。
+
+改词库 / 加音频后执行：
+
+```bash
+node backend/build-audio-index.js     # 或直接 node build-pages.js（会自动刷新）
+```
+
+### 字体自托管
+
+原来两个页面都用 `@import url('https://fonts.googleapis.com/...')`。
+CSS 的 `@import` 是**渲染阻塞**的，国内网络下经常卡 3–10 秒才出字。
+
+现在 `Press Start 2P` 的 latin 子集（4.6 KB woff2）放在 `frontend/fonts/`，
+构建时复制到 `docs/fonts/`，通过 `@font-face` 引用。跨域请求归零，断网也能正确显示。
+
+### 家庭码：学情跨设备同步
+
+`localStorage` 只活在当前浏览器，换台设备孩子就得从零开始。
+用 6 位家庭码（去掉易混的 `0/O/1/I`，32 字符表 ≈ 10 亿种）把状态存到后端：
+
+| 数据 | 合并规则 | 理由 |
+|---|---|---|
+| `owk_masks` 面具收藏 | 并集 | 成就不能丢 |
+| `owk_miss` 错词 | 取较新的一份 | 会衰减的信号，合并会越积越多 |
+| `owk_seen_practice` 最近见过的词 | 取较新的一份 | 同上 |
+
+接口：`GET/POST /api/state/:code`（本地 Node 已实现，存 SQLite `family_state` 表）。
+
+静态版（GitHub Pages 没有后端）需要 Cloudflare Worker：
+
+```bash
+cd cloudflare
+wrangler kv namespace create OWK_KV    # 把返回的 id 填进 wrangler.toml
+wrangler deploy
+cd ..
+OWK_SYNC_URL=https://<你的域名> node build-pages.js   # 构建时注入
+```
+
+未配置 `OWK_SYNC_URL` 时，静态页会显示「同步服务未配置（仅本机保存）」，游戏本身不受影响。
+
+**安全边界**：码就是钥匙。这是「不设防的分区键」，不要往里存任何隐私信息。
+
 ### 体积与存储（已决定：保持现状）
 
 现在 `docs/audio/` 约 **51 MB**：906 词 × 6 份（中性 + 5 角色）+ 501 例句 + 试听样本。

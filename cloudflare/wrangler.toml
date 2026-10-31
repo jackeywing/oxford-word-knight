@@ -1,0 +1,8 @@
+name = "owk-sync"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+# 先执行 wrangler kv namespace create OWK_KV，把返回的 id 填到这里
+[[kv_namespaces]]
+binding = "OWK_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

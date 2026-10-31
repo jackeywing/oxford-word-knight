@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎧 Word-Knight | Phonics</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  @font-face{font-family:'Press Start 2P';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/press-start-2p.woff2') format('woff2');}
   :root{
     --dirt:#8B5E3C; --grass:#5D8C2E; --gold:#F9A825; --emerald:#43A047;
     --panel-bg:#C4A46C; --panel-border:#6D4C2E;
@@ -79,11 +79,15 @@
   .type-badge.sight{background:#EF6C00;border-color:#E65100;}
   .type-badge.syllable{background:#2E7D32;border-color:#1B5E20;}
 
-  .ch-prompt{font-size:.46em;color:#8D6E63;margin-bottom:12px;line-height:1.8;}
+  .ch-prompt{font-size:max(.56em,11px);color:#8D6E63;margin-bottom:12px;line-height:1.8;}
   .ch-word{font-family:'Press Start 2P',monospace;font-size:2.1em;color:#3E2723;text-align:center;letter-spacing:3px;margin:10px 0 4px;word-break:break-word;}
-  .ch-sentence{font-size:1.05em;color:#3E2723;margin-bottom:6px;line-height:1.7;text-align:center;font-family:-apple-system,'PingFang SC',sans-serif;font-weight:600;}
+  .ch-sentence{font-size:max(1.12em,17px);color:#3E2723;margin-bottom:6px;line-height:1.7;text-align:center;font-family:-apple-system,'PingFang SC',sans-serif;font-weight:600;}
 .ch-hint{font-size:.46em;color:#5D4037;background:#FFF8E1;border-left:3px solid #FFD54F;padding:6px 10px;margin:6px 0 10px;line-height:1.7}
 /* ── 面具收藏 ── */
+.sync-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:2px dashed #C8A97E}
+.sync-lbl{font-size:max(.44em,10.5px);color:#8D6E63}
+.sync-code{font-family:'Press Start 2P',monospace;font-size:max(.62em,12px);color:#3E2723;letter-spacing:2px;background:#F0DDB8;border:2px solid #8D6E63;padding:5px 9px}
+.sync-btn{padding:6px 12px !important;font-size:max(.42em,10px) !important}
 .mask-strip{background:#FFF8E1;border:3px solid #D7CCC8;border-radius:8px;padding:12px;text-align:center}
 .mask-title{font-size:.46em;color:#5D4037;margin-bottom:10px}
 .mask-title b{color:#BF360C}
@@ -111,18 +115,18 @@
 .ball-name{font-size:.36em;color:#FFE0B2;margin-top:6px}
 .ball-note{font-size:.4em;color:#FFD54F;min-height:1.4em;margin-bottom:12px}
 .mark-opts{gap:14px}
-.opt.mark{min-width:70px;font-size:1.5em;font-family:Georgia,"Times New Roman",serif;padding:10px 14px;line-height:1.2}
+.opt.mark{min-width:70px;font-size:max(1.5em,24px);font-family:Georgia,"Times New Roman",serif;padding:10px 14px;line-height:1.2}
 .type-badge.punct{background:#7B1FA2;color:#fff}
 .ch-hint b{color:#BF360C}
   .ch-sentence .blank{color:#F9A825;letter-spacing:2px;border-bottom:3px solid #F9A825;padding:0 10px;}
   .speak-btn{display:block;margin:8px auto 14px;font-size:.42em;padding:10px 18px;}
 
   .opts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
-  .opt{font-family:inherit;font-size:.55em;padding:14px 20px;min-width:92px;background:#E0C9A6;color:#3E2723;
+  .opt{font-family:inherit;font-size:max(.78em,13px);padding:14px 20px;min-width:92px;background:#E0C9A6;color:#3E2723;
     border:3px solid #8D6E63;box-shadow:0 4px 0 #6D4C2E;cursor:pointer;transition:all .15s;line-height:1.5;}
   .opt:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 0 #6D4C2E;background:#F0DDB8;}
   .opt:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 #6D4C2E;}
-  .opt.wide{min-width:150px;font-size:.5em;}
+  .opt.wide{min-width:150px;font-size:max(.72em,12.5px);}
   .opt.correct{background:#A5D6A7;border-color:#2E7D32;box-shadow:0 4px 0 #2E7D32;}
   .opt.wrong{background:#EF9A9A;border-color:#B71C1C;box-shadow:0 4px 0 #B71C1C;animation:shake .4s ease;}
   .opt:disabled{cursor:default;opacity:.9;}
@@ -142,7 +146,7 @@
   .reveal .ph{color:#6A1B9A;font-weight:bold;}
   .fb-actions{margin-top:12px;text-align:right;}
 
-  .mc-btn{padding:12px 22px;font-family:inherit;font-size:.48em;background:#5D8C2E;color:#FFE0B2;border:3px solid #33691E;box-shadow:0 4px 0 #33691E;cursor:pointer;transition:all .15s;}
+  .mc-btn{padding:12px 22px;font-family:inherit;font-size:max(.64em,12px);background:#5D8C2E;color:#FFE0B2;border:3px solid #33691E;box-shadow:0 4px 0 #33691E;cursor:pointer;transition:all .15s;}
   .mc-btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 #33691E;}
   .mc-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #33691E;}
   .mc-btn.blue{background:#1565C0;border-color:#0D47A1;box-shadow:0 4px 0 #0D47A1;}
@@ -321,8 +325,18 @@ function pickVoice(gender){
  * 有音频文件就播文件：音质稳定、支持 iOS、不依赖系统装了哪些语音。
  * 没有就回落到 speechSynthesis（新词还没生成时的兜底）。
  */
-let AUDIO_MANIFEST=null, _curAudio=null;
-(async()=>{ try{ const r=await fetch('audio/manifest.json'); if(r.ok) AUDIO_MANIFEST=await r.json(); }catch(e){} })();
+/* 只拉精简索引（约 34 KB），不再拉 1 MB 的 manifest.json。
+ * manifest 里的 bytes/voice/variants 前端一个都用不上：
+ *   词的路径可推导 → words/<w>.mp3 / words/<w>__<char>.mp3
+ *   句子的文件名是 sha1 前 12 位，推不出来，所以索引里保留映射。
+ * 由 backend/build-audio-index.js 生成，build-pages.js 每次构建会顺带刷新。 */
+let AUDIO_INDEX=null, _audioWords=null, _curAudio=null;
+(async()=>{
+  try{
+    const r=await fetch('audio/index.json');
+    if(r.ok){ AUDIO_INDEX=await r.json(); _audioWords=new Set(String(AUDIO_INDEX.w||'').split(' ')); }
+  }catch(e){}
+})();
 
 function playFile(rel){
   return new Promise((resolve)=>{
@@ -341,20 +355,25 @@ function playFile(rel){
 }
 function audioForWord(w){
   const k=String(w||'').trim().toLowerCase();
-  const e=AUDIO_MANIFEST && AUDIO_MANIFEST.words && AUDIO_MANIFEST.words[k];
-  if(!e) return null;
-  // 优先当前角色的那份：闯关内容和自我介绍必须是同一个声音
-  const v=e.variants && e.variants[ch];
-  return v || e;
+  if(!k) return null;
+  // 索引里没有这个词就不试，省一次 404
+  if(_audioWords && !_audioWords.has(k)) return null;
+  // 先角色版，再中性版：闯关内容和自我介绍必须是同一个声音
+  return { paths: ['words/'+k+'__'+ch+'.mp3', 'words/'+k+'.mp3'] };
+}
+
+/* 依次尝试多条路径，任意一条播成功就停 */
+function playAny(paths){
+  return paths.reduce((p, rel) => p.then(ok => ok ? true : playFile(rel)), Promise.resolve(false));
 }
 /* 整句/短语：先精确匹配 phrases（角色开场白），再匹配例句库。
    之前只查 words，所以 "Hello, I am Biff." 永远查不到 → 掉回系统语音，
    切换角色听起来毫无变化。 */
 function audioForText(text){
   const t=String(text||'').trim();
-  if(!t) return null;
-  const M=AUDIO_MANIFEST||{};
-  return (M.phrases && M.phrases[t]) || (M.sentences && M.sentences[t]) || null;
+  if(!t || !AUDIO_INDEX) return null;
+  const f=(AUDIO_INDEX.p && AUDIO_INDEX.p[t]) || (AUDIO_INDEX.s && AUDIO_INDEX.s[t]);
+  return f ? { paths:[f] } : null;
 }
 
 /* 系统语音兜底（原实现，保持不变） */
@@ -388,7 +407,7 @@ function speak(text,rate=0.85){
   const raw=String(text||'').trim();
   const hit=audioForWord(raw) || audioForText(raw);
   if(hit){
-    playFile(hit.file).then((ok)=>{ if(!ok) speakSynth(text,rate); });
+    playAny(hit.paths).then((ok)=>{ if(!ok) speakSynth(text,rate); });
     return true;
   }
   return speakSynth(text,rate);
@@ -421,6 +440,7 @@ function awardMask(){
   const m=MASKS[have.length];
   have.push(m.id);
   try{ localStorage.setItem(MASK_KEY,JSON.stringify(have)); }catch(e){}
+  if(typeof syncSoon==='function') syncSoon();
   return m;
 }
 function ballUnlocked(){ return myMasks().length>=MASKS.length; }
@@ -438,6 +458,137 @@ function masksStrip(){
     <div class="mask-row">${slots}</div>
     ${ball}
   </div>`;
+}
+
+/* ── 家庭码：学情跨设备同步 ────────────────────────────
+ * localStorage 只活在当前浏览器，换台设备孩子就得从零开始。
+ * 用一个 6 位家庭码当钥匙，把三份状态存到后端：
+ *   owk_masks         面具收藏   → 并集（成就不能丢）
+ *   owk_miss          错词       → 取较新的一份（这是会衰减的信号，合并会越积越多）
+ *   owk_seen_practice 最近见过的词 → 同上
+ *
+ * 后端地址：
+ *   本地/自建 Node → 同源（SYNC_BASE 为空）
+ *   静态 Pages     → 构建时注入 window.OWK_SYNC_BASE 指向 Cloudflare Worker
+ */
+const SYNC_KEYS = { masks:'owk_masks', miss:'owk_miss', seen:'owk_seen_practice', seenMain:'owk_seen' };
+function syncBase(){
+  return (typeof window!=='undefined' && window.OWK_SYNC_BASE) ? String(window.OWK_SYNC_BASE).replace(/\/$/,'') : '';
+}
+function genFamCode(){
+  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';   // 去掉 0/O/1/I，避免念错
+  let s=''; for(let i=0;i<6;i++) s+=A[Math.floor(Math.random()*A.length)];
+  return s;
+}
+function famCode(){
+  let c=localStorage.getItem('owk_family_code');
+  if(!c){ c=genFamCode(); localStorage.setItem('owk_family_code', c); }
+  return c;
+}
+function setFamCode(c){
+  const v=String(c||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12);
+  if(v.length<4) return false;
+  localStorage.setItem('owk_family_code', v);
+  return true;
+}
+function localPayload(){
+  const rd=(k,d)=>{ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); return v==null?d:v; }catch(e){ return d; } };
+  return {
+    masks: rd(SYNC_KEYS.masks, []),
+    miss:  rd(SYNC_KEYS.miss, []),
+    seen:  rd(SYNC_KEYS.seen, rd(SYNC_KEYS.seenMain, [])),
+    ts: Date.now(),
+  };
+}
+/* 合并：成就取并集，衰减型信号取较新的 */
+function mergePayload(a, b){
+  if(!a) return b; if(!b) return a;
+  const newer = (b.ts||0) > (a.ts||0) ? b : a;
+  const older = newer === b ? a : b;
+  return {
+    masks: Array.from(new Set([...(a.masks||[]), ...(b.masks||[])])),
+    miss: newer.miss && newer.miss.length ? newer.miss : (older.miss||[]),
+    seen: newer.seen && newer.seen.length ? newer.seen : (older.seen||[]),
+    ts: Math.max(a.ts||0, b.ts||0),
+  };
+}
+function applyPayload(p){
+  if(!p) return false;
+  if(Array.isArray(p.masks)) localStorage.setItem(SYNC_KEYS.masks, JSON.stringify(p.masks));
+  if(Array.isArray(p.miss))  localStorage.setItem(SYNC_KEYS.miss,  JSON.stringify(p.miss));
+  if(Array.isArray(p.seen))  localStorage.setItem(SYNC_KEYS.seen,  JSON.stringify(p.seen));
+  return true;
+}
+async function syncPull(){
+  const base=syncBase(); if(!base && base!=='') return null;
+  try{
+    const r=await fetch(base+'/api/state/'+famCode(), { cache:'no-store' });
+    if(!r.ok) return null;
+    const d=await r.json();
+    return d.payload || null;
+  }catch(e){ return null; }
+}
+async function syncPush(){
+  const base=syncBase();
+  try{
+    await fetch(base+'/api/state/'+famCode(), {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ payload: localPayload() }),
+    });
+    return true;
+  }catch(e){ return false; }
+}
+/* 启动时拉一次 → 合并 → 写回 → 有变化就推一次 */
+async function syncInit(){
+  if(typeof window!=='undefined' && window.OWK_SYNC_OFF) return;
+  const base=syncBase();
+  if(!base && base!=='') return;
+  const remote=await syncPull();
+  if(remote){
+    const merged=mergePayload(localPayload(), remote);
+    applyPayload(merged);
+    await syncPush();
+  } else {
+    await syncPush();
+  }
+  if(typeof renderMasks==='function') renderMasks();
+  if(typeof renderFamCode==='function') renderFamCode();
+}
+let _syncTimer=null;
+function syncSoon(){ clearTimeout(_syncTimer); _syncTimer=setTimeout(syncPush, 1500); }
+
+function syncStrip(){
+  if(typeof window!=='undefined' && window.OWK_SYNC_OFF){
+    return `<div class="sync-row"><span class="sync-lbl">🏠 家庭码</span><span style="font-size:max(.42em,10px);color:#A1887F;">同步服务未配置（仅本机保存）</span></div>`;
+  }
+  const base=syncBase();
+  if(base===null) return '';
+  const c=famCode();
+  return `<div class="sync-row">
+    <span class="sync-lbl">🏠 家庭码</span>
+    <b class="sync-code">${c}</b>
+    <button class="mc-btn sync-btn" onclick="copyFamCode()">复制</button>
+    <button class="mc-btn sync-btn" onclick="promptFamCode()">换设备</button>
+  </div>`;
+}
+function renderFamCode(){
+  const host=document.getElementById('syncHost');
+  if(host) host.innerHTML=syncStrip();
+}
+function copyFamCode(){
+  const c=famCode();
+  try{ navigator.clipboard.writeText(c); toast('已复制家庭码 '+c, 'ok'); }
+  catch(e){ toast('家庭码：'+c, 'ok'); }
+}
+function promptFamCode(){
+  const cur=famCode();
+  const v=prompt('输入另一台设备上的家庭码（输入后本机会合并两边进度）：', '');
+  if(v===null) return;
+  if(!setFamCode(v)) return toast('家庭码至少 4 位', 'bad');
+  if(famCode()===cur) return;
+  toast('已切换到 '+famCode(), 'ok');
+  syncInit().then(()=>{ if(typeof renderMasks==='function') renderMasks(); });
 }
 
 function renderMasks(){
@@ -511,6 +662,7 @@ function pPushSeen(word){
   const k=String(word||'').toLowerCase(); if(!k) return;
   const cur=pSeen(); if(cur[cur.length-1]===k) return;
   localStorage.setItem('owk_seen_practice',JSON.stringify(cur.concat([k]).slice(-24)));
+  if(typeof syncSoon==='function') syncSoon();
 }
 
 async function fetchCard(type){
@@ -525,13 +677,15 @@ async function fetchCard(type){
   return d;
 }
 
+syncInit();
+
 function resetRound(){
   clearInterval(timerId);
   answered=false; i=0; sc=0; cb=0; mx=0; xp=0; ls=[]; roundWords=[]; card=null; playing=false;
   const go=document.getElementById('goBtn'); if(go) go.style.display='inline-block';
   const rst=document.getElementById('rstBtn'); if(rst) rst.style.display='none';
   const area=document.getElementById('chArea');
-  if(area) area.innerHTML='<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:26px 10px 10px;">选择你的角色<br>开始特训吧！</div><div id="maskHost" style="padding:0 14px 18px;">'+masksStrip()+'</div>';
+  if(area) area.innerHTML='<div style="color:#5D4037;font-size:0.48em;text-align:center;padding:26px 10px 10px;">选择你的角色<br>开始特训吧！</div><div id="maskHost" style="padding:0 14px 0;">'+masksStrip()+'</div><div id="syncHost" style="padding:0 14px 18px;">'+syncStrip()+'</div>';
   hud(); dn();
 }
 
@@ -863,6 +1017,9 @@ function renderError(){
 }
 
 dn();mc_();hud();
+/* 起始屏由 resetRound() 生成（含面具收藏条 + 家庭码），
+   否则页面里写成死 HTML 的那段会盖住它们。 */
+resetRound();
 if('speechSynthesis' in window) speechSynthesis.getVoices();
 window.addEventListener('resize',()=>{dn();mc_()});
 </script>

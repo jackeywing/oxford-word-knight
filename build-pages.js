@@ -157,7 +157,7 @@ const uiScript = tpl.slice(scriptStart + '<script>'.length).replace(/<\/script>[
   '/* static build: no server log */'
 );
 
-const html = `<!DOCTYPE html>
+let html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -180,8 +180,37 @@ try { new Function(scriptMatch[1]); }
 catch (e) { throw new Error('generated script has syntax error: ' + e.message); }
 console.log('syntax check: OK');
 
+/* 静态版把同步请求指向 Cloudflare Worker。
+   部署后设置 OWK_SYNC_URL=https://xxx.workers.dev 再构建即可；
+   未设置时同步区显示「未配置」，不影响游戏本身。 */
+const SYNC_URL = process.env.OWK_SYNC_URL || '';
 fs.mkdirSync(OUT, { recursive: true });
+
+/* 自托管字体：前端用 @font-face 指向 fonts/press-start-2p.woff2，
+   静态版要与 frontend/ 保持同一份文件，否则线上会 404 掉回系统字体。 */
+const FONT_SRC = path.join(ROOT, 'frontend', 'fonts');
+if (fs.existsSync(FONT_SRC)) {
+  fs.mkdirSync(path.join(OUT, 'fonts'), { recursive: true });
+  for (const f of fs.readdirSync(FONT_SRC)) {
+    fs.copyFileSync(path.join(FONT_SRC, f), path.join(OUT, 'fonts', f));
+  }
+}
+
+/* 音频索引：前端只拉 index.json（约 34 KB），不拉 manifest.json（1 MB）。
+   每次构建刷新一遍，保证词库变化后索引不会落后。 */
+try {
+  require('child_process').execFileSync(process.execPath, [path.join(ROOT, 'backend', 'build-audio-index.js')], { stdio: 'inherit' });
+} catch (e) {
+  console.warn('⚠️ 音频索引生成失败（不影响页面构建）:', e.message);
+}
+/* 注入同步服务地址（未配置则显式关掉，避免静态站打到 GitHub Pages 自己的路径上 405）。
+   必须写在 writeFileSync 之前，否则注入只改了内存里的字符串、落盘的还是原样。 */
+html = html.replace('</head>', '<script>window.OWK_SYNC_BASE=' + JSON.stringify(SYNC_URL) +
+  ';window.OWK_SYNC_OFF=' + (SYNC_URL ? 'false' : 'true') + ';</script></head>');
+if (!html.includes('window.OWK_SYNC_OFF')) throw new Error('同步配置注入失败：模板里没有 </head>');
+
 fs.writeFileSync(path.join(OUT, 'phonics.html'), html, 'utf8');
+
 console.log('wrote docs/phonics.html', (html.length / 1024).toFixed(1) + ' KB');
 
 // 防回归：静态页必须用共享引擎，不能再出现手工抄写的生成器

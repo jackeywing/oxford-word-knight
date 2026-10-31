@@ -15,6 +15,16 @@ const db = new Database(DB_PATH);
 db.pragma('journal_mode = WAL');
 
 // ── Tables ──
+
+// 学情跨设备同步：一个「家庭码」对应一份合并后的状态（mask/错词/最近见过的词）。
+// 无账号体系，码就是钥匙——6 位随机，够挡住随手猜测。
+db.exec(`
+  CREATE TABLE IF NOT EXISTS family_state (
+    code TEXT PRIMARY KEY,
+    payload TEXT NOT NULL DEFAULT '{}',
+    updated_at TEXT DEFAULT (datetime('now','localtime'))
+  )
+`);
 db.exec(`
   CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -389,6 +399,41 @@ const server = http.createServer((req, res) => {
   }
 
   // ── POST /api/track ── 客户端行为埋点（角色切换 / 答错 / 重玩 …）
+  // ── /api/state/:code ── 家庭码学情同步（跨设备）
+  // 码只做分区用，不含身份信息；payload 是各端合并后的 JSON。
+  if (pathname.startsWith('/api/state/')) {
+    const code = decodeURIComponent(pathname.slice('/api/state/'.length)).toUpperCase();
+    if (!/^[A-Z0-9]{4,12}$/.test(code)) return json(res, { error: 'bad code' }, 400);
+
+    if (req.method === 'GET') {
+      const row = db.prepare('SELECT code, payload, updated_at FROM family_state WHERE code = ?').get(code);
+      if (!row) return json(res, { code, payload: null, updated_at: null });
+      let payload = {};
+      try { payload = JSON.parse(row.payload); } catch (e) {}
+      return json(res, { code, payload, updated_at: row.updated_at });
+    }
+
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', (c) => { body += c; if (body.length > 2e5) req.destroy(); });
+      req.on('end', () => {
+        try {
+          const b = JSON.parse(body || '{}');
+          const p = b && typeof b.payload === 'object' && b.payload ? b.payload : null;
+          if (!p) return json(res, { error: 'payload required' }, 400);
+          db.prepare(`
+            INSERT INTO family_state (code, payload, updated_at)
+            VALUES (?, ?, datetime('now','localtime'))
+            ON CONFLICT(code) DO UPDATE SET payload = excluded.payload, updated_at = excluded.updated_at
+          `).run(code, JSON.stringify(p));
+          const row = db.prepare('SELECT updated_at FROM family_state WHERE code = ?').get(code);
+          return json(res, { ok: true, code, updated_at: row.updated_at });
+        } catch (e) { return json(res, { error: 'bad json' }, 400); }
+      });
+      return;
+    }
+  }
+
   if (req.method === 'POST' && pathname === '/api/track') {
     let body = '';
     req.on('data', (c) => { body += c; if (body.length > 2e5) req.destroy(); });
@@ -546,6 +591,22 @@ const server = http.createServer((req, res) => {
         json(res, agent.reviewProposal(id, action));
       } catch (e) { json(res, { error: e.message }, 400); }
     });
+    return;
+  }
+
+  // ── /fonts/* ── 自托管字体（不再依赖 fonts.googleapis.com 的跨域 @import）
+  if (req.method === 'GET' && pathname.startsWith('/fonts/')) {
+    const rel = decodeURIComponent(pathname.slice('/fonts/'.length));
+    if (rel.includes('..')) { res.writeHead(403); return res.end('Forbidden'); }
+    try {
+      const buf = fs.readFileSync(path.join(__dirname, '..', 'frontend', 'fonts', rel));
+      res.writeHead(200, {
+        'Content-Type': 'font/woff2',
+        'Content-Length': buf.length,
+        'Cache-Control': 'public, max-age=31536000, immutable',
+      });
+      res.end(buf);
+    } catch (e) { res.writeHead(404); res.end('Not Found'); }
     return;
   }
 

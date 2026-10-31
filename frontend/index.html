@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⛏️ Word-Knight | 牛津树单词冒险</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    @font-face{font-family:'Press Start 2P';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/press-start-2p.woff2') format('woff2');}
     :root {
       --dirt:#8B5E3C; --grass:#5D8C2E; --gold:#F9A825; --emerald:#43A047;
       --panel-bg:#C4A46C; --panel-border:#6D4C2E;
@@ -88,7 +88,7 @@
     @keyframes pulse { 0%{opacity:1} 100%{opacity:0.5} }
     .timer-num { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:0.45em; color:#3E2723; font-weight:bold; }
 
-    .mc-btn { padding:12px 24px; font-family:inherit; font-size:0.5em; background:#5D8C2E; color:#FFE0B2; border:3px solid #33691E; box-shadow:0 4px 0 #33691E; cursor:pointer; transition:all 0.15s; }
+    .mc-btn { padding:12px 24px; font-family:inherit; font-size:max(0.66em,12.5px); background:#5D8C2E; color:#FFE0B2; border:3px solid #33691E; box-shadow:0 4px 0 #33691E; cursor:pointer; transition:all 0.15s; }
     .mc-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 #33691E; }
     .mc-btn:active,.mc-btn.down { transform:translateY(2px); box-shadow:0 2px 0 #33691E; }
     .mc-btn.down { opacity:0.6; pointer-events:none; }
