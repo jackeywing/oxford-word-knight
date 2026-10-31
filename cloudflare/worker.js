@@ -114,7 +114,8 @@ async function adminData(env, days) {
     `).bind(since),
 
     env.owk_stats.prepare(`
-      SELECT id, code, character, level, score, correct, total, created_at
+      SELECT id, code, character, level, score, correct, total,
+             datetime(created_at, '+8 hours') AS created_at
       FROM rounds WHERE created_at >= datetime('now', ?)
       ORDER BY id DESC LIMIT 20
     `).bind(since),
