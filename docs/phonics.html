@@ -1423,6 +1423,46 @@ async function syncInit(){
 let _syncTimer=null;
 function syncSoon(){ clearTimeout(_syncTimer); _syncTimer=setTimeout(syncPush, 1500); }
 
+/* ── 只读统计上报（D1）───────────────────────────────
+ * 只上报：闯关结果 + 每题对错/耗时/题型/目标词。
+ * 不上报：IP、孩子输入的原始字符串、任何身份信息。
+ * 没有配置 Worker 时静默跳过（本地 node 后端没有 /api/log）。
+ */
+let _answerBuf = [];
+function statUrl(){
+  const b = syncBase();
+  return b ? b + '/api/log' : '';
+}
+async function logStat(body){
+  const u = statUrl();
+  if(!u) return null;
+  try{
+    const r = await fetch(u, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    return await r.json();
+  }catch(e){ return null; }
+}
+function statWord(c){
+  if(!c) return '';
+  return String(c.word || c.correct || (c.reveal && c.reveal.word) || '').trim().toLowerCase();
+}
+function statAnswer(card, ok, ms){
+  if(!statUrl()) return;
+  _answerBuf.push({ type: card && card.card_type, word: statWord(card), correct: !!ok, ms: Number(ms)||0 });
+}
+function statFlush(score, correct, total){
+  if(!statUrl()) return;
+  const buf = _answerBuf; _answerBuf = [];
+  (async () => {
+    const r = await logStat({ code: famCode(), kind:'round',
+      round:{ character: ch, level:'G2', score, correct, total, max_combo: mx } });
+    const rid = (r && r.id) || 0;
+    for(const a of buf){
+      await logStat({ code: famCode(), kind:'answer',
+        answer:{ round_id: rid, type:a.type, word:a.word, correct:a.correct, ms:a.ms } });
+    }
+  })();
+}
+
 function syncStrip(){
   if(typeof window!=='undefined' && window.OWK_SYNC_OFF){
     return `<div class="sync-row"><span class="sync-lbl">🏠 家庭码</span><span style="font-size:max(.42em,10px);color:#A1887F;">同步服务未配置（仅本机保存）</span></div>`;
@@ -1718,6 +1758,7 @@ async function pick(val,btn,timeout=false){
   if(btn && !res.is_correct) btn.classList.add('wrong');
 
   const okk=res.is_correct;
+  if(typeof statAnswer==='function') statAnswer(card, okk, ms);
   track(okk?'answer_ok':'answer_wrong',{type:card.card_type,target:(card.word||card.correct||card.audio_text||''),response:(val==null?'(timeout)':String(val)),ms,timeout});
   if(okk){
     cb++; mx=Math.max(mx,cb);
@@ -1788,6 +1829,7 @@ async function finish(){
   track('round_finish',{score:sc,correct:ls.filter(x=>x.ok).length,total:N,character:ch});
   clearInterval(timerId);
   const ok=ls.filter(x=>x.ok).length;
+  if(typeof statFlush==='function') statFlush(sc, ok, N);
   const stars=ok===N?'⭐⭐⭐':(ok>=Math.ceil(N*.7)?'⭐⭐':'⭐');
   const prof = profileOf(ch);
   const rec = recommendFor(ch, "G2");

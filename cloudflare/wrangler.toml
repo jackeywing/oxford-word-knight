@@ -6,3 +6,9 @@ compatibility_date = "2026-10-01"
 [[kv_namespaces]]
 binding = "OWK_KV"
 id = "154bb7fca14e4652a7172dff061bc5eb"
+
+# 只读统计：闯关 + 答题明细，供 /admin 看板查询。
+[[d1_databases]]
+binding = "owk_stats"
+database_name = "owk-stats"
+database_id = "dbe61392-b4ec-4d60-a546-ca3a57b5156c"
