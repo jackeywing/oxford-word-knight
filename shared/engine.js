@@ -61,6 +61,7 @@
     { phoneme: '/uː/', grapheme: 'oo', articulation: '嘴唇收圆前突', example: 'moon', kind: 'vowel' },
     { phoneme: '/eɪ/', grapheme: 'ai', articulation: '从 /e/ 滑到 /ɪ/，双元音', example: 'rain', kind: 'vowel' },
     { phoneme: '/eɪ/', grapheme: 'ay', articulation: '同 ai，词尾常见', example: 'play', kind: 'vowel' },
+    { phoneme: '/ɔː/', grapheme: 'au', articulation: '嘴唇收圆，像 "奥"', example: 'sauce', kind: 'vowel' },
     { phoneme: '/əʊ/', grapheme: 'oa', articulation: '从 /ə/ 滑到 /ʊ/', example: 'boat', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ou', articulation: '从 /a/ 滑到 /ʊ/', example: 'house', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ow', articulation: '同 ou', example: 'cow', kind: 'vowel' },
@@ -135,7 +136,7 @@
    */
   const FOCUS_WORDS = new Set([
     'show', 'last', 'even', 'left', 'pass', 'eye', 'should', 'shall', 'would', 'wrong', 'try',
-    'different', 'reading', 'content', 'idea', 'detail', 'august', 'source', 'shape',
+    'different', 'reading', 'content', 'idea', 'detail', 'august', 'sauce', 'shape',
     'now', 'at', 'answer', 'mean', 'time', 'begin', 'succeed', 'along',
   ]);
 
