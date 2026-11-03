@@ -124,12 +124,19 @@
     return false;
   }
   /* ─────────── 用户指定的高频词 ───────────
-   * 这 11 个词在闯关和特训里都要提高出现率。
+   * 这些词在闯关和特训里都要提高出现率（特训里 +6.0 分，主游戏里 FOCUS_BOOST）。
    * 主游戏（backend/pick.js）与特训（本文件）共用同一份名单，避免两边不一致。
    * 系数各自不同是因为两边的分数量纲不同，不是笔误。
+   *
+   * 第一批 11 个：show last even left pass eye should shall would wrong try
+   * 第二批 16 个：different reading content idea detail august source shape
+   *              now at answer mean time begin succeed along
+   * （last 两批都有，只算一次）
    */
   const FOCUS_WORDS = new Set([
     'show', 'last', 'even', 'left', 'pass', 'eye', 'should', 'shall', 'would', 'wrong', 'try',
+    'different', 'reading', 'content', 'idea', 'detail', 'august', 'source', 'shape',
+    'now', 'at', 'answer', 'mean', 'time', 'begin', 'succeed', 'along',
   ]);
 
   /** 音素加权表：数值 = 相对权重倍数，1 = 不加权 */
@@ -472,7 +479,7 @@
         const hit = ph.filter((p) => weakSet.has(p.grapheme)).length;
         const syl = syllableCount(r.word);
         const aiBoost = isAISound(r.word) ? 6.0 : 0;      // /aɪ/ 专项加权
-        const focusBoost = FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 6.0 : 0;
+        const focusBoost = FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 12.0 : 0;
         return { row: r, score: 1 + syl * 0.8 + hit * 1.5 + aiBoost + focusBoost + priorityWeight(r.word) * 1.6 + Math.random() * 0.8, syl, ph };
       });
 
@@ -570,6 +577,7 @@
         score: 1 + (weakMap.get(c.p.phoneme) || 0) * 2 + Math.min(c.hits.length, 6) * 0.3
                + ownCount(c.hits) * 3.0
                + ((PHONEME_BOOST[c.p.phoneme] || 1) - 1) * 4.2   // /aɪ/ 规则加权
+               + c.hits.filter((r) => FOCUS_WORDS.has(norm(r.word))).length * 1.2  // 高频词扎堆的规则优先
                + Math.random() * 0.8,
       }));
 
@@ -606,7 +614,7 @@
       const poolSingle = bank.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);
       const targetRow = weightedPick(usePool, (r) => 1 + priorityWeight(r.word) * 1.6
-        + (FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 6.0 : 0));
+        + (FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 12.0 : 0));
       const target = targetRow.word;
       const sameRule = usePool.filter((r) => norm(r.word) !== norm(target)).slice(0, 2);
 
@@ -670,7 +678,9 @@
     function makeSightWordCard(player) {
       // 全池加权：错过的词权重高，高频词（rank 小）略高，其余均匀
       const pool = SIGHT_WORDS.map(([word, rank, zh]) => ({ word, rank, zh, err: errOf(player, word) }));
-      const target = weightedPick(pool, (x) => 1 + x.err * 6 + 6 / Math.max(1, x.rank) + priorityWeight(x.word) * 1.6);
+      const target = weightedPick(pool, (x) => 1 + x.err * 6 + 6 / Math.max(1, x.rank)
+        + priorityWeight(x.word) * 1.6
+        + (FOCUS_WORDS.has(String(x.word).toLowerCase()) ? 12.0 : 0));
 
       const others = SIGHT_WORDS.filter(([w]) => w !== target.word)
         .sort(() => Math.random() - 0.5).slice(0, 3).map(([, , zh]) => zh);

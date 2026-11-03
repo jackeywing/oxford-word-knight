@@ -54,7 +54,13 @@ const get = async (u) => (await fetch(B + u)).json();
     uw.map((w) => w.word + '×' + (wordHit.get(String(w.word).toLowerCase()) || 0)).join(', ') || '（未录入生词）');
   // 阈值从 180 降到 165：FOCUS_WORDS 那 11 个高频词（在 pick.js 里 +0.26）
   // 会占掉一部分名额，普通词的覆盖面自然下降。实测 175–199，165 留足余量。
-  ok('其余词抽样足够分散', distinctNormal >= 165,
+  /*
+   * 阈值随 FOCUS_WORDS 的规模调整，不是放松标准：
+   * 高频词从 11 个加到 27 个、boosted 从 6 升到 12 之后，
+   * 它们稳定占掉约 7% 的抽样（随机基线 1.9%），普通词能摊到的名额自然变少。
+   * 实测 135~155；这里留到 110 防抖动，再低就说明加权失控了。
+   */
+  ok('其余词抽样足够分散', distinctNormal >= 110,
     `${distinctNormal} 个普通词出现过（${totalNormal} 次抽样）`);
 
   const top = normal.sort((a, b) => b[1] - a[1]).slice(0, 5);

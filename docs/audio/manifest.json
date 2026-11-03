@@ -38051,6 +38051,300 @@
           "rate": "-8%"
         }
       }
+    },
+    "reading": {
+      "file": "words/reading.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "kipper": {
+          "file": "words/reading__kipper.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "biff": {
+          "file": "words/reading__biff.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/reading__chip.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "wilma": {
+          "file": "words/reading__wilma.mp3",
+          "bytes": 6860,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/reading__floppy.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
+    },
+    "content": {
+      "file": "words/content.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "chip": {
+          "file": "words/content__chip.mp3",
+          "bytes": 7292,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "biff": {
+          "file": "words/content__biff.mp3",
+          "bytes": 7148,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/content__kipper.mp3",
+          "bytes": 7724,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "floppy": {
+          "file": "words/content__floppy.mp3",
+          "bytes": 7724,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/content__wilma.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        }
+      }
+    },
+    "detail": {
+      "file": "words/detail.mp3",
+      "bytes": 7580,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/detail__biff.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/detail__chip.mp3",
+          "bytes": 6860,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/detail__kipper.mp3",
+          "bytes": 7292,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/detail__wilma.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/detail__floppy.mp3",
+          "bytes": 7292,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
+    },
+    "august": {
+      "file": "words/august.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/august__biff.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/august__chip.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/august__kipper.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/august__wilma.mp3",
+          "bytes": 6716,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/august__floppy.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
+    },
+    "source": {
+      "file": "words/source.mp3",
+      "bytes": 7148,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/source__biff.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/source__chip.mp3",
+          "bytes": 7148,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "wilma": {
+          "file": "words/source__wilma.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/source__floppy.mp3",
+          "bytes": 7580,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        },
+        "kipper": {
+          "file": "words/source__kipper.mp3",
+          "bytes": 7580,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        }
+      }
+    },
+    "shape": {
+      "file": "words/shape.mp3",
+      "bytes": 6428,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/shape__biff.mp3",
+          "bytes": 5708,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/shape__chip.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/shape__kipper.mp3",
+          "bytes": 6716,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "floppy": {
+          "file": "words/shape__floppy.mp3",
+          "bytes": 6716,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/shape__wilma.mp3",
+          "bytes": 5996,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        }
+      }
+    },
+    "succeed": {
+      "file": "words/succeed.mp3",
+      "bytes": 8156,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/succeed__biff.mp3",
+          "bytes": 7292,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/succeed__chip.mp3",
+          "bytes": 7580,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "wilma": {
+          "file": "words/succeed__wilma.mp3",
+          "bytes": 7436,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/succeed__floppy.mp3",
+          "bytes": 8012,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        },
+        "kipper": {
+          "file": "words/succeed__kipper.mp3",
+          "bytes": 8012,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        }
+      }
     }
   },
   "sentences": {
@@ -41065,9 +41359,9 @@
     "nadim": "en-GB-RyanNeural",
     "anneena": "en-GB-MaisieNeural"
   },
-  "generated_at": "2026-10-28T05:09:18.586Z",
+  "generated_at": "2026-11-03T12:33:23.493Z",
   "counts": {
-    "words": 906,
+    "words": 913,
     "sentences": 499,
     "phrases": 5
   },
