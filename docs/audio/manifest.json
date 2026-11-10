@@ -38387,6 +38387,174 @@
           "rate": ""
         }
       }
+    },
+    "spill": {
+      "file": "words/spill.mp3",
+      "bytes": 6716,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "chip": {
+          "file": "words/spill__chip.mp3",
+          "bytes": 5996,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/spill__kipper.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "floppy": {
+          "file": "words/spill__floppy.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/spill__wilma.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "biff": {
+          "file": "words/spill__biff.mp3",
+          "bytes": 6140,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        }
+      }
+    },
+    "drill": {
+      "file": "words/drill.mp3",
+      "bytes": 6284,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "chip": {
+          "file": "words/drill__chip.mp3",
+          "bytes": 5852,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/drill__kipper.mp3",
+          "bytes": 6140,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "biff": {
+          "file": "words/drill__biff.mp3",
+          "bytes": 5852,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/drill__floppy.mp3",
+          "bytes": 6140,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/drill__wilma.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        }
+      }
+    },
+    "chill": {
+      "file": "words/chill.mp3",
+      "bytes": 6140,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/chill__biff.mp3",
+          "bytes": 5564,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/chill__chip.mp3",
+          "bytes": 5852,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/chill__kipper.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/chill__wilma.mp3",
+          "bytes": 5996,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/chill__floppy.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
+    },
+    "skill": {
+      "file": "words/skill.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/skill__biff.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/skill__chip.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/skill__kipper.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/skill__wilma.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/skill__floppy.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
     }
   },
   "sentences": {
@@ -41401,9 +41569,9 @@
     "nadim": "en-GB-RyanNeural",
     "anneena": "en-GB-MaisieNeural"
   },
-  "generated_at": "2026-11-03T14:07:37.916Z",
+  "generated_at": "2026-11-10T00:51:53.357Z",
   "counts": {
-    "words": 914,
+    "words": 918,
     "sentences": 499,
     "phrases": 5
   },

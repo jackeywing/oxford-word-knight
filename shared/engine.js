@@ -62,6 +62,7 @@
     { phoneme: '/eɪ/', grapheme: 'ai', articulation: '从 /e/ 滑到 /ɪ/，双元音', example: 'rain', kind: 'vowel' },
     { phoneme: '/eɪ/', grapheme: 'ay', articulation: '同 ai，词尾常见', example: 'play', kind: 'vowel' },
     { phoneme: '/ɔː/', grapheme: 'au', articulation: '嘴唇收圆，像 "奥"', example: 'sauce', kind: 'vowel' },
+    { phoneme: '/ɪl/', grapheme: 'ill', articulation: '短 /ɪ/ 收到舌侧音 /l/，词尾不拖长', example: 'still', kind: 'vowel' },
     { phoneme: '/əʊ/', grapheme: 'oa', articulation: '从 /ə/ 滑到 /ʊ/', example: 'boat', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ou', articulation: '从 /a/ 滑到 /ʊ/', example: 'house', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ow', articulation: '同 ou', example: 'cow', kind: 'vowel' },
@@ -140,8 +141,28 @@
     'now', 'at', 'answer', 'mean', 'time', 'begin', 'succeed', 'along',
   ]);
 
+  /* ─────────── 押韵词族 ───────────
+   * still 这类词单独看只是普通词，但作为一个「词族」连着练才有迁移价值：
+   * 孩子记住的是 ill 这个形，不是某一个单词。
+   * 库里的 -ill 家族：fill / hill / still / will / spill / drill / chill / skill
+   */
+  const RHYME_FAMILY = new Set([
+    'fill', 'hill', 'still', 'will', 'spill', 'drill', 'chill', 'skill',
+  ]);
+  const RHYME_BOOST = 14.0;
+
+  /* 统一的词汇加权入口：高频词 + 押韵词族，两边加成叠加。
+     三处生成器（音节 / 拼读 / 视觉词）都调这一个函数，避免各写一份系数。 */
+  function wordBoost(w) {
+    const k = String(w || '').toLowerCase();
+    let b = 0;
+    if (FOCUS_WORDS.has(k)) b += 12.0;
+    if (RHYME_FAMILY.has(k)) b += RHYME_BOOST;
+    return b;
+  }
+
   /** 音素加权表：数值 = 相对权重倍数，1 = 不加权 */
-  const PHONEME_BOOST = { '/aɪ/': 3.4 };   // 规则得分额外 +（3.4-1）×4.2 ≈ +10
+  const PHONEME_BOOST = { '/aɪ/': 4.5 };   // igh 专项：3.4 → 4.5
 
   /** 可能混淆的拼写组合（用于干扰项，逼孩子真的分辨音而不是猜形） */
   const CONFUSABLE_GRAPHEMES = {
@@ -468,7 +489,7 @@
       /* /aɪ/ 词和用户指定高频词大多在 G1，必须跨级并入，否则加权无效 */
       const aiExtra = wordsInBank('')
         .filter((r) => /^[a-z]{3,}$/i.test(String(r.word).trim()))
-        .filter((r) => isAISound(r.word) || FOCUS_WORDS.has(String(r.word).toLowerCase()));
+        .filter((r) => isAISound(r.word) || wordBoost(r.word) > 0);   // 高频词 + 押韵词族都要跨级并入
       const seenW = new Set(base.map((r) => String(r.word).toLowerCase()));
       const bank = base.concat(aiExtra.filter((r) => !seenW.has(String(r.word).toLowerCase())));
       if (!bank.length) return null;
@@ -480,7 +501,7 @@
         const hit = ph.filter((p) => weakSet.has(p.grapheme)).length;
         const syl = syllableCount(r.word);
         const aiBoost = isAISound(r.word) ? 6.0 : 0;      // /aɪ/ 专项加权
-        const focusBoost = FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 12.0 : 0;
+        const focusBoost = wordBoost(r.word);
         return { row: r, score: 1 + syl * 0.8 + hit * 1.5 + aiBoost + focusBoost + priorityWeight(r.word) * 1.6 + Math.random() * 0.8, syl, ph };
       });
 
@@ -588,9 +609,12 @@
        * 同时留 60% 给其他规则，不至于变成单一题型。
        */
       const ighRule = candidates.find((c) => c.p.grapheme === 'igh');
-      const FORCE_IGH_RATE = 0.30;
-      const chosen = (ighRule && Math.random() < FORCE_IGH_RATE)
-        ? ighRule
+      const illRule = candidates.find((c) => c.p.grapheme === 'ill');
+      const FORCE_IGH_RATE = 0.45;
+      const FORCE_ILL_RATE = 0.15;   // -ill 词族：和 still 押韵的一组，连着练才有迁移
+      const roll = Math.random();
+      const chosen = (ighRule && roll < FORCE_IGH_RATE) ? ighRule
+        : (illRule && roll < FORCE_IGH_RATE + FORCE_ILL_RATE) ? illRule
         : weightedPick(scored, (x) => x.score);
 
       /*
@@ -599,13 +623,13 @@
        * 其他规则仍只在当前级别内取，避免打乱分级难度。
        */
       let hits = chosen.hits;
-      if (chosen.p.grapheme === 'igh') {
+      if (chosen.p.grapheme === 'igh' || chosen.p.grapheme === 'ill') {
         const full = wordsInBank('').filter((r) => r.sentence)
           .filter((r) => {
             const cs = charactersIn(r.sentence);
             return cs.length === 0 || cs.includes(character);
           });
-        const wide = full.filter((r) => norm(r.word).includes('igh'));
+        const wide = full.filter((r) => norm(r.word).includes(chosen.p.grapheme));
         if (wide.length >= 2) hits = wide;
       }
 
@@ -615,7 +639,7 @@
       const poolSingle = bank.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);
       const targetRow = weightedPick(usePool, (r) => 1 + priorityWeight(r.word) * 1.6
-        + (FOCUS_WORDS.has(String(r.word).toLowerCase()) ? 12.0 : 0));
+        + wordBoost(r.word));
       const target = targetRow.word;
       const sameRule = usePool.filter((r) => norm(r.word) !== norm(target)).slice(0, 2);
 
@@ -681,7 +705,7 @@
       const pool = SIGHT_WORDS.map(([word, rank, zh]) => ({ word, rank, zh, err: errOf(player, word) }));
       const target = weightedPick(pool, (x) => 1 + x.err * 6 + 6 / Math.max(1, x.rank)
         + priorityWeight(x.word) * 1.6
-        + (FOCUS_WORDS.has(String(x.word).toLowerCase()) ? 12.0 : 0));
+        + wordBoost(x.word));
 
       const others = SIGHT_WORDS.filter(([w]) => w !== target.word)
         .sort(() => Math.random() - 0.5).slice(0, 3).map(([, , zh]) => zh);
