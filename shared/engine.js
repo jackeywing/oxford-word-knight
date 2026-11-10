@@ -63,6 +63,7 @@
     { phoneme: '/eɪ/', grapheme: 'ay', articulation: '同 ai，词尾常见', example: 'play', kind: 'vowel' },
     { phoneme: '/ɔː/', grapheme: 'au', articulation: '嘴唇收圆，像 "奥"', example: 'sauce', kind: 'vowel' },
     { phoneme: '/ɪl/', grapheme: 'ill', articulation: '短 /ɪ/ 收到舌侧音 /l/，词尾不拖长', example: 'still', kind: 'vowel' },
+    { phoneme: '/eɪd/', grapheme: 'ade', articulation: 'a_e 拆读：/eɪ/ 收在 /d/ 上，词尾 e 不发音', example: 'made', kind: 'vowel' },
     { phoneme: '/əʊ/', grapheme: 'oa', articulation: '从 /ə/ 滑到 /ʊ/', example: 'boat', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ou', articulation: '从 /a/ 滑到 /ʊ/', example: 'house', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ow', articulation: '同 ou', example: 'cow', kind: 'vowel' },
@@ -131,7 +132,8 @@
    * 系数各自不同是因为两边的分数量纲不同，不是笔误。
    *
    * 第一批 11 个：show last even left pass eye should shall would wrong try
-   * 第二批 16 个：different reading content idea detail august source shape
+   * 第三批 3 个：made after her
+   * 第二批 16 个：different reading content idea detail august sauce shape
    *              now at answer mean time begin succeed along
    * （last 两批都有，只算一次）
    */
@@ -139,6 +141,7 @@
     'show', 'last', 'even', 'left', 'pass', 'eye', 'should', 'shall', 'would', 'wrong', 'try',
     'different', 'reading', 'content', 'idea', 'detail', 'august', 'sauce', 'shape',
     'now', 'at', 'answer', 'mean', 'time', 'begin', 'succeed', 'along',
+    'made', 'after', 'her', 'water',
   ]);
 
   /* ─────────── 押韵词族 ───────────
@@ -572,7 +575,14 @@
 
     /* 3. 拼读规则（语境选词） */
     function makePhonicsCard(player, level, character) {
-      const all = wordsInBank(level).filter((r) => r.sentence);
+      /*
+       * 跨级并入加权词：高频词和押韵词族大多在 G1，
+       * 只取当前级别的话，加多少权重都出不来（和 makeSyllableCard 同一个坑）。
+       */
+      const base = wordsInBank(level).filter((r) => r.sentence);
+      const boosted = wordsInBank('').filter((r) => r.sentence && wordBoost(r.word) > 0);
+      const seenP = new Set(base.map((r) => norm(r.word)));
+      const all = base.concat(boosted.filter((r) => !seenP.has(norm(r.word))));
       if (!all.length) return makeSyllableCard(player, level, character);
       let bank = character
         ? all.filter((r) => {
@@ -634,7 +644,13 @@
       }
 
       const ownHits = hits.filter(isOwnLine);
-      const preferred = ownHits.length ? ownHits : hits;
+      /*
+       * 本人台词优先，但用户指定要加权的词不能被挤出题池。
+       * 这些词的例句多半是中立的旁白（"She put her book in the bag."），
+       * 一旦本轮有本人台词的候选，它们就会被整个排除，权重再高也抽不到。
+       */
+      const boostedHits = hits.filter((r) => wordBoost(r.word) > 0 && !ownHits.includes(r));
+      const preferred = (ownHits.length + boostedHits.length) ? ownHits.concat(boostedHits) : hits;
       const hitsSingle = preferred.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const poolSingle = bank.filter((r) => /^[a-z]+$/i.test(String(r.word).trim()));
       const usePool = hitsSingle.length >= 2 ? hitsSingle : (preferred.length ? preferred : poolSingle);

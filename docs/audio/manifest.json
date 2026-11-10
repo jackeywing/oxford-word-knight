@@ -38555,6 +38555,90 @@
           "rate": "-8%"
         }
       }
+    },
+    "shade": {
+      "file": "words/shade.mp3",
+      "bytes": 7004,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "chip": {
+          "file": "words/shade__chip.mp3",
+          "bytes": 6284,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/shade__kipper.mp3",
+          "bytes": 6716,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "biff": {
+          "file": "words/shade__biff.mp3",
+          "bytes": 5708,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "wilma": {
+          "file": "words/shade__wilma.mp3",
+          "bytes": 5852,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/shade__floppy.mp3",
+          "bytes": 6716,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
+    },
+    "grade": {
+      "file": "words/grade.mp3",
+      "bytes": 6860,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/grade__biff.mp3",
+          "bytes": 5852,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/grade__kipper.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "chip": {
+          "file": "words/grade__chip.mp3",
+          "bytes": 6572,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/grade__floppy.mp3",
+          "bytes": 7004,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/grade__wilma.mp3",
+          "bytes": 5996,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        }
+      }
     }
   },
   "sentences": {
@@ -41569,9 +41653,9 @@
     "nadim": "en-GB-RyanNeural",
     "anneena": "en-GB-MaisieNeural"
   },
-  "generated_at": "2026-11-10T00:51:53.357Z",
+  "generated_at": "2026-11-10T12:15:43.336Z",
   "counts": {
-    "words": 918,
+    "words": 920,
     "sentences": 499,
     "phrases": 5
   },
