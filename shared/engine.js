@@ -64,6 +64,7 @@
     { phoneme: '/ɔː/', grapheme: 'au', articulation: '嘴唇收圆，像 "奥"', example: 'sauce', kind: 'vowel' },
     { phoneme: '/ɪl/', grapheme: 'ill', articulation: '短 /ɪ/ 收到舌侧音 /l/，词尾不拖长', example: 'still', kind: 'vowel' },
     { phoneme: '/eɪd/', grapheme: 'ade', articulation: 'a_e 拆读：/eɪ/ 收在 /d/ 上，词尾 e 不发音', example: 'made', kind: 'vowel' },
+    { phoneme: '/st/', grapheme: 'st', articulation: '舌尖抵住上齿龈，/s/ 直接滑到 /t/，中间不插元音', example: 'start', kind: 'consonant' },
     { phoneme: '/əʊ/', grapheme: 'oa', articulation: '从 /ə/ 滑到 /ʊ/', example: 'boat', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ou', articulation: '从 /a/ 滑到 /ʊ/', example: 'house', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ow', articulation: '同 ou', example: 'cow', kind: 'vowel' },
@@ -154,6 +155,17 @@
   ]);
   const RHYME_BOOST = 14.0;
 
+  /* ─────────── st- 辅音连缀词族 ───────────
+   * start / stop / still / street 这类词共同点是词首 st 连读，
+   * 中间不能插元音（不是 s-t-art）。按词首聚成一组练，迁移到其他 st 词更快。
+   */
+  const ST_BLEND = new Set([
+    'stand', 'star', 'start', 'station', 'stay', 'stick', 'still', 'stop', 'storm',
+    'strange', 'street', 'strong', 'study', 'stairs', 'stamp', 'stone', 'story',
+    'stretch', 'state', 'steal',
+  ]);
+  const ST_BOOST = 8.0;
+
   /* 统一的词汇加权入口：高频词 + 押韵词族，两边加成叠加。
      三处生成器（音节 / 拼读 / 视觉词）都调这一个函数，避免各写一份系数。 */
   function wordBoost(w) {
@@ -161,6 +173,7 @@
     let b = 0;
     if (FOCUS_WORDS.has(k)) b += 12.0;
     if (RHYME_FAMILY.has(k)) b += RHYME_BOOST;
+    if (ST_BLEND.has(k)) b += ST_BOOST;
     return b;
   }
 
@@ -620,11 +633,14 @@
        */
       const ighRule = candidates.find((c) => c.p.grapheme === 'igh');
       const illRule = candidates.find((c) => c.p.grapheme === 'ill');
+      const stRule = candidates.find((c) => c.p.grapheme === 'st');
       const FORCE_IGH_RATE = 0.45;
       const FORCE_ILL_RATE = 0.15;   // -ill 词族：和 still 押韵的一组，连着练才有迁移
+      const FORCE_ST_RATE = 0.15;    // st- 词首连缀：start / stop / street
       const roll = Math.random();
       const chosen = (ighRule && roll < FORCE_IGH_RATE) ? ighRule
         : (illRule && roll < FORCE_IGH_RATE + FORCE_ILL_RATE) ? illRule
+        : (stRule && roll < FORCE_IGH_RATE + FORCE_ILL_RATE + FORCE_ST_RATE) ? stRule
         : weightedPick(scored, (x) => x.score);
 
       /*
@@ -633,7 +649,7 @@
        * 其他规则仍只在当前级别内取，避免打乱分级难度。
        */
       let hits = chosen.hits;
-      if (chosen.p.grapheme === 'igh' || chosen.p.grapheme === 'ill') {
+      if (chosen.p.grapheme === 'igh' || chosen.p.grapheme === 'ill' || chosen.p.grapheme === 'st') {
         const full = wordsInBank('').filter((r) => r.sentence)
           .filter((r) => {
             const cs = charactersIn(r.sentence);
