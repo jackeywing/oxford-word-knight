@@ -10,7 +10,7 @@ while true; do
     
     # Make sure server is up
     if ! lsof -ti:3000 > /dev/null 2>&1; then
-      cd /Users/shuo/.openclaw/workspace/oxford-word-knight
+      cd /Users/shuo/openclaw-workspace/oxford-word-knight
       nohup node backend/server.js > /tmp/oxford.log 2>&1 &
       sleep 2
     fi
