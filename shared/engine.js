@@ -166,6 +166,16 @@
   ]);
   const ST_BOOST = 8.0;
 
+  /* ─────────── every- 词族 ───────────
+   * every / everything / everyone / everyday / everywhere / everybody
+   * 拆开是六个词，但共用同一个词根 every，语义都是「每一个 / 所有」。
+   * 连起来练才建立词族感，而不是当成六个孤立的生词背。
+   */
+  const EVERY_FAMILY = new Set([
+    'every', 'everything', 'everyone', 'everywhere', 'everyday', 'everybody',
+  ]);
+  const EVERY_BOOST = 10.0;
+
   /* 统一的词汇加权入口：高频词 + 押韵词族，两边加成叠加。
      三处生成器（音节 / 拼读 / 视觉词）都调这一个函数，避免各写一份系数。 */
   function wordBoost(w) {
@@ -174,6 +184,7 @@
     if (FOCUS_WORDS.has(k)) b += 12.0;
     if (RHYME_FAMILY.has(k)) b += RHYME_BOOST;
     if (ST_BLEND.has(k)) b += ST_BOOST;
+    if (EVERY_FAMILY.has(k)) b += EVERY_BOOST;
     return b;
   }
 

@@ -38639,6 +38639,90 @@
           "rate": ""
         }
       }
+    },
+    "everyday": {
+      "file": "words/everyday.mp3",
+      "bytes": 8012,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "kipper": {
+          "file": "words/everyday__kipper.mp3",
+          "bytes": 7148,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/everyday__wilma.mp3",
+          "bytes": 7148,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/everyday__chip.mp3",
+          "bytes": 6716,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "biff": {
+          "file": "words/everyday__biff.mp3",
+          "bytes": 6716,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/everyday__floppy.mp3",
+          "bytes": 7292,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
+    },
+    "everybody": {
+      "file": "words/everybody.mp3",
+      "bytes": 8444,
+      "voice": "en-GB-SoniaNeural",
+      "variants": {
+        "biff": {
+          "file": "words/everybody__biff.mp3",
+          "bytes": 7580,
+          "voice": "en-GB-MaisieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "chip": {
+          "file": "words/everybody__chip.mp3",
+          "bytes": 6860,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "-5%",
+          "rate": ""
+        },
+        "kipper": {
+          "file": "words/everybody__kipper.mp3",
+          "bytes": 7292,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+15%",
+          "rate": "-8%"
+        },
+        "wilma": {
+          "file": "words/everybody__wilma.mp3",
+          "bytes": 7436,
+          "voice": "en-GB-HollieNeural",
+          "pitch": "",
+          "rate": ""
+        },
+        "floppy": {
+          "file": "words/everybody__floppy.mp3",
+          "bytes": 7148,
+          "voice": "en-GB-RyanNeural",
+          "pitch": "+35%",
+          "rate": "-8%"
+        }
+      }
     }
   },
   "sentences": {
@@ -41653,9 +41737,9 @@
     "nadim": "en-GB-RyanNeural",
     "anneena": "en-GB-MaisieNeural"
   },
-  "generated_at": "2026-11-10T16:44:50.846Z",
+  "generated_at": "2026-11-17T11:40:53.461Z",
   "counts": {
-    "words": 920,
+    "words": 922,
     "sentences": 499,
     "phrases": 5
   },
