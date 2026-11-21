@@ -134,7 +134,7 @@ module.exports = function createPractice(db) {
            w.actual === undefined ? null : w.actual);
   }
 
-  function answer({ player, card, response, response_ms = 0, ip = '' }) {
+  function answer({ player, card, response, response_ms = 0, prev_ms = 0, ip = '' }) {
     const p = player || 'guest';
     const ms = Math.max(0, parseInt(response_ms) || 0);
     const type = card.card_type;
@@ -150,7 +150,7 @@ module.exports = function createPractice(db) {
        VALUES (?, ?, ?, ?, ?, ?, ?)`
     ).run(p, type, card.word || card.audio_text || card.correct || '', card.focus || '', ok ? 1 : 0, ms, String(ip || ''));
 
-    const fb = E.buildFeedback(card, ok, ms);
+    const fb = E.buildFeedback(card, ok, ms, prev_ms);
     return {
       is_correct: ok,
       correct_answer: card.correct,

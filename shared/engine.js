@@ -60,21 +60,21 @@
     { phoneme: '/iː/', grapheme: 'ea', articulation: '嘴角向两边拉平，长音', example: 'tea', kind: 'vowel' },
     { phoneme: '/uː/', grapheme: 'oo', articulation: '嘴唇收圆前突', example: 'moon', kind: 'vowel' },
     { phoneme: '/eɪ/', grapheme: 'ai', articulation: '从 /e/ 滑到 /ɪ/，双元音', example: 'rain', kind: 'vowel' },
-    { phoneme: '/eɪ/', grapheme: 'ay', articulation: '同 ai，词尾常见', example: 'play', kind: 'vowel' },
+    { phoneme: '/eɪ/', grapheme: 'ay', articulation: '从 /e/ 滑到 /ɪ/，和 ai 同音，多出现在词尾', example: 'play', kind: 'vowel' },
     { phoneme: '/ɔː/', grapheme: 'au', articulation: '嘴唇收圆，像 "奥"', example: 'sauce', kind: 'vowel' },
     { phoneme: '/ɪl/', grapheme: 'ill', articulation: '短 /ɪ/ 收到舌侧音 /l/，词尾不拖长', example: 'still', kind: 'vowel' },
     { phoneme: '/eɪd/', grapheme: 'ade', articulation: 'a_e 拆读：/eɪ/ 收在 /d/ 上，词尾 e 不发音', example: 'made', kind: 'vowel' },
     { phoneme: '/st/', grapheme: 'st', articulation: '舌尖抵住上齿龈，/s/ 直接滑到 /t/，中间不插元音', example: 'start', kind: 'consonant' },
     { phoneme: '/əʊ/', grapheme: 'oa', articulation: '从 /ə/ 滑到 /ʊ/', example: 'boat', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ou', articulation: '从 /a/ 滑到 /ʊ/', example: 'house', kind: 'vowel' },
-    { phoneme: '/aʊ/', grapheme: 'ow', articulation: '同 ou', example: 'cow', kind: 'vowel' },
+    { phoneme: '/aʊ/', grapheme: 'ow', articulation: '从 /a/ 滑到 /ʊ/，和 ou 同音；grow / snow 里读 /əʊ/', example: 'cow', kind: 'vowel' },
     { phoneme: '/ɔɪ/', grapheme: 'oi', articulation: '从 /ɔ/ 滑到 /ɪ/', example: 'coin', kind: 'vowel' },
-    { phoneme: '/ɔɪ/', grapheme: 'oy', articulation: '同 oi，词尾常见', example: 'boy', kind: 'vowel' },
+    { phoneme: '/ɔɪ/', grapheme: 'oy', articulation: '从 /ɔ/ 滑到 /ɪ/，和 oi 同音，多出现在词尾', example: 'boy', kind: 'vowel' },
     { phoneme: '/ɑː/', grapheme: 'ar', articulation: '嘴张大，舌后缩', example: 'car', kind: 'vowel' },
     { phoneme: '/ɔː/', grapheme: 'or', articulation: '圆唇，舌后缩', example: 'fork', kind: 'vowel' },
-    { phoneme: '/ɜː/', grapheme: 'er', articulation: '中央元音，舌平放', example: 'her', kind: 'vowel' },
-    { phoneme: '/ɜː/', grapheme: 'ir', articulation: '同 er', example: 'bird', kind: 'vowel' },
-    { phoneme: '/ɜː/', grapheme: 'ur', articulation: '同 er', example: 'turn', kind: 'vowel' },
+    { phoneme: '/ɜː/', grapheme: 'er', articulation: '舌放在口腔中央不动，嘴角微松，像短促的「呃」', example: 'her', kind: 'vowel' },
+    { phoneme: '/ɜː/', grapheme: 'ir', articulation: '和 er 同音，但拼写不同：ir 多在词中，如 bird / girl', example: 'bird', kind: 'vowel' },
+    { phoneme: '/ɜː/', grapheme: 'ur', articulation: '和 er 同音，常见于词中，如 hurt / turn', example: 'turn', kind: 'vowel' },
     { phoneme: '/ʃ/', grapheme: 'sh', articulation: '嘴唇微前突，气流摩擦，不振动声带', example: 'ship', kind: 'consonant' },
     { phoneme: '/tʃ/', grapheme: 'ch', articulation: '先堵住再释放，像打喷嚏前一刻', example: 'chip', kind: 'consonant' },
     { phoneme: '/θ/', grapheme: 'th', articulation: '舌尖轻放上下齿之间，送气', example: 'think', kind: 'consonant' },
@@ -353,7 +353,31 @@
   }
 
   /** 面向 8–9 岁的即时反馈文案 */
-  function buildFeedback(card, ok, ms = 0) {
+  /* 答题耗时 → 一句可读的进度反馈。
+     只跟"同一个词的上一次"比：跟全库平均比没有意义，孩子关心的是自己有没有变快。 */
+  function timingNote(ms, prevMs) {
+    const cur = Number(ms) || 0;
+    if (cur <= 0) return '';
+    const sec = (cur / 1000).toFixed(1);
+    const prev = Number(prevMs) || 0;
+    if (prev > 0) {
+      const d = (prev - cur) / 1000;          // 正数 = 变快了
+      if (Math.abs(d) < 0.3) return `${sec} 秒 · 和上次差不多`;
+      return d > 0
+        ? `${sec} 秒 · 比上次快 ${d.toFixed(1)} 秒`
+        : `${sec} 秒 · 比上次慢 ${Math.abs(d).toFixed(1)} 秒`;
+    }
+    return `${sec} 秒`;
+  }
+
+  function buildFeedback(card, ok, ms = 0, prevMs = 0) {
+    const fb = buildFeedbackInner(card, ok, ms);
+    const t = timingNote(ms, prevMs);
+    if (t) fb.timing = t;
+    return fb;
+  }
+
+  function buildFeedbackInner(card, ok, ms = 0) {
     const t = card.card_type;
     if (t === 'PUNCTUATION_MARK') {
       const mk = (card.reveal || {}).mark || card.correct;
@@ -367,8 +391,16 @@
       return { message: `这个词要这样切：${card.reveal.display}`, type: 'hint', hint: `拍着手跟着读：${card.reveal.display}`, effect: 'bounce', next_action: 'retry' };
     if (t === 'PHONEME_DISCRIMINATION')
       return { message: `注意听：${card.reveal.phonemes[0]} 和 ${card.reveal.phonemes[1]} 是不同的音`, type: 'correction', hint: `${card.reveal.tip}！再听一遍`, effect: 'shake', next_action: 'retry' };
-    if (t === 'PHONICS_CONTEXT_MATCH')
-      return { message: `${card.reveal.grapheme} 通常发 ${card.reveal.phoneme}`, type: 'hint', hint: `同家族的词还有：${card.reveal.family.join('、')}`, effect: 'glow', next_action: 'review_rule' };
+    if (t === 'PHONICS_CONTEXT_MATCH') {
+      const art = (card.reveal && card.reveal.articulation) || '';
+      return {
+        message: `${card.reveal.grapheme} 通常发 ${card.reveal.phoneme}`,
+        type: 'hint',
+        hint: `同家族的词还有：${card.reveal.family.join('、')}`,
+        effect: 'glow',
+        next_action: 'review_rule',
+      };
+    }
     if (t === 'SIGHT_WORD_FLASH')
       return { message: `再记一次：${card.reveal.word} = ${card.reveal.zh}`, type: 'hint', hint: card.reveal.tip, effect: 'bounce', next_action: 'retry' };
     return { message: '再试一次', type: 'hint', hint: '', effect: 'bounce', next_action: 'retry' };

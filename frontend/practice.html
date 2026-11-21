@@ -88,6 +88,9 @@
 .sync-lbl{font-size:max(.44em,10.5px);color:#8D6E63}
 .sync-code{font-family:'Press Start 2P',monospace;font-size:max(.62em,12px);color:#3E2723;letter-spacing:2px;background:#F0DDB8;border:2px solid #8D6E63;padding:5px 9px}
 .sync-btn{padding:6px 12px !important;font-size:max(.42em,10px) !important}
+.fb-timing{font-size:max(.44em,10.5px);color:#8D6E63;margin:2px 0 6px;letter-spacing:.3px}
+.reveal .art{margin-top:6px;color:#5D4037;line-height:1.7}
+.reveal .art b{color:#E65100;margin-right:6px}
 .mask-strip{background:#FFF8E1;border:3px solid #D7CCC8;border-radius:8px;padding:12px;text-align:center}
 .mask-title{font-size:.46em;color:#5D4037;margin-bottom:10px}
 .mask-title b{color:#BF360C}
@@ -697,6 +700,27 @@ function hud(){
 
 /* ── 取题 ── */
 /* 跨轮记忆：最近 3 轮的词，避免连续两轮刷到同样的题（与主游戏 owk_seen 同一思路） */
+/* 每个词上次答了多久：反馈里用它算"比上次快/慢多少"。
+   只存最近一次，不累积，避免无限增长。 */
+function _msMap(){ try{ return JSON.parse(localStorage.getItem('owk_ms')||'{}'); }catch(e){ return {}; } }
+function _msKey(c){
+  const w=String((c && (c.word || c.correct || (c.reveal && c.reveal.word))) || '').trim().toLowerCase();
+  return w;
+}
+function lastMs(c){
+  const k=_msKey(c); if(!k) return 0;
+  const m=_msMap();
+  return Number(m[k]) || 0;
+}
+function saveMs(c, ms){
+  const k=_msKey(c); if(!k || !ms) return;
+  const m=_msMap();
+  m[k]=Number(ms)||0;
+  const keys=Object.keys(m);
+  if(keys.length>600){ keys.slice(0, keys.length-600).forEach(x=>delete m[x]); }
+  try{ localStorage.setItem('owk_ms', JSON.stringify(m)); }catch(e){}
+}
+
 function pSeen(){try{return JSON.parse(localStorage.getItem('owk_seen_practice')||'[]')}catch(e){return []}}
 function pPushSeen(word){
   const k=String(word||'').toLowerCase(); if(!k) return;
@@ -893,7 +917,7 @@ async function pick(val,btn,timeout=false){
 
   const res=await fetch(`${API}/practice/answer`,{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({player:ch,card,response:val,response_ms:ms})
+    body:JSON.stringify({player:ch,card,response:val,response_ms:ms,prev_ms:lastMs(card)})
   }).then(r=>r.json()).catch(()=>({error:'network'}));
 
   if(res.error){toast('⚠️ 网络错误','bad');answered=false;return;}
@@ -906,6 +930,7 @@ async function pick(val,btn,timeout=false){
   if(btn && !res.is_correct) btn.classList.add('wrong');
 
   const okk=res.is_correct;
+  saveMs(card, ms);                       // 供下一次比较
   if(typeof statAnswer==='function') statAnswer(card, okk, ms);
   track(okk?'answer_ok':'answer_wrong',{type:card.card_type,target:(card.word||card.correct||card.audio_text||''),response:(val==null?'(timeout)':String(val)),ms,timeout});
   if(okk){
@@ -940,7 +965,11 @@ function renderFeedback(res,okk,timeout){
       <br><button class="mc-btn blue" style="font-size:.9em;padding:8px 14px;margin-top:8px;" onclick="speakPair('${rv.pair[0]}','${rv.pair[1]}')">🔊 对比听</button>
     </div>`;
   } else if(card.card_type==='PHONICS_CONTEXT_MATCH' && rv.grapheme){
-    extra=`<div class="reveal">字母组合 <span class="ph">${rv.grapheme}</span> → ${rv.phoneme}<br>${rv.articulation||''}<br>同家族：${(rv.family||[]).join('、')}</div>`;
+    extra=`<div class="reveal">
+      <div>字母组合 <span class="ph">${rv.grapheme}</span> → ${rv.phoneme}</div>
+      <div class="art"><b>发音要领</b>${rv.articulation||''}</div>
+      <button class="mc-btn blue" style="font-size:.9em;padding:8px 14px;margin-top:10px;" onclick="speakSlow('${card.correct}')">🐢 慢速听</button>
+    </div>`;
   } else if(card.card_type==='PUNCTUATION_MARK' && rv.mark){
     extra=`<div class="reveal">完整句子：<span class="ph">${rv.full}</span><br>${rv.tip||''}</div>`;
   } else if(card.card_type==='SIGHT_WORD_FLASH' && rv.word){
@@ -952,12 +981,15 @@ function renderFeedback(res,okk,timeout){
   box.innerHTML=`
     <div class="fb-head">${okk?'✅ 答对了':'💡 再想想'}</div>
     <div class="fb-msg">${f.message||''}</div>
+    ${f.timing?`<div class="fb-timing">⏱ ${f.timing}</div>`:''}
     ${f.hint?`<div class="fb-hint">${f.hint}</div>`:''}
     ${extra}
     <div class="fb-actions"><button class="mc-btn" onclick="adv()">继续 ▶</button></div>`;
   document.querySelector('.ch-card').appendChild(box);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+
+function speakSlow(w){ speak(w, 0.55); }
 
 function speakPair(a,b){
   speak(a,0.7);

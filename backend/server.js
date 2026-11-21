@@ -951,10 +951,10 @@ const server = http.createServer((req, res) => {
     req.on('data', c => body += c);
     req.on('end', () => {
       try {
-        const { player, card, response, response_ms } = JSON.parse(body);
+        const { player, card, response, response_ms, prev_ms } = JSON.parse(body);
         if (!card || card.correct === undefined)
           return json(res, { error: 'card required' }, 400);
-        const result = practice.answer({ player, card, response, response_ms, ip: clientIp(req) });
+        const result = practice.answer({ player, card, response, response_ms, prev_ms, ip: clientIp(req) });
         json(res, result);
       } catch (e) { json(res, { error: e.message }, 400); }
     });

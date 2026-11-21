@@ -88,6 +88,9 @@
 .sync-lbl{font-size:max(.44em,10.5px);color:#8D6E63}
 .sync-code{font-family:'Press Start 2P',monospace;font-size:max(.62em,12px);color:#3E2723;letter-spacing:2px;background:#F0DDB8;border:2px solid #8D6E63;padding:5px 9px}
 .sync-btn{padding:6px 12px !important;font-size:max(.42em,10px) !important}
+.fb-timing{font-size:max(.44em,10.5px);color:#8D6E63;margin:2px 0 6px;letter-spacing:.3px}
+.reveal .art{margin-top:6px;color:#5D4037;line-height:1.7}
+.reveal .art b{color:#E65100;margin-right:6px}
 .mask-strip{background:#FFF8E1;border:3px solid #D7CCC8;border-radius:8px;padding:12px;text-align:center}
 .mask-title{font-size:.46em;color:#5D4037;margin-bottom:10px}
 .mask-title b{color:#BF360C}
@@ -327,21 +330,21 @@
     { phoneme: '/iː/', grapheme: 'ea', articulation: '嘴角向两边拉平，长音', example: 'tea', kind: 'vowel' },
     { phoneme: '/uː/', grapheme: 'oo', articulation: '嘴唇收圆前突', example: 'moon', kind: 'vowel' },
     { phoneme: '/eɪ/', grapheme: 'ai', articulation: '从 /e/ 滑到 /ɪ/，双元音', example: 'rain', kind: 'vowel' },
-    { phoneme: '/eɪ/', grapheme: 'ay', articulation: '同 ai，词尾常见', example: 'play', kind: 'vowel' },
+    { phoneme: '/eɪ/', grapheme: 'ay', articulation: '从 /e/ 滑到 /ɪ/，和 ai 同音，多出现在词尾', example: 'play', kind: 'vowel' },
     { phoneme: '/ɔː/', grapheme: 'au', articulation: '嘴唇收圆，像 "奥"', example: 'sauce', kind: 'vowel' },
     { phoneme: '/ɪl/', grapheme: 'ill', articulation: '短 /ɪ/ 收到舌侧音 /l/，词尾不拖长', example: 'still', kind: 'vowel' },
     { phoneme: '/eɪd/', grapheme: 'ade', articulation: 'a_e 拆读：/eɪ/ 收在 /d/ 上，词尾 e 不发音', example: 'made', kind: 'vowel' },
     { phoneme: '/st/', grapheme: 'st', articulation: '舌尖抵住上齿龈，/s/ 直接滑到 /t/，中间不插元音', example: 'start', kind: 'consonant' },
     { phoneme: '/əʊ/', grapheme: 'oa', articulation: '从 /ə/ 滑到 /ʊ/', example: 'boat', kind: 'vowel' },
     { phoneme: '/aʊ/', grapheme: 'ou', articulation: '从 /a/ 滑到 /ʊ/', example: 'house', kind: 'vowel' },
-    { phoneme: '/aʊ/', grapheme: 'ow', articulation: '同 ou', example: 'cow', kind: 'vowel' },
+    { phoneme: '/aʊ/', grapheme: 'ow', articulation: '从 /a/ 滑到 /ʊ/，和 ou 同音；grow / snow 里读 /əʊ/', example: 'cow', kind: 'vowel' },
     { phoneme: '/ɔɪ/', grapheme: 'oi', articulation: '从 /ɔ/ 滑到 /ɪ/', example: 'coin', kind: 'vowel' },
-    { phoneme: '/ɔɪ/', grapheme: 'oy', articulation: '同 oi，词尾常见', example: 'boy', kind: 'vowel' },
+    { phoneme: '/ɔɪ/', grapheme: 'oy', articulation: '从 /ɔ/ 滑到 /ɪ/，和 oi 同音，多出现在词尾', example: 'boy', kind: 'vowel' },
     { phoneme: '/ɑː/', grapheme: 'ar', articulation: '嘴张大，舌后缩', example: 'car', kind: 'vowel' },
     { phoneme: '/ɔː/', grapheme: 'or', articulation: '圆唇，舌后缩', example: 'fork', kind: 'vowel' },
-    { phoneme: '/ɜː/', grapheme: 'er', articulation: '中央元音，舌平放', example: 'her', kind: 'vowel' },
-    { phoneme: '/ɜː/', grapheme: 'ir', articulation: '同 er', example: 'bird', kind: 'vowel' },
-    { phoneme: '/ɜː/', grapheme: 'ur', articulation: '同 er', example: 'turn', kind: 'vowel' },
+    { phoneme: '/ɜː/', grapheme: 'er', articulation: '舌放在口腔中央不动，嘴角微松，像短促的「呃」', example: 'her', kind: 'vowel' },
+    { phoneme: '/ɜː/', grapheme: 'ir', articulation: '和 er 同音，但拼写不同：ir 多在词中，如 bird / girl', example: 'bird', kind: 'vowel' },
+    { phoneme: '/ɜː/', grapheme: 'ur', articulation: '和 er 同音，常见于词中，如 hurt / turn', example: 'turn', kind: 'vowel' },
     { phoneme: '/ʃ/', grapheme: 'sh', articulation: '嘴唇微前突，气流摩擦，不振动声带', example: 'ship', kind: 'consonant' },
     { phoneme: '/tʃ/', grapheme: 'ch', articulation: '先堵住再释放，像打喷嚏前一刻', example: 'chip', kind: 'consonant' },
     { phoneme: '/θ/', grapheme: 'th', articulation: '舌尖轻放上下齿之间，送气', example: 'think', kind: 'consonant' },
@@ -620,7 +623,31 @@
   }
 
   /** 面向 8–9 岁的即时反馈文案 */
-  function buildFeedback(card, ok, ms = 0) {
+  /* 答题耗时 → 一句可读的进度反馈。
+     只跟"同一个词的上一次"比：跟全库平均比没有意义，孩子关心的是自己有没有变快。 */
+  function timingNote(ms, prevMs) {
+    const cur = Number(ms) || 0;
+    if (cur <= 0) return '';
+    const sec = (cur / 1000).toFixed(1);
+    const prev = Number(prevMs) || 0;
+    if (prev > 0) {
+      const d = (prev - cur) / 1000;          // 正数 = 变快了
+      if (Math.abs(d) < 0.3) return `${sec} 秒 · 和上次差不多`;
+      return d > 0
+        ? `${sec} 秒 · 比上次快 ${d.toFixed(1)} 秒`
+        : `${sec} 秒 · 比上次慢 ${Math.abs(d).toFixed(1)} 秒`;
+    }
+    return `${sec} 秒`;
+  }
+
+  function buildFeedback(card, ok, ms = 0, prevMs = 0) {
+    const fb = buildFeedbackInner(card, ok, ms);
+    const t = timingNote(ms, prevMs);
+    if (t) fb.timing = t;
+    return fb;
+  }
+
+  function buildFeedbackInner(card, ok, ms = 0) {
     const t = card.card_type;
     if (t === 'PUNCTUATION_MARK') {
       const mk = (card.reveal || {}).mark || card.correct;
@@ -634,8 +661,16 @@
       return { message: `这个词要这样切：${card.reveal.display}`, type: 'hint', hint: `拍着手跟着读：${card.reveal.display}`, effect: 'bounce', next_action: 'retry' };
     if (t === 'PHONEME_DISCRIMINATION')
       return { message: `注意听：${card.reveal.phonemes[0]} 和 ${card.reveal.phonemes[1]} 是不同的音`, type: 'correction', hint: `${card.reveal.tip}！再听一遍`, effect: 'shake', next_action: 'retry' };
-    if (t === 'PHONICS_CONTEXT_MATCH')
-      return { message: `${card.reveal.grapheme} 通常发 ${card.reveal.phoneme}`, type: 'hint', hint: `同家族的词还有：${card.reveal.family.join('、')}`, effect: 'glow', next_action: 'review_rule' };
+    if (t === 'PHONICS_CONTEXT_MATCH') {
+      const art = (card.reveal && card.reveal.articulation) || '';
+      return {
+        message: `${card.reveal.grapheme} 通常发 ${card.reveal.phoneme}`,
+        type: 'hint',
+        hint: `同家族的词还有：${card.reveal.family.join('、')}`,
+        effect: 'glow',
+        next_action: 'review_rule',
+      };
+    }
     if (t === 'SIGHT_WORD_FLASH')
       return { message: `再记一次：${card.reveal.word} = ${card.reveal.zh}`, type: 'hint', hint: card.reveal.tip, effect: 'bounce', next_action: 'retry' };
     return { message: '再试一次', type: 'hint', hint: '', effect: 'bounce', next_action: 'retry' };
@@ -1173,14 +1208,14 @@ const __ENGINE = OWK.createEngine({
 function nextTask(p, level, type, character, exclude) { return __ENGINE.nextTask({ player: p, level, type, character, exclude }); }
 
 /* ---- 判定 + 学情（逻辑来自 shared/engine.js，这里只做 localStorage 读写） ---- */
-function answerCard(p, card, response, ms){
+function answerCard(p, card, response, ms, prevMs){
   const okk = OWK.gradeAnswer(card, response);
   const d   = OWK.learningDeltas(card, okk, ms, response);
   const st  = me(p);
   for (const w of d.words){ const r = st.words[w.word] = st.words[w.word] || {e:0,c:0}; w.error ? r.e++ : r.c++; }
   for (const ph of d.phonemes) bump(p, ph.phoneme, ph.grapheme, ph.delta, ph.correct);
   st.n++; if (okk) st.ok++; persist();
-  return { is_correct: okk, correct_answer: card.correct, feedback: OWK.buildFeedback(card, okk, ms), reveal: card.reveal, hesitant: d.hesitant };
+  return { is_correct: okk, correct_answer: card.correct, feedback: OWK.buildFeedback(card, okk, ms, prevMs || 0), reveal: card.reveal, hesitant: d.hesitant };
 }
 
 function profileOf(p){
@@ -1640,6 +1675,27 @@ function hud(){
 
 /* ── 取题 ── */
 /* 跨轮记忆：最近 3 轮的词，避免连续两轮刷到同样的题（与主游戏 owk_seen 同一思路） */
+/* 每个词上次答了多久：反馈里用它算"比上次快/慢多少"。
+   只存最近一次，不累积，避免无限增长。 */
+function _msMap(){ try{ return JSON.parse(localStorage.getItem('owk_ms')||'{}'); }catch(e){ return {}; } }
+function _msKey(c){
+  const w=String((c && (c.word || c.correct || (c.reveal && c.reveal.word))) || '').trim().toLowerCase();
+  return w;
+}
+function lastMs(c){
+  const k=_msKey(c); if(!k) return 0;
+  const m=_msMap();
+  return Number(m[k]) || 0;
+}
+function saveMs(c, ms){
+  const k=_msKey(c); if(!k || !ms) return;
+  const m=_msMap();
+  m[k]=Number(ms)||0;
+  const keys=Object.keys(m);
+  if(keys.length>600){ keys.slice(0, keys.length-600).forEach(x=>delete m[x]); }
+  try{ localStorage.setItem('owk_ms', JSON.stringify(m)); }catch(e){}
+}
+
 function pSeen(){try{return JSON.parse(localStorage.getItem('owk_seen_practice')||'[]')}catch(e){return []}}
 function pPushSeen(word){
   const k=String(word||'').toLowerCase(); if(!k) return;
@@ -1824,7 +1880,7 @@ async function pick(val,btn,timeout=false){
   clearInterval(timerId);
   const ms=Date.now()-t0;
 
-  const res = answerCard(ch, card, val, ms);
+  const res = answerCard(ch, card, val, ms, lastMs(card));
 
   if(res.error){toast('⚠️ 网络错误','bad');answered=false;return;}
 
@@ -1836,6 +1892,7 @@ async function pick(val,btn,timeout=false){
   if(btn && !res.is_correct) btn.classList.add('wrong');
 
   const okk=res.is_correct;
+  saveMs(card, ms);                       // 供下一次比较
   if(typeof statAnswer==='function') statAnswer(card, okk, ms);
   track(okk?'answer_ok':'answer_wrong',{type:card.card_type,target:(card.word||card.correct||card.audio_text||''),response:(val==null?'(timeout)':String(val)),ms,timeout});
   if(okk){
@@ -1870,7 +1927,11 @@ function renderFeedback(res,okk,timeout){
       <br><button class="mc-btn blue" style="font-size:.9em;padding:8px 14px;margin-top:8px;" onclick="speakPair('${rv.pair[0]}','${rv.pair[1]}')">🔊 对比听</button>
     </div>`;
   } else if(card.card_type==='PHONICS_CONTEXT_MATCH' && rv.grapheme){
-    extra=`<div class="reveal">字母组合 <span class="ph">${rv.grapheme}</span> → ${rv.phoneme}<br>${rv.articulation||''}<br>同家族：${(rv.family||[]).join('、')}</div>`;
+    extra=`<div class="reveal">
+      <div>字母组合 <span class="ph">${rv.grapheme}</span> → ${rv.phoneme}</div>
+      <div class="art"><b>发音要领</b>${rv.articulation||''}</div>
+      <button class="mc-btn blue" style="font-size:.9em;padding:8px 14px;margin-top:10px;" onclick="speakSlow('${card.correct}')">🐢 慢速听</button>
+    </div>`;
   } else if(card.card_type==='PUNCTUATION_MARK' && rv.mark){
     extra=`<div class="reveal">完整句子：<span class="ph">${rv.full}</span><br>${rv.tip||''}</div>`;
   } else if(card.card_type==='SIGHT_WORD_FLASH' && rv.word){
@@ -1882,12 +1943,15 @@ function renderFeedback(res,okk,timeout){
   box.innerHTML=`
     <div class="fb-head">${okk?'✅ 答对了':'💡 再想想'}</div>
     <div class="fb-msg">${f.message||''}</div>
+    ${f.timing?`<div class="fb-timing">⏱ ${f.timing}</div>`:''}
     ${f.hint?`<div class="fb-hint">${f.hint}</div>`:''}
     ${extra}
     <div class="fb-actions"><button class="mc-btn" onclick="adv()">继续 ▶</button></div>`;
   document.querySelector('.ch-card').appendChild(box);
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+
+function speakSlow(w){ speak(w, 0.55); }
 
 function speakPair(a,b){
   speak(a,0.7);
